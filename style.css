@@ -1,0 +1,414 @@
+                          /*
+                           * normalize.css | MIT License | git.io/normalize
+                           */
+                      html, body, div, span, applet, object, iframe,
+                      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+                      a, abbr, acronym, address, big, cite, code,
+                      del, dfn, em, img, ins, kbd, q, s, samp,
+                      small, strike, strong, sub, sup, tt, var,
+                      b, u, i, center,
+                      dl, dt, dd, ol, ul, li,
+                      fieldset, form, label, legend,
+                      table, caption, tbody, tfoot, thead, tr, th, td,
+                      article, aside, canvas, details, embed,
+                      figure, figcaption, footer, header, hgroup,
+                      menu, nav, output, ruby, section, summary,
+                      time, mark, audio, video {
+                          margin: 0;
+                          padding: 0;
+                          border: 0;
+                          font-size: 100%;
+                          font: inherit;
+                          vertical-align: baseline;
+                      }
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Clearing */
+
+.clear:before,
+.clear:after,
+.row:before,
+.row:after,
+.container:before,
+.container:after {
+    content: '';
+    display: table;
+}
+
+.clear:after,
+.row:after,
+.container:after {
+    clear: both;
+}
+
+/* Grid */
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    transition: all 0.5s ease-in-out 0s;
+}
+
+.row {
+    margin: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+[class^="col-"] {
+    position: relative;
+    float: left;
+    min-height: 1px;
+    padding: 0 1.5em;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.col-12 {
+    width: 100%;
+}
+.col-11 {
+    width: 91.66666667%;
+}
+.col-10 {
+    width: 83.33333333%;
+}
+.col-9 {
+    width: 75%;
+}
+.col-8 {
+    width: 66.66666667%;
+}
+.col-7 {
+    width: 58.33333333%;
+}
+.col-6 {
+    width: 50%;
+}
+.col-5 {
+    width: 41.66666667%;
+}
+.col-4 {
+    width: 33.33333333%;
+}
+.col-3 {
+    width: 25%;
+}
+.col-2 {
+    width: 16.66666667%;
+}
+.col-1 {
+    width: 8.33333333%;
+}
+.col-offset-12 {
+    margin-left: 100%;
+}
+.col-offset-11 {
+    margin-left: 91.66666667%;
+}
+.col-offset-10 {
+    margin-left: 83.33333333%;
+}
+.col-offset-9 {
+    margin-left: 75%;
+}
+.col-offset-8 {
+    margin-left: 66.66666667%;
+}
+.col-offset-7 {
+    margin-left: 58.33333333%;
+}
+.col-offset-6 {
+    margin-left: 50%;
+}
+.col-offset-5 {
+    margin-left: 41.66666667%;
+}
+.col-offset-4 {
+    margin-left: 33.33333333%;
+}
+.col-offset-3 {
+    margin-left: 25%;
+}
+.col-offset-2 {
+    margin-left: 16.66666667%;
+}
+.col-offset-1 {
+    margin-left: 8.33333333%;
+}
+.col-offset-0 {
+    margin-left: 0;
+}
+
+.row {
+    padding: 1.5em 0;
+}
+
+.nofloat {
+    float: none;
+    margin: auto;
+}
+
+/* Main */
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    background-color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: #e88b00;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:focus, input {
+    outline: 0 none;
+}
+
+img {
+    border: 0;
+    max-width: 100%;
+    height: auto;
+}
+
+.align-center {
+    display: block;
+    margin: 1.5em auto;
+}
+
+.align-left {
+    float: left;
+    margin: 0 1em 1em 0;
+}
+
+.align-right {
+    float: right;
+    margin: 0 0 1em 1em;
+}
+
+p {
+    margin: 0 0 1.5em 0;
+    padding: 0;
+}
+
+ul {
+    list-style-type: disc;
+    margin: 0 1.5em 0 2em;
+    padding: 0;
+}
+
+ul li {
+    padding: 0.5em 0;
+    margin: 0;
+}
+
+[class^="col-"] p:last-child,
+[class^="col-"] ul:last-child {
+    margin-bottom: 0;
+}
+
+/* Typography */
+
+h1,
+h2,
+h3,
+h4 {
+    color: #202228;
+    line-height: 1.4;
+    margin: 1em 0 0.5em;
+    padding: 0;
+}
+
+h1  {
+    font-size: 3.25em;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+h1.site-title {
+    margin: 0 0 0.5em;
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.5em;
+    color: #fff;
+}
+
+h1.site-title:before {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    width: 80px;
+    left: 50%;
+    margin-left: -40px;
+    height: 2px;
+    background-color: rgba(255,255,255,0.5);
+}
+
+h2 {
+    font-size: 1.75em;
+    font-weight: 400;
+}
+
+.site-tagline {
+    font-size: 1.25em;
+    color: #fff;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Header */
+
+.site-header {
+    background-color: #4174ab;
+}
+
+.site-header .row {
+    padding: 1em 0;
+}
+
+.site-header .welcome {
+    min-height: 360px;
+    padding: 2em 0;
+    background: url('//im.altervista.org/site_index/welcome-bg.png') repeat-x center bottom;
+}
+
+.logo {
+    margin: 2em auto 1em;
+    text-align: center;
+}
+
+.logo a {
+    display: inline-block;
+}
+
+.logo svg {
+    float: left;
+    display: block;
+    fill: currentColor;
+}
+
+.logo .altervista-icon {
+    width: 50px;
+    height: 40px;
+    background-color: #fff;
+    margin-right: 1em;
+    color: #f79400;
+}
+
+.logo .altervista {
+    width: 138px;
+    height: 26px;
+    margin: 5px 0 0 0;
+    color: #fff;
+}
+
+/* Content */
+
+.button {
+    display: inline-block;
+    padding: 12px 24px 11px;
+    margin: 1.5em 0;
+    background-color: #47b247;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+
+.button:hover {
+    text-decoration: none;
+    background-color: #41a341;
+}
+
+.goodby {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+}
+
+.sep {
+    display: inline-block;
+    padding: 0 0.25em;
+    color: #aaa;
+}
+
+.site-footer {
+    text-align: center;
+    color: #777;
+    font-size: 0.875em;
+    padding: 1em 0;
+    background-color: #f4f4f4;
+}
+
+.site-footer a {
+    color: #777;
+}
+
+.site-footer a:hover {
+    color: #333;
+    text-decoration: none;
+}
+
+@media screen and (min-width: 1540px) {
+    .container {max-width: 1200px;}
+}
+@media screen and (max-width: 768px) {
+    .container {
+        margin: auto;
+    }
+    .logo {
+        margin: 0 auto 1em;
+        padding-bottom: 1em;
+        border-bottom: 1px solid rgba(255,255,255,0.25);
+    }
+    [class^="col-"] {
+        width: 100%;
+        float: none;
+        margin: auto;
+    }
+    .main-navigation ul, .site-footer {text-align: center;}
+}
+@media screen and (max-width: 320px) {
+    h1 {font-size: 2.75em;}
+}
