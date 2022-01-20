@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="425ff6bc-7098-425c-94e4-2531dfd081aa" name="Flegiasetourist" url="http://ftp.flegiasetourist.altervista.org">
+        <fileTransfer host="ftp.flegiasetourist.altervista.org" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
