@@ -12,9 +12,6 @@ if(isset($_SESSION['id'])){
 
 }
 
-//$2y$10$6.TY2beEv.sGgI/WH1QDBu8DKaR7Q840IGGw.f2JCdSbvweE1nwEm
-
-
 $email = $connection->real_escape_string($_POST['email']);
 $password = $connection->real_escape_string($_POST['password']);
 

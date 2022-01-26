@@ -27,16 +27,25 @@ if ($_POST) {
     if (!$_POST['password'])
         $error .= "Password richiesta<br>";
     if (!($_POST['password2'] === $_POST['password']))
-        $error .= "Conferma password errata schifoso<br>";
+        $error .= "Conferma password errata<br>";
+
+    $sql = "SELECT * FROM users WHERE email = '".$_POST['email']."'";
+
+    if ($result = $connection->query($sql)) {
+        if ($result->num_rows){
+            $error .= "Email già esistente";
+        }
+
+    }
 
     if ($error)
         $error = "
             <div class='alert alert-danger' role='alert'>
-                <p>
+                <h4>
                     <strong>
-                        Sbagghiasti
+                        Errore inserimento dati
                     </strong>
-                </p>                    
+                </h4>                    
                 $error
             </div>
         ";
