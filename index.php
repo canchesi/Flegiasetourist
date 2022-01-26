@@ -2,9 +2,7 @@
 
 session_start();
 if(isset($_SESSION['id'])){
-    if ($_SESSION['type'] === 'cliente')
-        header('location: index.php');
-    else
+    if (!$_SESSION['type'] === 'cliente')
         header('location: dashboard.php');
 
 }
@@ -36,6 +34,12 @@ if(isset($_SESSION['id'])){
 <body>
 
 <h1>Home Page<br>Viva Cristo</h1>
+
+
+<form action="logout.php">
+    <input type="submit" value="Logout" class="btn btn-danger">
+</form>
+
 
 </body>
 </html>
