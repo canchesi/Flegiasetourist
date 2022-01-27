@@ -39,7 +39,7 @@ else if ($_SESSION['type'] === 'cliente')
 
 
 <!-- Begin Sidebar -->
-<div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+<div class="sidebar sidebar-dark sidebar-fixed hide" id="sidebar">
     <div class="sidebar-brand d-md-flex">
         <button class="header-toggler px-md-0 me-md-3" type="button"
                 onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">

@@ -10,6 +10,9 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
+    if(isset($_POST['name']))
+        header('location: employees.php');
+
 ?>
 
 <!doctype html>
@@ -41,7 +44,7 @@
 
 
     <!-- Begin Sidebar -->
-    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+    <div class="sidebar sidebar-dark sidebar-fixed hide" id="sidebar">
         <div class="sidebar-brand d-md-flex">
             <button class="header-toggler px-md-0 me-md-3" type="button"
                     onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
@@ -126,14 +129,28 @@
                                 </span>
                             </div>
                             <div class="card-body">
-                                <form class="row g-3">
-                                    <div class="col-md-6">
+                                <form class="row g-3" method="POST">
+                                    <div class="col-md-5">
                                         <label for="name" class="form-label">Nome*</label>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-5">
                                         <label for="surname" class="form-label">Cognome*</label>
                                         <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="type" class="form-label">Grado*</label>
+                                        <select id="type" class="form-select" name="type" required>
+                                            <option disabled selected>
+                                                Seleziona...
+                                            </option>
+                                            <option value="amministratore">
+                                                Amministratore
+                                            </option>
+                                            <option value="capitano">
+                                                Capitano
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="inputAddress2" class="form-label">Sesso*</label>
@@ -165,7 +182,7 @@
                                         <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="Residenza" class="form-label">Residenza*</label>
+                                        <label for="Provincia" class="form-label">Residenza*</label>
                                         <select id="Provincia" class="form-select" name="prov_r" required>
                                             <option disabled selected>Provincia</option>
                                             <?php
@@ -183,14 +200,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="" class="form-label">
-                                            <input class="form-check-input" type="checkbox" id="domicile">
+                                            <input class="form-check-input" type="checkbox" id="domicile" name='domicile' value="true">
                                             <label class="form-check-label" for="domicile">
                                                 Residenza coincide con domicilio
                                             </label>
                                         </label>
                                         <select id="Comune" class="form-select" name="city_r" required>
-                                            <option disabled selected>Comune</option>
-
+                                            <option disabled selected value="base">Comune</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 hidden">
@@ -213,24 +229,24 @@
                                     <div class="col-md-3 hidden">
                                         <label for="Comune" class="form-label"><br></label>
                                         <select id="Comune" class="form-select" name="city_d">
-                                            <option disabled selected>Comune</option>
+                                            <option disabled selected value="base">Comune</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3 hidden">
-                                        <select id="Cap" class="form-select" name="zip_d">
+                                    <div class="col-md-3">
+                                        <label class="form-label show"><br></label>
+                                        <select id="Cap" class="form-select" name="zip_r" required>
                                             <option disabled selected>CAP</option>
-
+                                            <option>12</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label show"><br></label>
                                         <input class="col-md-12 form-control" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label show"><br></label>
-                                        <select id="Cap" class="form-select" name="zip_r" required>
+                                    <div class="col-md-3 hidden">
+                                        <select id="Cap" class="form-select" name="zip_d">
                                             <option disabled selected>CAP</option>
-                                            <option>a</option>
+                                            <option>12</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 hidden">
@@ -294,7 +310,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="eyes" class="form-label">Colore occhi*</label>
-                                        <select class="form-select" name="eyes" required>
+                                        <select id='eyes' class="form-select" name="eyes" required>
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
@@ -310,7 +326,7 @@
                                         </select>
                                     </div>
                                     <div class="col-12 mt-4">
-                                        <button type="submit" class="btn btn-primary">Sign in</button>
+                                        <button type="submit" class="btn btn-primary">Aggiungi</button>
                                         <a class="btn btn-outline-secondary" type="submit" href="employees.php">Annulla</a>
                                     </div>
                                 </form>
@@ -326,7 +342,8 @@
 
         <!--Begin Footer -->
         <footer class="footer">
-            <div class="">Flegias & Tourist</a>
+            <div class="">
+                Flegias & Tourist
             </div>
             <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
         </footer>
@@ -336,7 +353,59 @@
 
     <?php
 
+        if(isset($_POST['name'])) {
+            $name = $connection->real_escape_string(ucfirst($_POST['name']));
+            $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
+            $email = $connection->real_escape_string(strtolower($_POST['name']) . '.' . strtolower($_POST['surname']) . '@flegias.it');
+            $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
+            $type = $connection->real_escape_string($_POST['type']);
+            $cf = $connection->real_escape_string($_POST['cf']);
+            $tel = $_POST['tel'];
+            $birth = $_POST['birth_date'];
+            $gender = $connection->real_escape_string($_POST['gender']);
+            $prov = $connection->real_escape_string($_POST['prov_r']);
+            $city = $connection->real_escape_string($_POST['city_r']);
+            $zip = $connection->real_escape_string($_POST['zip_r']);
+            $addr = $connection->real_escape_string($_POST['addr_r']);
 
+            $sql = "
+        
+                INSERT INTO users (email, psw, name, surname, type)
+                    VALUES ('$email', '$hashPasswd', '$name', '$surname', '$type');
+                
+            ";
+
+            if ($result = $connection->query($sql))
+                $sql = "
+
+                    INSERT INTO infos(user_id, cf, tel, birth_date, gender, prov_r, city_r, zip_r, addr_r)
+                        VALUES('$connection->insert_id', '$cf', '$tel', '$birth', '$gender', '$prov', '$city', '$zip', '$addr');
+                
+                ";
+            else
+                die('<script>alert("Errore nell\'invio dei dati1.")</script>');
+
+            if ($result = $connection->query($sql))
+                if (!isset($_POST['domicile'])) {
+
+                    $prov = $connection->real_escape_string($_POST['prov_d']);
+                    $city = $connection->real_escape_string($_POST['city_d']);
+                    $zip = $connection->real_escape_string($_POST['zip_d']);
+                    $addr = $connection->real_escape_string($_POST['addr_d']);
+
+                    $sql = "
+        
+                        UPDATE infos
+                            SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
+                    
+                    ";
+
+                    if (!$result = $connection->query($sql))
+                        die('<script>alert("Errore nell\'invio dei dati3.")</script>');
+
+                }
+
+        }
 
     ?>
 
