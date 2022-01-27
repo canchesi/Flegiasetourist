@@ -148,21 +148,19 @@ else if ($_SESSION['type'] === 'cliente')
                                 </div>
 
                             </div>
-                            <div class="table-responsive">
-                                <table class="table border" id="warehouseTable">
+                            <div class="table-responsive" id="warehouseTable">
+                                <table class="table border">
                                     <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <!--<th class="text-center" style="min-width: 80%">
-                                            <i class="icon cil-image"></i>
-                                        </th>-->
-                                        <th class="">ID</th>
-                                        <th class="">Nome e Cognome</th>
-                                        <th class="">Email</th>
-                                        <th class="">Grado</th>
-                                        <th class="text-center"></th>
-                                        <th class="text-end"></th>
-                                        <th></th>
-                                    </tr>
+                                        <tr class="align-middle">
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="user_id" data-order="asc">ID</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type" data-order="asc">Grado</a></th>
+                                            <th class="text-center"></th>
+                                            <th class="text-end"></th>
+                                            <th></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
 
@@ -183,13 +181,16 @@ else if ($_SESSION['type'] === 'cliente')
                                                     <td class="text-center">
                                                         <div>' . $row["user_id"] . '</div>
                                                     </td>
-                                                    <td class="">
-                                                        <div>' . $row["name"] . " " . $row["surname"] . '</div>
+                                                    <td class="" style="padding: 20px">
+                                                        <div>' . $row["surname"] . '</div>
                                                     </td>
-                                                    <td class="">
+                                                    <td class="" style="padding: 20px">
+                                                        <div>' . $row["name"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
                                                        <div>' . $row["email"] . '</div>
                                                     </td>
-                                                    <td>
+                                                    <td class="" style="padding: 20px">
                                                         <div>' . ucfirst($row["type"]) . '</div>
                                                     </td>
                                                     <td></td>
@@ -219,7 +220,7 @@ else if ($_SESSION['type'] === 'cliente')
 
     <!--Begin Footer -->
     <footer class="footer">
-        <div class="">Flegias & Tourist</a>
+        <div class="">Flegias & Tourist
         </div>
         <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
     </footer>
@@ -261,12 +262,26 @@ else if ($_SESSION['type'] === 'cliente')
 
         $.ajax({
             method: 'GET',
-            url: "deleteuser.php?id="+ del_id,
+            url: "php/deleteuser.php?id="+ del_id,
             cache: false,
             success:function(result){
                 tr.fadeOut(1000, function(){
                     $(this).remove();
                 });
+            }
+        });
+    });
+
+    $(document).on("click", ".orderButton", function () {
+        var column = $(this).attr("id"),
+            order = $(this).data("order");
+
+        $.ajax({
+            url: "php/sort.php",
+            method: "POST",
+            data: {column: column, order: order},
+            success: function (data) {
+                $('#warehouseTable').html(data);
             }
         });
     });

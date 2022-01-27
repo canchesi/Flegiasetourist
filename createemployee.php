@@ -1,12 +1,14 @@
 <?php
-require_once('php/config.php');
 
-session_start();
+    require_once('php/config.php');
+    require_once('php/residenceinfos.php');
 
-if (!isset($_SESSION['id']))
-    header("location: login.php");
-else if ($_SESSION['type'] === 'cliente')
-    header('location: index.php');
+    session_start();
+
+    if (!isset($_SESSION['id']))
+        header("location: login.php");
+    else if ($_SESSION['type'] === 'cliente')
+        header('location: index.php');
 
 ?>
 
@@ -131,11 +133,11 @@ else if ($_SESSION['type'] === 'cliente')
                                     </div>
                                     <div class="col-md-6">
                                         <label for="surname" class="form-label">Cognome*</label>
-                                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome">
+                                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome" required>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <label for="inputAddress2" class="form-label">Sesso*</label>
-                                        <select class="form-select" name="sex">
+                                        <select class="form-select" name="gender" required>
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
@@ -150,32 +152,166 @@ else if ($_SESSION['type'] === 'cliente')
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
-                                        <label for="inputCity" class="form-label">Data di nascita</label>
-                                        <input type="date" class="form-control" id="inputCity">
+                                    <div class="col-md-3">
+                                        <label for="birth" class="form-label">Data di nascita*</label>
+                                        <input type="date" class="form-control" id="birth" name="birth_date" required>
                                     </div>
-                                    <div class="col-md-2">
-                                        <label for="telefono" class="form-label">Telefono</label>
-                                        <input type="text" class="form-control" id="telefono" name="tel">
+                                    <div class="col-md-3">
+                                        <label for="telefono" class="form-label">Telefono*</label>
+                                        <input type="text" pattern="[0-9]*" class="form-control" id="telefono" name="tel" placeholder="Form. 123456789 " required>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="inputState" class="form-label">State</label>
-                                        <select id="inputState" class="form-select">
-                                            <option selected>Choose...</option>
-                                            <option>...</option>
+                                    <div class="col-md-3">
+                                        <label for="cf" class="form-label">Codice Fiscale*</label>
+                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="Residenza" class="form-label">Residenza*</label>
+                                        <select id="Provincia" class="form-select" name="prov_r" required>
+                                            <option disabled selected>Provincia</option>
+                                            <?php
+                                            foreach($provinces as $prov => $val) {
+                                                echo "
+                                                        
+                                                        <option value='$prov'>
+                                                            $val
+                                                        </option>
+                                                    
+                                                    ";
+                                            }
+                                            ?>
                                         </select>
                                     </div>
-
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="gridCheck">
-                                            <label class="form-check-label" for="gridCheck">
-                                                Check me out
+                                    <div class="col-md-3">
+                                        <label for="" class="form-label">
+                                            <input class="form-check-input" type="checkbox" id="domicile">
+                                            <label class="form-check-label" for="domicile">
+                                                Residenza coincide con domicilio
                                             </label>
-                                        </div>
+                                        </label>
+                                        <select id="Comune" class="form-select" name="city_r" required>
+                                            <option disabled selected>Comune</option>
+
+                                        </select>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-md-3 hidden">
+                                        <label for="Domicilio" class="form-label">Domicilio</label>
+                                        <select id="Domicilio" class="form-select" name="prov_d">
+                                            <option disabled selected>Provincia</option>
+                                            <?php
+                                            foreach($provinces as $prov => $val) {
+                                                echo "
+                                                        
+                                                        <option value='$prov'>
+                                                            $val
+                                                        </option>
+                                                    
+                                                    ";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 hidden">
+                                        <label for="Comune" class="form-label"><br></label>
+                                        <select id="Comune" class="form-select" name="city_d">
+                                            <option disabled selected>Comune</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 hidden">
+                                        <select id="Cap" class="form-select" name="zip_d">
+                                            <option disabled selected>CAP</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label show"><br></label>
+                                        <input class="col-md-12 form-control" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label show"><br></label>
+                                        <select id="Cap" class="form-select" name="zip_r" required>
+                                            <option disabled selected>CAP</option>
+                                            <option>a</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 hidden">
+                                        <input class="col-md-12 form-control" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="hair" class="form-label">Altezza*</label>
+                                        <input class="form-control" type="number" placeholder="Cm" name="height" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="blood" class="form-label">Gruppo Sanguigno*</label>
+                                        <select class="form-select" name="blood" required>
+                                            <option disabled selected>
+                                                Seleziona...
+                                            </option>
+                                            <option value="a+">
+                                                A+
+                                            </option>
+                                            <option value="a-">
+                                                A-
+                                            </option>
+                                            <option value="b+">
+                                                B+
+                                            </option>
+                                            <option value="b-">
+                                                B-
+                                            </option>
+                                            <option value="ab+">
+                                                AB+
+                                            </option>
+                                            <option value="ab-">
+                                                AB-
+                                            </option>
+                                            <option value="0+">
+                                                0+
+                                            </option>
+                                            <option value="0-">
+                                                0-
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="hair" class="form-label">Colore capelli*</label>
+                                        <select class="form-select" name="hair" required>
+                                            <option disabled selected>
+                                                Seleziona...
+                                            </option>
+                                            <option value="castani">
+                                                Castani
+                                            </option>
+                                            <option value="biondi">
+                                                Biondi
+                                            </option>
+                                            <option value="rossi">
+                                                Rossi
+                                            </option>
+                                            <option value="">
+                                                Pelato
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="eyes" class="form-label">Colore occhi*</label>
+                                        <select class="form-select" name="eyes" required>
+                                            <option disabled selected>
+                                                Seleziona...
+                                            </option>
+                                            <option value="marrone">
+                                                Marroni
+                                            </option>
+                                            <option value="azzurro">
+                                                Azzurri
+                                            </option>
+                                            <option value="verde">
+                                                Verdi
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Sign in</button>
+                                        <a class="btn btn-outline-secondary" type="submit" href="employees.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>
@@ -198,7 +334,30 @@ else if ($_SESSION['type'] === 'cliente')
     </div>
     </body>
 
+    <?php
+
+
+
+    ?>
+
     <script>
+
+        $(function(){
+            var checkbox = $('#domicile'),
+                hidden = $('.hidden'),
+                show = $('.show');
+
+            show.hide()
+            checkbox.change(function(){
+                if(checkbox.is(":checked")){
+                    hidden.hide();
+                    show.show();
+                } else {
+                    hidden.show();
+                    show.hide();
+                }
+            });
+        });
 
     </script>
 

@@ -6,7 +6,7 @@ if (!isset($_SESSION['id']) || $_SESSION['type'] !== 'amministratore') {
     exit;
 }
 
-require_once('php/config.php');
+require_once('config.php');
 
 $id = $connection->real_escape_string($_GET['id']);
 
