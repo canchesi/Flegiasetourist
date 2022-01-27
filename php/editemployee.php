@@ -1,7 +1,7 @@
 <?php
 
-    require_once('php/config.php');
-    require_once('php/residenceinfos.php');
+    require_once('config.php');
+    require_once('residenceinfos.php');
 
     session_start();
 
@@ -12,6 +12,20 @@
 
     if(isset($_POST['name']))
         header('location: employees.php');
+    
+    $sql = "
+    
+        SELECT *
+        FROM users LEFT JOIN infos ON users.id_code
+        WHERE users.id_code = " . $_GET['id'] . " 
+        
+        ";
+
+    if($result = $connection->query($sql)) {
+
+        $row = $result->fetch_array(MYSQLI_ASSOC);
+
+    }
 
 ?>
 
@@ -38,7 +52,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"
                 integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-        <title>Crea Dipendente</title>
+        <title>Modifica Dipendente</title>
     </head>
     <body>
 
@@ -53,19 +67,19 @@
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
             <li class="nav-item">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="../index.php">
                     <i class="cil-speedometer nav-icon"></i>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">
+                <a class="nav-link" href="../dashboard.php">
                     <i class="cil-compass nav-icon"></i>
                     Rotte
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="employees.php">
+                <a class="nav-link" href="../employees.php">
                     <i class="cil-contact nav-icon "></i>
                     Dipendenti
                 </a>
@@ -77,7 +91,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="ships.php">
+                <a class="nav-link" href="../ships.php">
                     <i class="cil-boat-alt nav-icon"></i>
                     Navi
                 </a>
@@ -109,7 +123,7 @@
 
                 <span class="fs-4">Flegias & Tourist</span>
 
-                <a href="logout.php" class="btn btn-light">Esci</a>
+                <a href="../logout.php" class="btn btn-light">Esci</a>
             </div>
 
         </header>
@@ -125,18 +139,18 @@
                         <div class="card mb-5">
                             <div class="card-header">
                                 <span class="fs-2">
-                                    Nuovo dipendente
+                                    Modifica dipendente
                                 </span>
                             </div>
                             <div class="card-body">
                                 <form class="row g-3" method="POST">
                                     <div class="col-md-5">
                                         <label for="name" class="form-label">Nome*</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $row['name'] ?>" required>
                                     </div>
                                     <div class="col-md-5">
                                         <label for="surname" class="form-label">Cognome*</label>
-                                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome" required>
+                                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome" value="<?php echo $row['surname'] ?>" required>
                                     </div>
                                     <div class="col-md-2">
                                         <label for="type" class="form-label">Grado*</label>
@@ -144,10 +158,10 @@
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
-                                            <option value="amministratore">
+                                            <option value="amministratore"  <?php if($row['type'] == 'amministratore') echo 'selected';?>>
                                                 Amministratore
                                             </option>
-                                            <option value="capitano">
+                                            <option value="capitano" <?php if($row['type'] == 'capitano') echo 'selected';?>>
                                                 Capitano
                                             </option>
                                         </select>
@@ -158,42 +172,53 @@
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
-                                            <option value="M">
+                                            <option value="M" <?php if($row['gender'] == 'M') echo 'selected'?>>
                                                 Maschio
                                             </option>
-                                            <option value="F">
+                                            <option value="F" <?php if($row['gender'] == 'F') echo 'selected'?>>
                                                 Femmina
                                             </option>
-                                            <option value="X">
+                                            <option value="X" <?php if($row['gender'] == 'X') echo 'selected'?>>
                                                 Altro
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="birth" class="form-label">Data di nascita*</label>
-                                        <input type="date" class="form-control" id="birth" name="birth_date" required>
+                                        <input type="date" class="form-control" id="birth" name="birth_date" required value="<?php echo $row['birth_date'];?>">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="telefono" class="form-label">Telefono*</label>
-                                        <input type="text" pattern="[0-9]*" class="form-control" id="telefono" name="tel" placeholder="Form. 123456789 " required>
+                                        <input type="text" pattern="[0-9]*" class="form-control" id="telefono" name="tel" placeholder="Form. 123456789 " value="<?php echo $row['tel'] ?>" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="cf" class="form-label">Codice Fiscale*</label>
-                                        <input type="text" class="form-control" pattern="^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" required>
+                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="ProvR" class="form-label">Residenza*</label>
                                         <select id="ProvR" class="form-select" name="prov_r" required>
                                             <option disabled selected>Provincia</option>
                                             <?php
-                                          foreach($provinces as $prov => $val) {
-                                                echo "
+                                            foreach($provinces as $prov => $val) {
+                                                if($prov == $row['prov_r'] ){
+                                                    echo "
                                                         
-                                                        <option value='$prov'>
+                                                        <option value='$prov' selected>
                                                             $val
                                                         </option>
                                                     
                                                     ";
+                                                } else {
+
+                                                    echo "
+                                                        
+                                                        <option value='$prov' >
+                                                            $val
+                                                        </option>
+                                                    
+                                                    ";
+                                                }
                                             }
                                             ?>
                                         </select>
@@ -202,20 +227,30 @@
                                         <label for="ComuneR" class="form-label"><br></label>
                                         <select id="ComuneR" class="form-select" name="city_r" required>
                                             <option disabled selected value="base">Comune</option>
+                                            <?php
+                                                echo "
+                                                        
+                                                        <option value='".$row["city_r"]."' selected>
+                                                            ".$row["city_r"]."
+                                                        </option>
+                                                    
+                                                    ";
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="AddrD" class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
+                                        <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d" value="<?php echo $row['addr_r'] ?>">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="zip_d" class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="zip_d" type="text" placeholder="CAP" name="zip_d" required>
+                                        <input class="col-md-12 form-control" id="zip_d" type="text" placeholder="CAP" name="zip_d" required value="<?php echo $row['zip_r'] ?>">
                                     </div>
+
 
                                     <div class="col-12">
                                         <label for="" class="form-label">
-                                            <input class="form-check-input" type="checkbox" id="domicile" name='domicile'>
+                                            <input class="form-check-input" type="checkbox" id="domicile" name='domicile' <?php if(!$row['Prov_D']) echo 'checked' ?>>
                                             <label class="form-check-label" for="domicile">
                                                 Domicilio coincide con residenza
                                             </label>
@@ -229,13 +264,25 @@
                                             <option disabled selected>Provincia</option>
                                             <?php
                                             foreach($provinces as $prov => $val) {
-                                                echo "
+
+                                                if($prov == $row['prov_d'] ){
+                                                    echo "
                                                         
-                                                        <option value='$prov'>
+                                                        <option value='$prov' selected>
                                                             $val
                                                         </option>
                                                     
                                                     ";
+                                                } else {
+
+                                                    echo "
+                                                        
+                                                        <option value='$prov' >
+                                                            $val
+                                                        </option>
+                                                    
+                                                    ";
+                                                }
                                             }
                                             ?>
                                         </select>
@@ -259,10 +306,9 @@
                                         <input class="col-md-12 form-control" id="zip_r" type="text" placeholder="CAP" name="zip_r" required>
 
                                     </div>
-
                                     <div class="col-md-3">
                                         <label for="hair" class="form-label">Altezza*</label>
-                                        <input class="form-control" type="number" placeholder="Cm" name="height" required>
+                                        <input class="form-control" type="number" placeholder="Cm" name="height" value="<?php echo $row['height'] ?>" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="blood" class="form-label">Gruppo Sanguigno*</label>
@@ -270,28 +316,28 @@
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
-                                            <option value="a+">
+                                            <option value="a+"  <?php if($row['blood'] == 'a+') echo 'selected'?>>
                                                 A+
                                             </option>
-                                            <option value="a-">
+                                            <option value="a-" <?php if($row['blood'] == 'a-') echo 'selected'?>>
                                                 A-
                                             </option>
-                                            <option value="b+">
+                                            <option value="b+" <?php if($row['blood'] == 'b+') echo 'selected'?>>
                                                 B+
                                             </option>
-                                            <option value="b-">
+                                            <option value="b-" <?php if($row['blood'] == 'b-') echo 'selected'?>>
                                                 B-
                                             </option>
-                                            <option value="ab+">
+                                            <option value="ab+" <?php if($row['blood'] == 'ab+') echo 'selected'?>>
                                                 AB+
                                             </option>
-                                            <option value="ab-">
+                                            <option value="ab-" <?php if($row['blood'] == 'ab-') echo 'selected'?>>
                                                 AB-
                                             </option>
-                                            <option value="0+">
+                                            <option value="0+" <?php if($row['blood'] == '0+') echo 'selected'?>>
                                                 0+
                                             </option>
-                                            <option value="0-">
+                                            <option value="0-" <?php if($row['blood'] == '0-') echo 'selected'?>>
                                                 0-
                                             </option>
                                         </select>
@@ -334,8 +380,8 @@
                                         </select>
                                     </div>
                                     <div class="col-12 mt-4">
-                                        <button type="submit" class="btn btn-primary">Aggiungi</button>
-                                        <a class="btn btn-outline-secondary" type="submit" href="employees.php">Annulla</a>
+                                        <button type="submit" class="btn btn-primary">Aggiorna</button>
+                                        <a class="btn btn-outline-secondary" type="submit" href="../employees.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>
@@ -367,7 +413,7 @@
             $email = $connection->real_escape_string(strtolower($_POST['name']) . '.' . strtolower($_POST['surname']) . '@flegias.it');
             $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
             $type = $connection->real_escape_string($_POST['type']);
-            $cf = $connection->real_escape_string($_POST['cf']);
+            $cf = $connection->real_escape_string(strtoupper($_POST['cf']));
             $tel = $_POST['tel'];
             $birth = $_POST['birth_date'];
             $gender = $connection->real_escape_string($_POST['gender']);
@@ -378,46 +424,62 @@
 
             $sql = "
         
-                INSERT INTO users (email, psw, name, surname, type)
-                    VALUES ('$email', '$hashPasswd', '$name', '$surname', '$type');
+                UPDATE users 
+                    SET
+                        name = $name,
+                        surname = $surname,
+                        email = $email,
+                        psw = $hashPasswd,
+                        type = $type;
+                
+                UPDATE infos
+                    SET
+                        cf = $cf,
+                        tel = $tel,
+                        birth_date = $birth,
+                        gender = $gender,
+                        prov_r = $prov,
+                        city_r = $city,
+                        zip_r = $zip,
+                        addr_r = $addr
+                    
                 
             ";
 
-            if ($result = $connection->query($sql))
-                $sql = "
+            if ($result = $connection->query($sql)) {
 
-                    INSERT INTO infos(user_id, cf, tel, birth_date, gender, prov_r, city_r, zip_r, addr_r)
-                        VALUES('$connection->insert_id', '$cf', '$tel', '$birth', '$gender', '$prov', '$city', '$zip', '$addr');
+                $prov = $connection->real_escape_string($_POST['prov_d']);
+                $city = $connection->real_escape_string($_POST['city_d']);
+                $zip = $connection->real_escape_string($_POST['zip_d']);
+                $addr = $connection->real_escape_string($_POST['addr_d']);
+
+                $sql = "
+    
+                    UPDATE infos
+                        SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
                 
                 ";
-            else
-                die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
-            if ($result = $connection->query($sql))
-                if (!isset($_POST['domicile'])) {
+                if (!$result = $connection->query($sql))
+                    die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
-                    $prov = $connection->real_escape_string($_POST['prov_d']);
-                    $city = $connection->real_escape_string($_POST['city_d']);
-                    $zip = $connection->real_escape_string($_POST['zip_d']);
-                    $addr = $connection->real_escape_string($_POST['addr_d']);
-
-                    $sql = "
-        
-                        UPDATE infos
-                            SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
-                    
-                    ";
-
-                    if (!$result = $connection->query($sql))
-                        die('<script>alert("Errore nell\'invio dei dati.")</script>');
-
-                }
-
+            }
         }
 
     ?>
 
     <script>
+
+        $( document ).ready(function() {
+            var checkbox = $('#domicile');
+            var hidden = $('.hidden');
+            var show = $('.show');
+
+            if (checkbox.is(":checked")) {
+                hidden.hide();
+                show.show();
+            }
+        });
 
         $(function(){
             var checkbox = $('#domicile'),
@@ -436,35 +498,39 @@
             });
         });
 
-
     </script>
 
+    <script>
+        $("#ProvR").change(function(){
+            var deptid = $(this).val();
 
-<script>
-    $("#ProvR").change(function(){
-        var deptid = $(this).val();
+            /*
+                    alert($("#ProvR option:selected").text().replace(/\s+/g, ''));
+            */
 
-        $.ajax({
-            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
-            type: 'get',
-            dataType: 'json',
-            success:function(response) {
+            $.ajax({
+                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
+                type: 'get',
+                dataType: 'json',
+                success:function(response) {
 
-                var len = response.length;
-                $("#ComuneR").empty();
+                    var len = response.length;
+                    $("#ComuneR").empty();
 
-                for( var i = 0; i<len; i++){
-                    var id = response[i]['nome'];
-                    var name = response[i]['nome'];
+                    for( var i = 0; i<len; i++){
+                        var id = response[i]['nome'];
+                        var name = response[i]['nome'];
 
-                    $("#ComuneR").append("<option value='"+id+"'>"+name+"</option>");
+                        $("#ComuneR").append("<option value='"+id+"'>"+name+"</option>");
+
+                    }
+
+
 
                 }
-            }
+            });
         });
-    });
-</script>
-
+    </script>
 
     <script>
         $("#ProvD").change(function(){
@@ -490,7 +556,6 @@
             });
         });
     </script>
-
 
 
 </html>

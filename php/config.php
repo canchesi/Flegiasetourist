@@ -8,7 +8,7 @@
     $connection = new mysqli($addr, $username, $password, $database);
 
     if (!$connection)
-        die("Sbagghiasti bestia".$connection->connect_error);
+        die("Errore di connessione: ".$connection->connect_error);
 
     echo '
         <!-- Style -->

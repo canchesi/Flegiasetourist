@@ -6,11 +6,11 @@ if (!isset($_SESSION['id']) || $_SESSION['type'] !== 'amministratore') {
     exit;
 }
 
-require_once('php/config.php');
+require_once('config.php');
 
 $id = $connection->real_escape_string($_GET['id']);
 
-$sql = "DELETE FROM users WHERE user_id = $id ";
+$sql = "DELETE FROM users WHERE id_code = $id ";
 
 
 if ($connection->query($sql) === FALSE) {

@@ -1,12 +1,17 @@
 <?php
-    require_once('php/config.php');
 
-    session_start();
+require_once('php/config.php');
+require_once('php/residenceinfos.php');
 
-    if (!isset($_SESSION['id']))
-        header("location: login.php");
-    else if ($_SESSION['type'] === 'cliente')
-        header('location: index.php');
+session_start();
+
+if (!isset($_SESSION['id']))
+    header("location: login.php");
+else if ($_SESSION['type'] === 'cliente')
+    header('location: index.php');
+
+if(isset($_POST['name']))
+    header('location: ships.php');
 
 ?>
 
@@ -30,9 +35,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.1.0/dist/js/coreui.bundle.min.js"></script>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-    <title>Dashboard</title>
+    <title>Crea Dipendente</title>
 </head>
 <body>
 
@@ -53,7 +59,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="warehouse.php">
+            <a class="nav-link" href="dashboard.php">
                 <i class="cil-compass nav-icon"></i>
                 Rotte
             </a>
@@ -84,7 +90,8 @@
         </li>
 
     </ul>
-    <button class="sidebar-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
+    <button class="sidebar-toggler" type="button"
+            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
 </div>
 <!--End Sidebar-->
 
@@ -104,21 +111,7 @@
 
             <a href="logout.php" class="btn btn-light">Esci</a>
         </div>
-        <div class="header-divider"></div>
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb my-0 ms-2">
-                    <!--
-                        <li class="breadcrumb-item">
-                            <span>
-                                Home
-                            </span>
-                        </li>
-                    -->
-                    <li class="breadcrumb-item"><span>Dashboard</span></li>
-                </ol>
-            </nav>
-        </div>
+
     </header>
     <!-- End Header -->
 
@@ -127,19 +120,77 @@
     <div class="body flex-grow-1 px-3">
         <div class="container-lg">
 
-
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-5">
+                        <div class="card-header">
+                                <span class="fs-2">
+                                    Nuova nave
+                                </span>
+                        </div>
+                        <div class="card-body">
+                            <form class="row g-3" method="POST">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Nome*</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="name" class="form-label">Max passeggeri*</label>
+                                    <input type="number" class="form-control" id="max_pass" name="max_pass" placeholder="Max passeggeri" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="name" class="form-label">Max veicoli*</label>
+                                    <input type="number" class="form-control" id="max_veh" name="max_veh" placeholder="Max veicoli" required>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-primary">Aggiungi</button>
+                                    <a class="btn btn-outline-secondary" type="submit" href="ships.php">Annulla</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.col-->
+            </div>
         </div>
     </div>
+    <!--End Content -->
     <!--End Content -->
 
     <!--Begin Footer -->
     <footer class="footer">
-        <div class="">Flegias & Tourist</a>
+        <div class="">
+            Flegias & Tourist
         </div>
         <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
     </footer>
     <!-- End Footer -->
 </div>
 </body>
+
+<?php
+
+if(isset($_POST['name'])) {
+    $name = $connection->real_escape_string(ucfirst($_POST['name']));
+    $num_pass = $_POST['max_pass'];
+    $num_veic = $_POST['max_veh'];
+
+    $sql = "
+        
+                INSERT INTO ships (name, max_pass, max_veh)
+                    VALUES ('$name', '$num_pass', '$num_veic');
+                
+            ";
+
+    if (!$result = $connection->query($sql))
+                die('<script>alert("Errore nell\'invio dei dati.")</script>');
+
+}
+
+?>
+
+
+
+
 
 </html>

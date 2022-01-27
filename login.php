@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         if (password_verify($password, $row['psw'])) {
 
-            $_SESSION['id'] = $row['user_id'];
+            $_SESSION['id'] = $row['id_code'];
             $_SESSION['type'] = $row['type'];
 
             if($_SESSION['type'] === 'cliente')
