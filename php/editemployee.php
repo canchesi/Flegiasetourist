@@ -1,7 +1,7 @@
 <?php
 
-    require_once('php/config.php');
-    require_once('php/residenceinfos.php');
+    require_once('config.php');
+    require_once('residenceinfos.php');
 
     session_start();
 
@@ -12,6 +12,20 @@
 
     if(isset($_POST['name']))
         header('location: employees.php');
+
+    $sql = "
+    
+        SELECT *
+        FROM users join infos ON user_id
+        WHERE user_id = 
+    
+    ";
+
+    if($result = $connection->query($sql)) {
+
+        $row = $result->fetch_array(MSQLI_ASSOC);
+
+    }
 
 ?>
 
@@ -53,19 +67,19 @@
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
             <li class="nav-item">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="../index.php">
                     <i class="cil-speedometer nav-icon"></i>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">
+                <a class="nav-link" href="../dashboard.php">
                     <i class="cil-compass nav-icon"></i>
                     Rotte
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="employees.php">
+                <a class="nav-link" href="../employees.php">
                     <i class="cil-contact nav-icon "></i>
                     Dipendenti
                 </a>
@@ -109,7 +123,7 @@
 
                 <span class="fs-4">Flegias & Tourist</span>
 
-                <a href="logout.php" class="btn btn-light">Esci</a>
+                <a href="../logout.php" class="btn btn-light">Esci</a>
             </div>
 
         </header>
@@ -132,7 +146,7 @@
                                 <form class="row g-3" method="POST">
                                     <div class="col-md-5">
                                         <label for="name" class="form-label">Nome*</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $_POST['name'] ?>" required>
                                     </div>
                                     <div class="col-md-5">
                                         <label for="surname" class="form-label">Cognome*</label>
@@ -214,15 +228,15 @@
                                         <select id="Domicilio" class="form-select" name="prov_d">
                                             <option disabled selected>Provincia</option>
                                             <?php
-                                            foreach($provinces as $prov => $val) {
-                                                echo "
+                                                foreach($provinces as $prov => $val) {
+                                                    echo "
+                                                            
+                                                            <option value='$prov'>
+                                                                $val
+                                                            </option>
                                                         
-                                                        <option value='$prov'>
-                                                            $val
-                                                        </option>
-                                                    
-                                                    ";
-                                            }
+                                                        ";
+                                                }
                                             ?>
                                         </select>
                                     </div>
@@ -327,7 +341,7 @@
                                     </div>
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Aggiungi</button>
-                                        <a class="btn btn-outline-secondary" type="submit" href="employees.php">Annulla</a>
+                                        <a class="btn btn-outline-secondary" type="submit" href="../employees.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>

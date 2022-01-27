@@ -39,7 +39,7 @@ else if ($_SESSION['type'] === 'cliente')
 
 
 <!-- Begin Sidebar -->
-<div class="sidebar sidebar-dark sidebar-fixed hide" id="sidebar">
+<div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
     <div class="sidebar-brand d-md-flex">
         <button class="header-toggler px-md-0 me-md-3" type="button"
                 onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
@@ -196,7 +196,7 @@ else if ($_SESSION['type'] === 'cliente')
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                        <a href="modifyitem.php?id=' . $row['user_id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                        <a href="editemployee.php" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                                                         <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
                                                     </td>
                                                 </tr>
