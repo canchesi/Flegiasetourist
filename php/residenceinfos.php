@@ -1,6 +1,5 @@
 <?php
 
-
     $provinces= array(
         'AG' => 'Agrigento',
         'AL' => 'Alessandria',

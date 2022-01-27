@@ -8,8 +8,7 @@
     $sql = "
     
         SELECT *
-            FROM users 
-            WHERE type != 'cliente' 
+            FROM ships 
             ORDER BY " . $_POST["column"] . " " . $_POST["order"] . " 
         
         ";
@@ -26,11 +25,11 @@
             <table class="table border">
             <thead class="table-light fw-semibold">
                 <tr class="align-middle">
-                    <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="' . $ord . '">ID</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="' . $ord . '">Cognome</a></th>
+                    <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="' . $ord . '">ID</a></th>
                     <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="' . $ord . '">Nome</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="' . $ord . '">Email</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type" data-order="' . $ord . '">Grado</a></th>
+                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="max_pass" data-order="' . $ord . '">Max passeggeri</a></th>
+                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="max_veh" data-order="' . $ord . '">Max veicoli</a></th>
+                    <th class="text-center"></th>
                     <th class="text-center"></th>
                     <th class="text-end"></th>
                     <th></th>
@@ -42,27 +41,25 @@
     while($row = $result->fetch_array(MYSQLI_ASSOC))
         $out .= '
         
-            <tr class="align-middle" id="' . $row["id_code"] . '">
+            <tr class="align-middle" id="' . $row["id"] . '">
                 <td class="text-center">
-                    <div>' . $row["id_code"] . '</div>
-                </td>
-                <td class="" style="padding: 20px">
-                    <div>' . $row["surname"] . '</div>
+                    <div>' . $row["id"] . '</div>
                 </td>
                 <td class="" style="padding: 20px">
                     <div>' . $row["name"] . '</div>
                 </td>
                 <td class="" style="padding: 20px">
-                   <div>' . $row["email"] . '</div>
+                    <div>' . $row["max_pass"] . '</div>
                 </td>
                 <td class="" style="padding: 20px">
-                    <div>' . ucfirst($row["type"]) . '</div>
+                   <div>' . $row["max_veh"] . '</div>
                 </td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td>
                 <form method="GET" class="">
-                    <a href="modifyitem.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                    <a href="php/editship.php?id=' . $row['id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                     <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
                 </form>
                 </td>

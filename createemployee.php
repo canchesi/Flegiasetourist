@@ -77,7 +77,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="warehouse.php">
+                <a class="nav-link" href="ships.php">
                     <i class="cil-boat-alt nav-icon"></i>
                     Navi
                 </a>
@@ -179,14 +179,14 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="cf" class="form-label">Codice Fiscale*</label>
-                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" required>
+                                        <input type="text" class="form-control" pattern="^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="Provincia" class="form-label">Residenza*</label>
-                                        <select id="Provincia" class="form-select" name="prov_r" required>
+                                        <label for="ProvR" class="form-label">Residenza*</label>
+                                        <select id="ProvR" class="form-select" name="prov_r" required>
                                             <option disabled selected>Provincia</option>
                                             <?php
-                                            foreach($provinces as $prov => $val) {
+                                          foreach($provinces as $prov => $val) {
                                                 echo "
                                                         
                                                         <option value='$prov'>
@@ -199,19 +199,33 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
+                                        <label for="ComuneR" class="form-label"><br></label>
+                                        <select id="ComuneR" class="form-select" name="city_r" required>
+                                            <option disabled selected value="base">Comune</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="AddrD" class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="zip_d" class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="zip_d" type="text" placeholder="CAP" name="zip_d" required>
+                                    </div>
+
+                                    <div class="col-12">
                                         <label for="" class="form-label">
-                                            <input class="form-check-input" type="checkbox" id="domicile" name='domicile' value="true">
+                                            <input class="form-check-input" type="checkbox" id="domicile" name='domicile'>
                                             <label class="form-check-label" for="domicile">
-                                                Residenza coincide con domicilio
+                                                Domicilio coincide con residenza
                                             </label>
                                         </label>
-                                        <select id="Comune" class="form-select" name="city_r" required>
-                                            <option disabled selected value="base">Comune</option>
-                                        </select>
                                     </div>
+
+
                                     <div class="col-md-3 hidden">
-                                        <label for="Domicilio" class="form-label">Domicilio</label>
-                                        <select id="Domicilio" class="form-select" name="prov_d">
+                                        <label for="ProvD" class="form-label">Domicilio</label>
+                                        <select id="ProvD" class="form-select" name="prov_d">
                                             <option disabled selected>Provincia</option>
                                             <?php
                                             foreach($provinces as $prov => $val) {
@@ -226,32 +240,26 @@
                                             ?>
                                         </select>
                                     </div>
+
                                     <div class="col-md-3 hidden">
-                                        <label for="Comune" class="form-label"><br></label>
-                                        <select id="Comune" class="form-select" name="city_d">
+
+                                        <label for="ComuneD" class="form-label"><br></label>
+                                        <select id="ComuneD" class="form-select" name="city_d">
                                             <option disabled selected value="base">Comune</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label show"><br></label>
-                                        <select id="Cap" class="form-select" name="zip_r" required>
-                                            <option disabled selected>CAP</option>
-                                            <option>12</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label show"><br></label>
-                                        <input class="col-md-12 form-control" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
+
+
+                                    <div class="col-md-3 hidden">
+                                        <label class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="AddrR" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
                                     </div>
                                     <div class="col-md-3 hidden">
-                                        <select id="Cap" class="form-select" name="zip_d">
-                                            <option disabled selected>CAP</option>
-                                            <option>12</option>
-                                        </select>
+                                        <label class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="zip_r" type="text" placeholder="CAP" name="zip_r" required>
+
                                     </div>
-                                    <div class="col-md-3 hidden">
-                                        <input class="col-md-12 form-control" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
-                                    </div>
+
                                     <div class="col-md-3">
                                         <label for="hair" class="form-label">Altezza*</label>
                                         <input class="form-control" type="number" placeholder="Cm" name="height" required>
@@ -416,9 +424,9 @@
                 hidden = $('.hidden'),
                 show = $('.show');
 
-            show.hide()
-            checkbox.change(function(){
-                if(checkbox.is(":checked")){
+            show.hide();
+            checkbox.change(function () {
+                if (checkbox.is(":checked")) {
                     hidden.hide();
                     show.show();
                 } else {
@@ -428,6 +436,61 @@
             });
         });
 
+
     </script>
+
+
+<script>
+    $("#ProvR").change(function(){
+        var deptid = $(this).val();
+
+        $.ajax({
+            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
+            type: 'get',
+            dataType: 'json',
+            success:function(response) {
+
+                var len = response.length;
+                $("#ComuneR").empty();
+
+                for( var i = 0; i<len; i++){
+                    var id = response[i]['nome'];
+                    var name = response[i]['nome'];
+
+                    $("#ComuneR").append("<option value='"+id+"'>"+name+"</option>");
+
+                }
+            }
+        });
+    });
+</script>
+
+
+    <script>
+        $("#ProvD").change(function(){
+            var deptid = $(this).val();
+
+            $.ajax({
+                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvD option:selected").text().replace(/\s+/g, ''),
+                type: 'get',
+                dataType: 'json',
+                success:function(response) {
+
+                    var len = response.length;
+                    $("#ComuneD").empty();
+
+                    for( var i = 0; i<len; i++){
+                        var id = response[i]['nome'];
+                        var name = response[i]['nome'];
+
+                        $("#ComuneD").append("<option value='"+id+"'>"+name+"</option>");
+
+                    }
+                }
+            });
+        });
+    </script>
+
+
 
 </html>
