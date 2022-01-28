@@ -10,22 +10,20 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
-    if(isset($_POST['name']))
-        header('location: ../employees.php');
+    //if(isset($_POST['name']))
+    //    header('location: ../clients.php');
     
     $sql = "
     
         SELECT *
         FROM users JOIN infos 
         ON users.id_code = infos.user_id
-        JOIN generalities
-        ON users.id_code = generalities.user_id
-        WHERE generalities.user_id = " . $_GET['id'] . " 
+        WHERE users.id_code = " . $_GET['id'] . " 
         
         ";
 
-if($result = $connection->query($sql))
-        $row = $result->fetch_array(MYSQLI_ASSOC);
+    if($result = $connection->query($sql))
+            $row = $result->fetch_array(MYSQLI_ASSOC);
 
 ?>
 
@@ -51,7 +49,7 @@ if($result = $connection->query($sql))
         <!-- jQuery -->
         <script src="../src/jquery/jquery.js"></script>
 
-        <title>Modifica Dipendente</title>
+        <title>Modifica Cliente</title>
 
     </head>
     <body>
@@ -139,32 +137,18 @@ if($result = $connection->query($sql))
                         <div class="card mb-5">
                             <div class="card-header">
                                 <span class="fs-2">
-                                    Aggiorna dati dipendente
+                                    Aggiorna dati cliente
                                 </span>
                             </div>
                             <div class="card-body">
                                 <form class="row g-3" method="POST">
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <label for="name" class="form-label">Nome*</label>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $row['name'] ?>" required>
                                     </div>
-                                    <div class="col-md-5">
+                                    <div class="col-md-6">
                                         <label for="surname" class="form-label">Cognome*</label>
                                         <input type="text" class="form-control" id="surname" name="surname" placeholder="Cognome" value="<?php echo $row['surname'] ?>" required>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label for="type" class="form-label">Grado*</label>
-                                        <select id="type" class="form-select" name="type" required>
-                                            <option disabled selected>
-                                                Seleziona...
-                                            </option>
-                                            <option value="amministratore"  <?php if($row['type'] == 'amministratore') echo 'selected';?>>
-                                                Amministratore
-                                            </option>
-                                            <option value="capitano" <?php if($row['type'] == 'capitano') echo 'selected';?>>
-                                                Capitano
-                                            </option>
-                                        </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="inputAddress2" class="form-label">Sesso*</label>
@@ -287,9 +271,7 @@ if($result = $connection->query($sql))
                                             ?>
                                         </select>
                                     </div>
-
                                     <div class="col-md-3 hidden">
-
                                         <label for="ComuneD" class="form-label"><br></label>
                                         <select id="ComuneD" class="form-select" name="city_d">
                                             <option disabled selected value="base">Comune</option>
@@ -303,86 +285,10 @@ if($result = $connection->query($sql))
                                         <label class="form-label"><br></label>
                                         <input class="col-md-12 form-control" id="ZipD" type="text" placeholder="CAP" name="zip_d" value="<?php echo $row['zip_d'] ?>">
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="height" class="form-label">Altezza*</label>
-                                        <input class="form-control" type="number" placeholder="Altezza" value="<?php echo $row['height'] ?>" name="height" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="blood" class="form-label">Gruppo Sanguigno*</label>
-                                        <select class="form-select" name="blood" required>
-                                            <option disabled>
-                                                Seleziona...
-                                            </option>
-                                            <option value="a+"  <?php if($row['blood'] == 'a+') echo 'selected'?>>
-                                                A+
-                                            </option>
-                                            <option value="a-" <?php if($row['blood'] == 'a-') echo 'selected'?>>
-                                                A-
-                                            </option>
-                                            <option value="b+" <?php if($row['blood'] == 'b+') echo 'selected'?>>
-                                                B+
-                                            </option>
-                                            <option value="b-" <?php if($row['blood'] == 'b-') echo 'selected'?>>
-                                                B-
-                                            </option>
-                                            <option value="ab+" <?php if($row['blood'] == 'ab+') echo 'selected'?>>
-                                                AB+
-                                            </option>
-                                            <option value="ab-" <?php if($row['blood'] == 'ab-') echo 'selected'?>>
-                                                AB-
-                                            </option>
-                                            <option value="0+" <?php if($row['blood'] == '0+') echo 'selected'?>>
-                                                0+
-                                            </option>
-                                            <option value="0-" <?php if($row['blood'] == '0-') echo 'selected'?>>
-                                                0-
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="hair" class="form-label">Colore capelli*</label>
-                                        <select class="form-select" name="hair" required>
-                                            <option disabled selected>
-                                                Seleziona...
-                                            </option>
-                                            <option value="neri" <?php if($row['hair'] == 'neri') echo 'selected'?>>
-                                                Neri
-                                            </option>
-                                            <option value="castani" <?php if($row['hair'] == 'castani') echo 'selected'?>>
-                                                Castani
-                                            </option>
-                                            <option value="biondi" <?php if($row['hair'] == 'biondi') echo 'selected'?>>
-                                                Biondi
-                                            </option>
-                                            <option value="rossi"  <?php if($row['hair'] == 'rossi') echo 'selected'?>>
-                                                Rossi
-                                            </option>
-                                            <option value="pelato"  <?php if($row['hair'] == 'pelato') echo 'selected'?>>
-                                                Pelato
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="eyes" class="form-label">Colore occhi*</label>
-                                        <select id='eyes' class="form-select" name="eyes" required>
-                                            <option disabled>
-                                                Seleziona...
-                                            </option>
-                                            <option value="marroni"  <?php if($row['eyes'] == 'marroni') echo 'selected'?>>
-                                                Marroni
-                                            </option>
-                                            <option value="azzurri"  <?php if($row['eyes'] == 'azzurri') echo 'selected'?>>
-                                                Azzurri
-                                            </option>
-                                            <option value="verdi"  <?php if($row['eyes'] == 'verdi') echo 'selected'?>>
-                                                Verdi
-                                            </option>
-                                        </select>
-                                        <input type="text" value="1" name="submitted" hidden>
-                                    </div>
+                                    <input type="text" value="1" name="submitted" hidden>
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Aggiorna</button>
-                                        <a class="btn btn-outline-secondary" type="submit" href="../employees.php">Annulla</a>
+                                        <a class="btn btn-outline-secondary" type="submit" href="../clients.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>
@@ -425,10 +331,6 @@ if($result = $connection->query($sql))
                 $cityd = $connection->real_escape_string($_POST['city_d']);
                 $zipd = $connection->real_escape_string($_POST['zip_d']);
                 $addrd = $connection->real_escape_string($_POST['addr_d']);
-                $blood = $connection->real_escape_string($_POST['blood']);
-                $hair = $connection->real_escape_string($_POST['hair']);
-                $eyes = $connection->real_escape_string($_POST['eyes']);
-                $height = $connection->real_escape_string($_POST['height']);
 
                 $sql = "
             
@@ -436,8 +338,7 @@ if($result = $connection->query($sql))
                         SET
                             name = '$name',
                             surname = '$surname',
-                            psw = '$hashPasswd',
-                            type = '$type'
+                            psw = '$hashPasswd'
                         WHERE id_code = " . $row['id_code'] . ";
                     
                     UPDATE infos
@@ -455,14 +356,6 @@ if($result = $connection->query($sql))
                             zip_d = NULLIF('$zipd', ''),
                             addr_d = NULLIF('$addrd', '')
                         WHERE infos.user_id = " . $row['id_code'] . ";
-                        
-                    UPDATE generalities
-                        SET
-                            hair = '$hair',
-                            blood = '$blood',
-                            height = '$height',
-                            eyes = '$eyes'
-                        WHERE generalities.user_id = " . $row['id_code'] . ";
     
                     ";
 
@@ -551,9 +444,6 @@ if($result = $connection->query($sql))
                         $("#ComuneR").append("<option value='"+id+"'>"+name+"</option>");
 
                     }
-
-
-
                 }
             });
         });

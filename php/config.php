@@ -10,7 +10,7 @@
     if (!$connection)
         die("Errore di connessione: ".$connection->connect_error);
 
-    echo '
+/*    echo '
         <!-- Style -->
         <link href="src/css/style.css" rel="stylesheet">
     
@@ -22,5 +22,5 @@
 
         <!-- jQuery -->
         <script src="src/jquery/jquery.js"></script>
-    ';
+    ';*/
 

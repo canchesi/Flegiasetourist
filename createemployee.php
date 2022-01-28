@@ -171,7 +171,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label for="birth" class="form-label">Data di nascita*</label>
-                                        <input type="date" class="form-control" id="birth" name="birth_date" required>
+                                        <input type="date" class="form-control" id="birth" name="birth_date"  max="" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="telefono" class="form-label">Telefono*</label>
@@ -205,12 +205,12 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="AddrD" class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
+                                        <label for="AddrR" class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="AddrR" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="zip_d" class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="zip_d" type="text" placeholder="CAP" name="zip_d" required>
+                                        <label for="zip_R" class="form-label"><br></label>
+                                        <input class="col-md-12 form-control" id="zip_r" type="text" placeholder="CAP" name="zip_r" required>
                                     </div>
 
                                     <div class="col-12">
@@ -252,12 +252,11 @@
 
                                     <div class="col-md-3 hidden">
                                         <label class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="AddrR" type="text" placeholder="Via/Viale/Piazza" name="addr_r" required>
+                                        <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
                                     </div>
                                     <div class="col-md-3 hidden">
                                         <label class="form-label"><br></label>
-                                        <input class="col-md-12 form-control" id="zip_r" type="text" placeholder="CAP" name="zip_r" required>
-
+                                        <input class="col-md-12 form-control" id="zip_d" type="text" placeholder="CAP" name="zip_d">
                                     </div>
 
                                     <div class="col-md-3">
@@ -364,7 +363,22 @@
         if(isset($_POST['name'])) {
             $name = $connection->real_escape_string(ucfirst($_POST['name']));
             $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
-            $email = $connection->real_escape_string(strtolower($_POST['name']) . '.' . strtolower($_POST['surname']) . '@flegias.it');
+            $sql = "
+
+                SELECT COUNT(id_code) 
+                FROM users
+                WHERE name = '$name' AND surname = '$surname'
+    
+            ";
+            $sn_users = $connection->query($sql);
+            $sn_users = $sn_users->fetch_array(MYSQLI_ASSOC);
+            $email = $connection->real_escape_string(strtolower(str_replace( array("'"," ","@","+", "-", "&&", "||", "!", "(", ")", "{", "}", "[", "]", "^", "~", "*", "?", ":","\"","\\"), '',strtolower($_POST['name'])) . '.' . str_replace( array("'"," ","@","+", "-", "&&", "||", "!", "(", ")", "{", "}", "[", "]", "^", "~", "*", "?", ":","\"","\\"), '',strtolower($_POST['surname'])). $sn_users['COUNT(id_code)'] .'@flegias.it'));
+            $unwantedCharacters = array('Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+                'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
+                'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
+                'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y');
+            $email = strtr($email, $unwantedCharacters);
             $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
             $type = $connection->real_escape_string($_POST['type']);
             $cf = $connection->real_escape_string($_POST['cf']);
@@ -375,25 +389,32 @@
             $city = $connection->real_escape_string($_POST['city_r']);
             $zip = $connection->real_escape_string($_POST['zip_r']);
             $addr = $connection->real_escape_string($_POST['addr_r']);
+            $blood = $connection->real_escape_string($_POST['blood']);
+            $hair = $connection->real_escape_string($_POST['hair']);
+            $height = $connection->real_escape_string($_POST['height']);
+            $eyes = $connection->real_escape_string($_POST['eyes']);
 
             $sql = "
         
                 INSERT INTO users (email, psw, name, surname, type)
                     VALUES ('$email', '$hashPasswd', '$name', '$surname', '$type');
-                
+            
             ";
 
-            if ($result = $connection->query($sql))
-                $sql = "
-
-                    INSERT INTO infos(user_id, cf, tel, birth_date, gender, prov_r, city_r, zip_r, addr_r)
-                        VALUES('$connection->insert_id', '$cf', '$tel', '$birth', '$gender', '$prov', '$city', '$zip', '$addr');
-                
-                ";
-            else
+            if (!($result = $connection->query($sql)))
                 die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
-            if ($result = $connection->query($sql))
+            $sql = "
+    
+                    INSERT INTO infos(user_id, cf, tel, birth_date, gender, prov_r, city_r, zip_r, addr_r)
+                        VALUES((SELECT max(id_code) FROM users), '$cf', '$tel', '$birth', '$gender', '$prov', '$city', '$zip', '$addr');            
+
+                    INSERT INTO generalities(user_id, blood, hair, eyes, height)
+                        VALUES((SELECT max(id_code) FROM users), '$blood', '$hair', '$eyes', '$height');
+               
+                ";
+
+            if ($result = $connection->multi_query($sql))
                 if (!isset($_POST['domicile'])) {
 
                     $prov = $connection->real_escape_string($_POST['prov_d']);
@@ -408,7 +429,7 @@
                     
                     ";
 
-                    if (!$result = $connection->query($sql))
+                    if (!($result = $connection->query($sql)))
                         die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
                 }
@@ -418,6 +439,22 @@
     ?>
 
     <script>
+
+        $(function(){
+            var dtToday = new Date();
+
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+
+            if(month < 10)
+                month = '0' + month.toString();
+            if(day < 10)
+                day = '0' + day.toString();
+
+            var maxDate = year + '-' + month + '-' + day;
+            $('#birth').attr('max', maxDate);
+        });
 
         $(function(){
             var checkbox = $('#domicile'),
@@ -490,6 +527,7 @@
             });
         });
     </script>
+
 
 
 

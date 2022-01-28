@@ -23,8 +23,6 @@
     if($result = $connection->query($sql))
         $row = $result->fetch_array(MYSQLI_ASSOC);
 
-
-
 ?>
 
 <!doctype html>
@@ -50,7 +48,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"
                 integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-        <title>Crea Dipendente</title>
+        <title>Aggiorna informazioni nave</title>
     </head>
     <body>
 
@@ -131,7 +129,6 @@
         <!--Begin Content -->
         <div class="body flex-grow-1 px-3">
             <div class="container-lg">
-                <?php echo print_r($row);?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card mb-5">
@@ -147,11 +144,11 @@
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $row['name'] ?>" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="name" class="form-label">Max passeggeri</label>
+                                        <label for="max_pass" class="form-label">Max passeggeri</label>
                                         <input type="number" class="form-control" id="max_pass" name="max_pass" placeholder="Max passeggeri" value="<?php echo $row['max_pass'] ?>" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="name" class="form-label">Max veicoli</label>
+                                        <label for="max_veh" class="form-label">Max veicoli</label>
                                         <input type="number" class="form-control" id="max_veh" name="max_veh" placeholder="Max veicoli" value="<?php echo $row['max_veh'] ?>" required>
                                     </div>
                                     <div class="col-12 mt-4">
@@ -183,7 +180,6 @@
 <?php
 
     if(isset($_POST['name'])) {
-        $id = $row['id'];
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
         $num_pass = $_POST['max_pass'];
         $num_veic = $_POST['max_veh'];
@@ -191,8 +187,11 @@
         $sql = "
         
                 UPDATE ships
-                    SET name = '$name', max_pass = '$num_pass', max_veh = '$num_veic'
-                    WHERE id = '$id'
+                    SET
+                        name = '$name',
+                        max_pass = '$num_pass',
+                        max_veh = '$num_veic'
+                    WHERE id = $id
                 
             ";
 

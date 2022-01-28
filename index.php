@@ -1,17 +1,15 @@
 <?php
 
 session_start();
-if(isset($_SESSION['id'])){
+if (isset($_SESSION['id']))
     if (!$_SESSION['type'] === 'cliente')
         header('location: dashboard.php');
-
-}
 
 ?>
 
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -20,26 +18,202 @@ if(isset($_SESSION['id'])){
 
     <!-- Style -->
     <link href="src/css/style.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
     <!-- JavaScript -->
     <script src="src/js/coreui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
 
     <!-- jQuery -->
     <script src="src/jquery/jquery.js"></script>
-    <title>Document</title>
+    <title>Flegias & Tourist</title>
+
+    <style>
+        img {
+            width: 100%;
+            height: auto;
+        }
+
+    </style>
+
 </head>
 <body>
+<!-- Begin Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Flegias & Tourist</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">I miei ordini</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
+                <a class="btn btn-outline-success" href="register.php">Registrati</a>
 
-<h1>Home Page<br>Viva Cristo</h1>
+            </form>
+        </div>
+    </div>
+</nav>
+<!-- End Navbar-->
+
+<!-- Begin Carousel -->
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="src/img/img1.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption text-start d-md-block">
+                <h1>Prenota il tuo viaggio</h1>
+                <p>Scopri le offerte dedicate ai minori...</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="src/img/img2.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption text-center d-md-block">
+                <h1>Scopri</h1>
+                <p>Scopri i nostri itinerari...</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="src/img/img3.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption text-end d-md-block">
+                <h1>Iscriviti</h1>
+                <p>Iscriviti per acquistare...</p>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<!-- End Carousel -->
+
+<div class="card">
+    <div class="card-body">
+        <form class="row text-center h-100">
+            <div class="col-12 h1 text-center mb-4">Cerca soluzioni</div>
+            <div class="col-1">
+
+            </div>
+
+            <div class="mb-3 col-md-3">
+                <label for="formGroupExampleInput" class="form-label">Porto di partenza</label>
+                <select class="form-select" id="inlineFormSelectPref">
+                    <option selected>Choose...</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <div class="mb-3 col-md-3">
+                <label for="inlineFormSelectPref" class="form-label">Porto di destinazione</label>
+                <select class="form-select" id="inlineFormSelectPref">
+                    <option selected>Choose...</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
 
 
-<form action="logout.php">
-    <input type="submit" value="Logout" class="btn btn-danger">
-</form>
+            <div class="mb-3 col-md-3">
+                <label for="date" class="form-label">Data di partenza</label>
+                <input type="date" class="form-control" id="date">
 
+            </div>
+
+            <div class="col-md-auto">
+                <label for="date" class="form-label">&nbsp;</label>
+                <input type="submit" class="btn btn-primary form-control">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="b-example-divider"></div>
+
+<div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">Flegias & Tourist</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col d-flex align-items-start">
+
+            <div>
+                <h2>Destinazioni</h2>
+                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Scilia,
+                    le spiaggie della Puglia e della Calabria, il sole della Campania.</p>
+
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div>
+                <h2>Sconti</h2>
+                <p>Offriamo sconti per i minorenni a partire dal 10% per tutti gli itinerari.</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <div>
+                <h2>Le Nostre Navi</h2>
+                <p>Le nostre navi offrono il confort di cui hai bisogno! Troverai a bordo un centro di ristorazione,
+                    balconi vista mare souvenir e tanto altro...</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<div class="container">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Accedi</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Registrati</a></li>
+        </ul>
+        <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
+    </footer>
+</div>
 
 </body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datepicker').datepicker();
+    });
+</script>
+
 </html>
+
+

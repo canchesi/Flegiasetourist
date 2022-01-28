@@ -78,7 +78,7 @@ else if ($_SESSION['type'] === 'cliente')
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="warehouse.php">
+            <a class="nav-link" href="clients.php">
                 <i class="cil-user nav-icon"></i>
                 Clienti
             </a>

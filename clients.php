@@ -86,8 +86,7 @@ else if ($_SESSION['type'] === 'cliente')
 
     </ul>
     <button class="sidebar-toggler" type="button"
-            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); ">
-    </button>
+            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
 </div>
 <!--End Sidebar-->
 
@@ -118,7 +117,7 @@ else if ($_SESSION['type'] === 'cliente')
                             </span>
                         </li>
                     -->
-                    <li class="breadcrumb-item"><span>Navi</span></li>
+                    <li class="breadcrumb-item"><span>Dipendenti</span></li>
                 </ol>
             </nav>
         </div>
@@ -133,20 +132,19 @@ else if ($_SESSION['type'] === 'cliente')
             <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-5">
-                        <div class="card-header">
-                            <span class="fs-2">
-                                Navi
-                            </span>
-                        </div>
+                        <div class="card-header"><span class="fs-2">Dipendenti</span></div>
+
                         <div class="card-body">
                             <div class=" d-flex flex-row-reverse">
                                 <!-- <a href="#" class="btn btn-secondary m-2">Produttori</a>
                                  <a href="#" class="btn btn-secondary m-2">Categorie</a>-->
-                                <a href="createship.php" class="btn btn-primary m-2">
-                                    Aggiungi
-                                </a>
+                                <a href="createemployee.php" class="btn btn-primary m-2">Aggiungi</a>
+                                <div class="m-2"></div>
+
                                 <div class="lg-col-2">
-                                    <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()" type="text" placeholder="Cerca">
+                                    <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()"
+                                           type="text"
+                                           placeholder="Cerca">
                                 </div>
 
                             </div>
@@ -154,26 +152,10 @@ else if ($_SESSION['type'] === 'cliente')
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
-                                            <th class="text-center">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="asc">
-                                                    ID
-                                                </a>
-                                            </th>
-                                            <th class="">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">
-                                                    Nome
-                                                </a>
-                                            </th>
-                                            <th class="">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="max_pass" data-order="asc">
-                                                    Max passeggeri
-                                                </a>
-                                            </th>
-                                            <th class="">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="max_veh" data-order="asc">
-                                                    Max veicoli
-                                                </a>
-                                            </th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="asc">ID</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
                                             <th class="text-center"></th>
                                             <th class="text-center"></th>
                                             <th class="text-end"></th>
@@ -184,44 +166,45 @@ else if ($_SESSION['type'] === 'cliente')
 
                                     <?php
 
-                                        $sql = "
-                                            
-                                            SELECT * 
-                                            FROM ships
+                                    $sql = "
                                         
-                                        ";
+                                        SELECT id_code, surname, name, email
+                                            FROM users
+                                            WHERE type = 'cliente'
+                                    
+                                    ";
 
-                                        if ($result = $connection->query($sql)) {
+                                    if ($result = $connection->query($sql)) {
 
-                                            while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                                                echo '
-                                                    <tr class="align-middle" id="' . $row["id"] . '">
-                                                        <td class="text-center">
-                                                            <div>' . $row["id"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                            <div>' . $row["name"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                            <div>' . $row["max_pass"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                           <div>' . $row["max_veh"] . '</div>
-                                                        </td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td>
-                                                        <form method="GET" class="">
-                                                            <a href="php/editship.php?id=' . $row['id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                            <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                                                        </form>
-                                                        </td>
-                                                    </tr>
-                                                ';
-                                            }
+                                        while ($row = $result->fetch_array()) {
+                                            echo '
+                                                <tr class="align-middle" id="' . $row["id_code"] . '">
+                                                    <td class="text-center">
+                                                        <div>' . $row["id_code"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                        <div>' . $row["surname"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                        <div>' . $row["name"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                       <div>' . $row["email"] . '</div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>
+                                                    <form method="GET" class="">
+                                                        <a href="php/editclient.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                        <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                                                    </form>
+                                                    </td>
+                                                </tr>
+                                            ';
                                         }
-                                        ?>
+                                    }
+                                    ?>
 
                                     </tbody>
                                 </table>
@@ -280,7 +263,7 @@ else if ($_SESSION['type'] === 'cliente')
 
         $.ajax({
             method: 'GET',
-            url: "php/deleteship.php?id="+ del_id,
+            url: "php/deleteuser.php?id="+ del_id,
             cache: false,
             success:function(result){
                 tr.fadeOut(1000, function(){
@@ -295,7 +278,7 @@ else if ($_SESSION['type'] === 'cliente')
             order = $(this).data("order");
 
         $.ajax({
-            url: "php/sortships.php",
+            url: "php/sort.php",
             method: "POST",
             data: {column: column, order: order},
             success: function (data) {
