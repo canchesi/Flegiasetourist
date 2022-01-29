@@ -35,7 +35,7 @@ if(isset($_POST['name']))
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.1.0/dist/js/coreui.bundle.min.js"></script>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"
+    <script src="src/jquery/jquery.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
     <title>Crea Dipendente</title>
@@ -59,7 +59,7 @@ if(isset($_POST['name']))
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="dashboard.php">
+            <a class="nav-link" href="routes.php">
                 <i class="cil-compass nav-icon"></i>
                 Rotte
             </a>

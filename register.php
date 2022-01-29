@@ -16,7 +16,7 @@
 
         $error = "";
 
-        if (!$_POST['name'])
+/*        if (!$_POST['name'])
             $error .= "Nome richiesto<br>";
         if (!$_POST['surname'])
             $error .= "Cognome richiesto<br>";
@@ -27,9 +27,13 @@
         if (!$_POST['password'])
             $error .= "Password richiesta<br>";
         if (!($_POST['password2'] === $_POST['password']))
-            $error .= "Conferma password errata<br>";
+            $error .= "Conferma password errata<br>";*/
 
-        $sql = "SELECT * FROM users WHERE email = '".$_POST['email']."'";
+        $sql = "
+            
+            SELECT * FROM users WHERE email = '".$_POST['email']."'
+            
+            ";
 
         if ($result = $connection->query($sql)) {
             if ($result->num_rows){
@@ -62,7 +66,7 @@
             $sql = "INSERT INTO users (email, psw, name, surname, type) VALUES ('$email', '$hashPasswd', '$name', '$surname', 'cliente')";
 
             if ($result = $connection->query($sql))
-                header('location: index.html');
+                header('location: registerinfos.php');
             else
                 echo '<script>alert("Errore nell\'invio dei dati.")</script>';
 
@@ -163,11 +167,6 @@
 
     </body>
     <!-- End Body -->
-
-<?php
-
-
-?>
 
     <script type="text/javascript">
         //TODO Verificare unicità mail

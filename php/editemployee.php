@@ -72,12 +72,12 @@ if($result = $connection->query($sql))
                     Dashboard
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../dashboard.php">
-                    <i class="cil-compass nav-icon"></i>
-                    Rotte
-                </a>
-            </li>
+        <li class="nav-item">
+            <a class="nav-link" href="../routes.php">
+                <i class="cil-compass nav-icon"></i>
+                Rotte
+            </a>
+        </li>
             <li class="nav-item">
                 <a class="nav-link" href="../employees.php">
                     <i class="cil-contact nav-icon "></i>
@@ -96,8 +96,8 @@ if($result = $connection->query($sql))
                     Navi
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="warehouse.php">
+                        <li class="nav-item">
+                <a class="nav-link" href="../clients.php">
                     <i class="cil-user nav-icon"></i>
                     Clienti
                 </a>
@@ -408,7 +408,7 @@ if($result = $connection->query($sql))
 
     <?php
         if (isset($_POST['submitted'])) {
-            if (isset($_POST)) {
+            if (isset($_POST))
                 $name = $connection->real_escape_string(ucfirst($_POST['name']));
                 $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
                 $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
@@ -465,8 +465,6 @@ if($result = $connection->query($sql))
                         WHERE generalities.user_id = " . $row['id_code'] . ";
     
                     ";
-
-                }
 
                 if (!($result = $connection->multi_query($sql)))
                     die('<script>alert("Errore nell\'invio dei dati.")</script>');

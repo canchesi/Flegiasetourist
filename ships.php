@@ -30,7 +30,7 @@ else if ($_SESSION['type'] === 'cliente')
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.1.0/dist/js/coreui.bundle.min.js"></script>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"
+    <script src="src/jquery/jquery.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
     <title>Dashboard</title>
@@ -54,7 +54,7 @@ else if ($_SESSION['type'] === 'cliente')
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="dashboard.php">
+            <a class="nav-link" href="routes.php">
                 <i class="cil-compass nav-icon"></i>
                 Rotte
             </a>
@@ -107,21 +107,6 @@ else if ($_SESSION['type'] === 'cliente')
 
             <a href="logout.php" class="btn btn-light">Esci</a>
         </div>
-        <div class="header-divider"></div>
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb my-0 ms-2">
-                    <!--
-                        <li class="breadcrumb-item">
-                            <span>
-                                Home
-                            </span>
-                        </li>
-                    -->
-                    <li class="breadcrumb-item"><span>Navi</span></li>
-                </ol>
-            </nav>
-        </div>
     </header>
     <!-- End Header -->
 
@@ -145,6 +130,7 @@ else if ($_SESSION['type'] === 'cliente')
                                 <a href="createship.php" class="btn btn-primary m-2">
                                     Aggiungi
                                 </a>
+                                <div class="m-2"></div>
                                 <div class="lg-col-2">
                                     <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()" type="text" placeholder="Cerca">
                                 </div>

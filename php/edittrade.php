@@ -9,14 +9,16 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
-    if(isset($_POST['name']))
-        header('location: ../ships.php');
+    if(isset($_POST['submitted']))
+        header('location: ../trades.php');
+
+    $id = explode("-", $_GET['id']);
 
     $sql = "
     
-        SELECT *
-        FROM ships
-        WHERE id = " . $_GET['id'] . " 
+        SELECT price_adult, price_underage
+        FROM trades
+        WHERE harb_dep ='" . $id[0] . "' AND harb_arr = '" . $id[1] . "'
         
         ";
 
@@ -134,26 +136,32 @@
                         <div class="card mb-5">
                             <div class="card-header">
                                 <span class="fs-2">
-                                    Aggiorna dati nave
+                                    Aggiorna prezzi
                                 </span>
                             </div>
                             <div class="card-body">
                                 <form class="row g-3" method="POST">
-                                    <div class="col-md-6">
-                                        <label for="name" class="form-label">Nome</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $row['name'] ?>" required>
+                                    <div class="col-md-3">
+                                        <label for="Part" class="form-label">Partenza</label>
+                                        <input type="text" class="form-control" id="Part" name="harb_dep" value="<?php echo $id[0] ?>" disabled>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="max_pass" class="form-label">Max passeggeri</label>
-                                        <input type="number" class="form-control" id="max_pass" name="max_pass" placeholder="Max passeggeri" value="<?php echo $row['max_pass'] ?>" required>
+                                        <label for="Arr" class="form-label">Arrivo</label>
+                                        <input type="text" class="form-control" id="Arr" name="harb_arr" value="<?php echo $id[1] ?>" disabled>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="max_veh" class="form-label">Max veicoli</label>
-                                        <input type="number" class="form-control" id="max_veh" name="max_veh" placeholder="Max veicoli" value="<?php echo $row['max_veh'] ?>" required>
+                                        <label for="price_adult" class="form-label">Prezzo maggiorenni</label>
+                                        <input type="number" class="form-control" id="price_adult" name="price_adult" placeholder="Prezzo O18" value="<?php echo $row['price_adult'] ?>" required>
+                                        <input type="text" name="submitted" value="1" hidden>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="price_adult" class="form-label">Prezzo minorenni</label>
+                                        <input type="number" class="form-control" id="price_adult" name="price_underage" placeholder="Prezzo U18" value="<?php echo $row['price_underage'] ?>" required>
+                                        <input type="text" name="submitted" value="1" hidden>
                                     </div>
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Aggiorna</button>
-                                        <a class="btn btn-outline-secondary" type="submit" href="../ships.php">Annulla</a>
+                                        <a class="btn btn-outline-secondary" type="submit" href="../trades.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>
@@ -179,22 +187,20 @@
 
 <?php
 
-    if(isset($_POST['name'])) {
-        $name = $connection->real_escape_string(ucfirst($_POST['name']));
-        $num_pass = $_POST['max_pass'];
-        $num_veic = $_POST['max_veh'];
+    if(isset($_POST['submitted'])) {
+        $prad = $_POST['price_adult'];
+        $prun = $_POST['price_underage'];
 
         $sql = "
         
-                UPDATE ships
+                UPDATE trades
                     SET
-                        name = '$name',
-                        max_pass = '$num_pass',
-                        max_veh = '$num_veic'
-                    WHERE id = $id
+                        price_adult = '$prad',
+                        price_underage = '$prun'
+                    WHERE harb_dep = '" . $id[0] . "' AND harb_arr = '" . $id[1] . "'
                 
             ";
-
+        echo $sql;
         if (!($result = $connection->query($sql)))
             die('<script>alert("Errore nell\'invio dei dati.")</script>');
 

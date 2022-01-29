@@ -10,8 +10,8 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
-    //if(isset($_POST['name']))
-    //    header('location: ../clients.php');
+    if(isset($_POST['name']))
+        header('location: ../clients.php');
     
     $sql = "
     
@@ -71,7 +71,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../dashboard.php">
+                <a class="nav-link" href="../routes.php">
                     <i class="cil-compass nav-icon"></i>
                     Rotte
                 </a>
@@ -95,7 +95,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="warehouse.php">
+                <a class="nav-link" href="../clients.php">
                     <i class="cil-user nav-icon"></i>
                     Clienti
                 </a>

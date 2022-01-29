@@ -1,5 +1,5 @@
 <?php
-
+require_once('php/config.php');
 session_start();
 if (isset($_SESSION['id']))
     if (!$_SESSION['type'] === 'cliente')
@@ -122,7 +122,7 @@ if (isset($_SESSION['id']))
 
 <div class="card">
     <div class="card-body">
-        <form class="row text-center h-100">
+        <form class="row text-center h-100" method="POST">
             <div class="col-12 h1 text-center mb-4">Cerca soluzioni</div>
             <div class="col-1">
 
@@ -131,10 +131,21 @@ if (isset($_SESSION['id']))
             <div class="mb-3 col-md-3">
                 <label for="formGroupExampleInput" class="form-label">Porto di partenza</label>
                 <select class="form-select" id="inlineFormSelectPref">
-                    <option selected>Choose...</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                    <?php
+                        $sql = "
+                        
+                            SELECT *
+                            FROM harbors
+                        
+                        ";
+
+                        if ($result = $connection->query($sql)) {
+                            while ($row = $result->fetch_array())
+                                echo "
+                                    <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
+                                ";
+                        }
+                    ?>
                 </select>
             </div>
             <div class="mb-3 col-md-3">
