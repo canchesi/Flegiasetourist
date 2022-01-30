@@ -211,6 +211,32 @@ require_once('php/config.php');
     </body>
 
     <script>
+        function searchElements() {
+            // Declare variables
+            var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("warehouseTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td_dep = tr[i].getElementsByTagName("td")[0];
+                td_arr = tr[i].getElementsByTagName("td")[1];
+
+                if (td_dep || td_arr) {
+                    txtValue_dep = td_dep.textContent || td_dep.innerText;
+                    txtValue_arr = td_arr.textContent || td_arr.innerText;
+
+                    if (txtValue_dep.toUpperCase().indexOf(filter) > -1 || txtValue_arr.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
         $('.deleteButton').click(function(){
             var tr = $(this).closest('tr'),
                 del_id = $(tr).attr('id');

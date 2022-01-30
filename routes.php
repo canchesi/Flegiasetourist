@@ -121,25 +121,39 @@ require_once('php/config.php');
                                 <div class=" d-flex flex-row-reverse">
                                     <!-- <a href="#" class="btn btn-secondary m-2">Produttori</a>
                                      <a href="#" class="btn btn-secondary m-2">Categorie</a>-->
-                                    <a href="createemployee.php" class="btn btn-primary m-2">Aggiungi</a>
+                                    <a href="createroute.php" class="btn btn-primary m-2">Aggiungi</a>
                                     <div class="m-2"></div>
                                     <div class="lg-col-2">
-                                        <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()"
-                                               type="text"
-                                               placeholder="Cerca">
+                                        <input class="form-control m-2 me-1" id="searchInputDate" onkeyup="searchElementsDate()"
+                                               type="date"
+                                               placeholder="Cerca per porti">
                                     </div>
-                                    <div class="col-md-7"></div>
+                                    <div class="m-2"></div>
+                                    <div class="lg-col-2">
+                                        <input class="form-control m-2 me-1" id="searchInputHarb" onkeyup="searchElementsHarb()"
+                                               type="text"
+                                               placeholder="Cerca per porti">
+                                    </div>
+                                    <div class="m-2"></div>
+                                    <div class="lg-col-2">
+                                        <input class="form-control m-2 me-1" id="searchInputShip" onkeyup="searchElementsShip()"
+                                        type="text"
+                                        placeholder="Cerca per nave">
+                                    </div>
+                                    <div class="col-md-3"></div>
                                     <a href="trades.php" class="btn btn-primary m-2 col-md-2">Vedi tratte</a>
                                 </div>
                                 <div class="table-responsive" id="warehouseTable">
                                     <table class="table border">
                                         <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="asc">ID</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type" data-order="asc">Grado</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nave</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="trade_dep" data-order="asc">Partenza</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="trade_arr" data-order="asc">Arrivo</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_exp" data-order="asc">Data partenza prev.</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_exp" data-order="asc">Data arrivo prev.</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_eff" data-order="asc">Data partenza eff.</a></th>
+                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_eff" data-order="asc">Data arrivo eff.</a></th>
                                             <th class="text-center"></th>
                                             <th class="text-end"></th>
                                             <th></th>
@@ -149,45 +163,53 @@ require_once('php/config.php');
 
                                         <?php
 
-                                        $sql = "
-                                        
-                                        SELECT * FROM users
-                                            WHERE type != 'cliente'
-                                    
-                                    ";
+                                            $sql = "
+                                            
+                                                SELECT name, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff
+                                                    FROM ships JOIN routes
+                                                    
+                                            ";
 
-                                        if ($result = $connection->query($sql)) {
+                                            if ($result = $connection->query($sql)) {
 
-                                            while ($row = $result->fetch_array()) {
-                                                echo '
-                                                <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
-                                                        <div>' . $row["id_code"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . $row["surname"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . $row["name"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                       <div>' . $row["email"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . ucfirst($row["type"]) . '</div>
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
-                                                    <form method="GET" class="">
-                                                        <a href="php/editemployee.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                        <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                                                    </form>
-                                                    </td>
-                                                </tr>
-                                            ';
+                                                while ($row = $result->fetch_array()) {
+                                                    if(!$row["dep_eff"])
+                                                        $row["dep_eff"] = '/';
+                                                    if(!$row["arr_eff"])
+                                                        $row["arr_eff"] = '/';
+                                                    echo '
+                                                    <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] .'">
+                                                        <td class="text-center">
+                                                            <div>' . $row["name"] . '</div>
+                                                        </td>
+                                                        <td class="" style="padding: 20px">
+                                                            <div>' . $row['trade_dep'] . '</div>
+                                                        </td>
+                                                        <td class="" style="padding: 20px">
+                                                            <div>' . $row["trade_arr"] . '</div>
+                                                        </td>
+                                                        <td class="" style="padding: 20px">
+                                                           <div>' . date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                        </td>
+                                                        <td class="" style="padding: 20px">
+                                                            <div>' .date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                        </td>
+                                                        <td class="text-center" style="padding: 20px">
+                                                            <div>' . $row["dep_eff"] . '</div>
+                                                        </td>
+                                                        <td class="text-center" style="padding: 20px">
+                                                            <div>' . $row["arr_eff"] . '</div>
+                                                        </td>
+                                                        <td>
+                                                        <form method="GET" class="">
+                                                            <a href="php/editeroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                            <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                                                        </form>
+                                                        </td>
+                                                    </tr>
+                                                ';
+                                                }
                                             }
-                                        }
                                         ?>
 
                                         </tbody>
@@ -214,5 +236,124 @@ require_once('php/config.php');
         <!-- End Footer -->
     </div>
     </body>
+
+    <script>
+        function searchElementsHarb() {
+            // Declare variables
+            var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;
+            input = document.getElementById("searchInputHarb").toString();
+            filter = input.value.toUpperCase();
+            table = document.getElementById("warehouseTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td_dep = tr[i].getElementsByTagName("td")[1];
+                td_arr = tr[i].getElementsByTagName("td")[2];
+
+                if (td_dep || td_arr) {
+                    txtValue_dep = td_dep.textContent || td_dep.innerText;
+                    txtValue_arr = td_arr.textContent || td_arr.innerText;
+
+                    if (txtValue_dep.toUpperCase().indexOf(filter) > -1 || txtValue_arr.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function searchElementsDate() {
+            // Declare variables
+            var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;
+            input = document.getElementById("searchInputDate");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("warehouseTable");
+            tr = table.getElementsByTagName("tr");
+
+            filter = new Date(filter);
+
+            filter = filter.toLocaleDateString("it-IT", { // you can use undefined as first argument
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+
+
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td_dep = tr[i].getElementsByTagName("td")[3];
+                td_arr = tr[i].getElementsByTagName("td")[4];
+
+                if (td_dep || td_arr) {
+                    txtValue_dep = td_dep.textContent || td_dep.innerText;
+                    txtValue_arr = td_arr.textContent || td_arr.innerText;
+
+                    if (txtValue_dep.indexOf(filter) > -1 || txtValue_arr.indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function searchElementsShip() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInputShip");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("warehouseTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        $('.deleteButton').click(function(){
+            var tr = $(this).closest('tr'),
+                del_id = $(tr).attr('id');
+                console.log(del_id);
+            $.ajax({
+                method: 'GET',
+                url: "php/deleteroute.php?id="+ del_id,
+                cache: false,
+                success:function(result){
+                    tr.fadeOut(1000, function(){
+                        $(this).remove();
+                    });
+                }
+            });
+        });
+
+        $(document).on("click", ".orderButton", function () {
+            var column = $(this).attr("id"),
+                order = $(this).data("order");
+
+            $.ajax({
+                url: "php/sortroutes.php",
+                method: "POST",
+                data: {column: column, order: order},
+                success: function (data) {
+                    $('#warehouseTable').html(data);
+                }
+            });
+        });
+
+    </script>
 
 </html>

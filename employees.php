@@ -220,7 +220,7 @@ else if ($_SESSION['type'] === 'cliente')
 
     function searchElements() {
         // Declare variables
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, td_dep, td_arr, tr, i, txtValue_dep, txtValue_arr;
         input = document.getElementById("searchInput");
         filter = input.value.toUpperCase();
         table = document.getElementById("warehouseTable");
@@ -228,13 +228,15 @@ else if ($_SESSION['type'] === 'cliente')
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1];
+            td_dep = tr[i].getElementsByTagName("td")[0];
+            td_arr = tr[i].getElementsByTagName("td")[1];
 
-            if (td) {
-                txtValue = td.textContent || td.innerText;
+            if (td_dep || td_arr) {
+                txtValue_dep = td_dep.textContent || td_dep.innerText;
+                txtValue_arr = td_arr.textContent || td_arr.innerText;
 
 
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                if (txtValue_dep.toUpperCase().indexOf(filter) > -1 || txtValue_arr.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";

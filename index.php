@@ -67,8 +67,16 @@ if (isset($_SESSION['id']))
                 </li>
             </ul>
             <form class="d-flex">
-                <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
-                <a class="btn btn-outline-success" href="register.php">Registrati</a>
+                <?php
+                    if (isset($_SESSION['type'])){
+                        echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';
+                    } else {
+                        echo '
+                        <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
+                        <a class="btn btn-outline-success" href="register.php">Registrati</a>
+                        ';
+                    }
+                ?>
 
             </form>
         </div>

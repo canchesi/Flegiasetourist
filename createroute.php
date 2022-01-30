@@ -124,7 +124,7 @@
                         <div class="card mb-5">
                             <div class="card-header">
                                 <span class="fs-2">
-                                    Nuova tratta
+                                    Nuova rotta
                                 </span>
                             </div>
                             <div class="card-body">
@@ -134,37 +134,33 @@
                                         <select class="form-select" id="harb_dep" name="harb_dep" required>
                                             <option disabled selected>Partenza</option>
                                             <?php
-                                                $sql = "
-                            
-                                                    SELECT *
-                                                    FROM harbors
+
+                                                $cities = array();
+                                                $sql = '
                                                 
-                                                ";
+                                                    SELECT harb_dep, harb_arr
+                                                    FROM trades
+                                                
+                                                ';
 
                                                 if ($result = $connection->query($sql)) {
-
-                                                    $cities = array();
-                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC)){
-                                                        echo "
-                                                            <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
-                                                        ";
-                                                        $cities[] = $row['city'];
+                                                    $last = '';
+                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                                                        if ($row['harb_dep'] != $last) {
+                                                            $last = $row['harb_dep'];
+                                                            echo "
+                                                                <option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>
+                                                            ";
+                                                        }
+                                                        $cities[] = array($row['harb_dep'] => $row['harb_arr']);
                                                     }
                                                 }
                                             ?>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="harb_arr" class="form-label">Porto di arrivo*</label>
-                                        <select class="form-select" id="harb_arr" name="harb_arr" required>
-                                            <option disabled selected>Arrivo</option>
-                                            <?php
-                                                foreach ($cities as $city)
-                                                    echo "
-                                                            <option value = '" . $city . "'> " . $city . " </option>
-                                                        ";
-                                            ?>
-                                        </select>
+                                        <label for="harb_arr" class="form-label">Porto di destinazione*</label>
+                                        <div class="" id="arr_div"></div>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="PrezzoMag" class="form-label">Prezzo maggiorenni*</label>
@@ -177,7 +173,7 @@
                                     </div>
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Aggiungi</button>
-                                        <a class="btn btn-outline-secondary" type="submit" href="trades.php">Annulla</a>
+                                        <a class="btn btn-outline-secondary" type="submit" href="routes.php">Annulla</a>
                                     </div>
                                 </form>
                             </div>
@@ -204,14 +200,14 @@
     <?php
 
         if(isset($_POST['submitted'])) {
-            $dep = $connection->real_escape_string($_POST['harb_dep']);
+            $id = $connection->real_escape_string();
             $arr = $connection->real_escape_string($_POST['harb_arr']);
             $prad = $_POST['price_adult'];
             $prun = $_POST['price_underage'];
 
             $sql = "
                 
-                        INSERT INTO trades
+                        INSERT INTO routes
                             VALUES ('$dep', '$arr', '$prad', '$prun');
                         
                     ";
@@ -224,12 +220,19 @@
     ?>
 
     <script>
-        $("#harb_dep").change(function (){
-            var cities = <?php echo json_encode($cities);?>,
-                arr = $("#harb_arr");
 
+        $(document).ready(function (){
+                $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" disabled><option disabled selected>Arrivo</option></select>');
+        });
+
+        $("#harb_dep").change(function (){
+            $("#arr_div").empty();
+            $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" required> <option disabled selected>Arrivo</option></select>');
+
+            var cities = '<?php echo json_encode($cities);?>',
+                arr = $("#harb_arr");
             $.ajax({
-                url: "php/settrades.php?city="+$("#harb_dep option:selected").text().trim(),
+                url: "php/setroutes.php?city="+$("#harb_dep option:selected").text().trim(),
                 type: "GET",
                 dataType: 'json',
                 data: {cities: cities},
@@ -242,7 +245,6 @@
                 }
             });
         });
-
 
     </script>
 

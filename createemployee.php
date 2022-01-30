@@ -198,11 +198,8 @@
                                             ?>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="ComuneRid">
                                         <label for="ComuneR" class="form-label"><br></label>
-                                        <select id="ComuneR" class="form-select" name="city_r" required>
-                                            <option disabled selected value="base">Comune</option>
-                                        </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="AddrR" class="form-label"><br></label>
@@ -240,16 +237,9 @@
                                             ?>
                                         </select>
                                     </div>
-
-                                    <div class="col-md-3 hidden">
-
+                                    <div class="col-md-3 hidden" id="ComuneDid">
                                         <label for="ComuneD" class="form-label"><br></label>
-                                        <select id="ComuneD" class="form-select" name="city_d">
-                                            <option disabled selected value="base">Comune</option>
-                                        </select>
                                     </div>
-
-
                                     <div class="col-md-3 hidden">
                                         <label class="form-label"><br></label>
                                         <input class="col-md-12 form-control" id="AddrD" type="text" placeholder="Via/Viale/Piazza" name="addr_d">
@@ -478,8 +468,17 @@
 
 
 <script>
+
+    $(document).ready(function (){
+        $("#ComuneRid").append('<select id="ComuneR" class="form-select" name="city_r" disabled><option disabled selected>Comune</option></select>');
+        $("#ComuneDid").append('<select id="ComuneD" class="form-select" name="city_d" disabled><option disabled selected>Comune</option></select>');
+    });
+
     $("#ProvR").change(function(){
         var deptid = $(this).val();
+
+        $("#ComuneRid").empty();
+        $("#ComuneRid").append('<label for="ComuneR" class="form-label"><br></label><select id="ComuneR" class="form-select" name="city_r" required><option disabled selected>Comune</option></select>');
 
         $.ajax({
             url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
@@ -506,6 +505,9 @@
     <script>
         $("#ProvD").change(function(){
             var deptid = $(this).val();
+
+            $("#ComuneDid").empty();
+            $("#ComuneDid").append('<label for="ComuneD" class="form-label"><br></label><select id="ComuneD" class="form-select" name="city_d" required><option disabled selected>Comune</option></select>');
 
             $.ajax({
                 url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvD option:selected").text().replace(/\s+/g, ''),

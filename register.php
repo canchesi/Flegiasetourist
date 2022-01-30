@@ -16,7 +16,7 @@
 
         $error = "";
 
-/*        if (!$_POST['name'])
+        if (!$_POST['name'])
             $error .= "Nome richiesto<br>";
         if (!$_POST['surname'])
             $error .= "Cognome richiesto<br>";
@@ -27,7 +27,7 @@
         if (!$_POST['password'])
             $error .= "Password richiesta<br>";
         if (!($_POST['password2'] === $_POST['password']))
-            $error .= "Conferma password errata<br>";*/
+            $error .= "Conferma password errata<br>";
 
         $sql = "
             
@@ -63,12 +63,12 @@
             $hashPasswd = password_hash($password, PASSWORD_DEFAULT);
 
 
-            $sql = "INSERT INTO users (email, psw, name, surname, type) VALUES ('$email', '$hashPasswd', '$name', '$surname', 'cliente')";
-
+            $_SESSION['user'] = "INSERT INTO users (email, psw, name, surname, type) VALUES ('$email', '$hashPasswd', '$name', '$surname', 'cliente')";
+            header('location: registerinfos.php');/*
             if ($result = $connection->query($sql))
                 header('location: registerinfos.php');
             else
-                echo '<script>alert("Errore nell\'invio dei dati.")</script>';
+                echo '<script>alert("Errore nell\'invio dei dati.")</script>';*/
 
 
         }
