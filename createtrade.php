@@ -161,8 +161,8 @@
                                             <?php
                                                 foreach ($cities as $city)
                                                     echo "
-                                                            <option value = '" . $city . "'> " . $city . " </option>
-                                                        ";
+                                                        <option value = '" . $city . "'> " . $city . " </option>
+                                                    ";
                                             ?>
                                         </select>
                                     </div>
@@ -237,7 +237,7 @@
                     arr.empty();
                     arr.append("<option disabled selected>Arrivo</option>");
                     response.forEach(function (city){
-                        $("#harb_arr").append("<option value = '"+city+"'>"+city+"</option>");
+                        arr.append("<option value = '"+city+"'>"+city+"</option>");
                     })
                 }
             });

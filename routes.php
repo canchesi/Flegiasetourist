@@ -241,7 +241,7 @@ require_once('php/config.php');
         function searchElementsHarb() {
             // Declare variables
             var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;
-            input = document.getElementById("searchInputHarb").toString();
+            input = document.getElementById("searchInputHarb");
             filter = input.value.toUpperCase();
             table = document.getElementById("warehouseTable");
             tr = table.getElementsByTagName("tr");
@@ -250,7 +250,6 @@ require_once('php/config.php');
             for (i = 0; i < tr.length; i++) {
                 td_dep = tr[i].getElementsByTagName("td")[1];
                 td_arr = tr[i].getElementsByTagName("td")[2];
-
                 if (td_dep || td_arr) {
                     txtValue_dep = td_dep.textContent || td_dep.innerText;
                     txtValue_arr = td_arr.textContent || td_arr.innerText;
@@ -268,33 +267,33 @@ require_once('php/config.php');
             // Declare variables
             var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;
             input = document.getElementById("searchInputDate");
-            filter = input.value.toUpperCase();
+            filter = new Date(input.value.toUpperCase());
             table = document.getElementById("warehouseTable");
             tr = table.getElementsByTagName("tr");
 
-            filter = new Date(filter);
+            if(isNaN(filter.getTime())) {
+                for (i = 0; i < tr.length; i++)
+                    tr[i].style.display = "";
+            } else {
+                filter = filter.toLocaleDateString("it-IT", { // you can use undefined as first argument
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                });
 
-            filter = filter.toLocaleDateString("it-IT", { // you can use undefined as first argument
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-            });
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    td_dep = tr[i].getElementsByTagName("td")[3];
+                    td_arr = tr[i].getElementsByTagName("td")[4];
 
+                    if (td_dep || td_arr) {
+                        txtValue_dep = td_dep.textContent || td_dep.innerText;
+                        txtValue_arr = td_arr.textContent || td_arr.innerText;
 
-
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 0; i < tr.length; i++) {
-                td_dep = tr[i].getElementsByTagName("td")[3];
-                td_arr = tr[i].getElementsByTagName("td")[4];
-
-                if (td_dep || td_arr) {
-                    txtValue_dep = td_dep.textContent || td_dep.innerText;
-                    txtValue_arr = td_arr.textContent || td_arr.innerText;
-
-                    if (txtValue_dep.indexOf(filter) > -1 || txtValue_arr.indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
+                        if (txtValue_dep.indexOf(filter) > -1 || txtValue_arr.indexOf(filter) > -1)
+                            tr[i].style.display = "";
+                        else
+                            tr[i].style.display = "none";
                     }
                 }
             }
@@ -327,7 +326,7 @@ require_once('php/config.php');
         $('.deleteButton').click(function(){
             var tr = $(this).closest('tr'),
                 del_id = $(tr).attr('id');
-                console.log(del_id);
+
             $.ajax({
                 method: 'GET',
                 url: "php/deleteroute.php?id="+ del_id,

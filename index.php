@@ -1,9 +1,11 @@
 <?php
-require_once('php/config.php');
-session_start();
-if (isset($_SESSION['id']))
-    if (!$_SESSION['type'] === 'cliente')
-        header('location: dashboard.php');
+    require_once('php/config.php');
+
+    session_start();
+
+    if (isset($_SESSION['id']))
+        if (!$_SESSION['type'] === 'cliente')
+            header('location: dashboard.php');
 
 ?>
 
@@ -137,32 +139,39 @@ if (isset($_SESSION['id']))
             </div>
 
             <div class="mb-3 col-md-3">
-                <label for="formGroupExampleInput" class="form-label">Porto di partenza</label>
-                <select class="form-select" id="inlineFormSelectPref">
+                <label for="harb_dep" class="form-label">Porto di partenza</label>
+                <select class="form-select" id="harb_dep" name="harb_dep">
+                    <option disabled selected>Partenza</option>
                     <?php
                         $sql = "
-                        
+                                
                             SELECT *
                             FROM harbors
                         
                         ";
 
                         if ($result = $connection->query($sql)) {
-                            while ($row = $result->fetch_array())
+                            $cities = array();
+                            while ($row = $result->fetch_array(MYSQLI_ASSOC)){
                                 echo "
                                     <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
                                 ";
+                                $cities[] = $row['city'];
+                            }
                         }
                     ?>
                 </select>
             </div>
-            <div class="mb-3 col-md-3">
-                <label for="inlineFormSelectPref" class="form-label">Porto di destinazione</label>
-                <select class="form-select" id="inlineFormSelectPref">
-                    <option selected>Choose...</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+            <div class="col-md-3">
+                <label for="harb_arr" class="form-label">Porto di arrivo*</label>
+                <select class="form-select" id="harb_arr" name="harb_arr" required>
+                    <option disabled selected>Arrivo</option>
+                    <?php
+                    foreach ($cities as $city)
+                        echo "
+                            <option value = '" . $city . "'> " . $city . " </option>
+                        ";
+                    ?>
                 </select>
             </div>
 
@@ -228,9 +237,32 @@ if (isset($_SESSION['id']))
 </body>
 
 <script type="text/javascript">
+
     $(document).ready(function () {
         $('#datepicker').datepicker();
     });
+
+    $("#harb_dep").change(function() {
+
+        var cities = <?php echo json_encode($cities);?>,
+            arr = $("#harb_arr");
+
+        $.ajax({
+            url: "php/settrades.php?city=" + $("#harb_dep option:selected").text().trim(),
+            type: "GET",
+            dataType: 'json',
+            data: {cities: cities},
+            success: function (response) {
+                console.log(JSON.stringify(response));
+                arr.empty();
+                arr.append("<option disabled selected>Arrivo</option>");
+                response.forEach(function (city) {
+                    arr.append("<option value = '" + city + "'>" + city + "</option>");
+                })
+            }
+        });
+    });
+
 </script>
 
 </html>
