@@ -9,6 +9,7 @@
     
         SELECT name, ship_id, trade_dep, trade_arr, dep_exp, arr_exp
             FROM ships JOIN routes
+            ON ship_id = id
             ORDER BY " . $_POST["column"] . " " . $_POST["order"] . " 
         
         ";
@@ -58,10 +59,10 @@
                     <div>' . $row["trade_arr"] . '</div>
                 </td>
                 <td class="" style="padding: 20px">
-                   <div>' . $row["dep_exp"] . '</div>
+                   <div>' . date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['dep_exp'])))  . '</div>
                 </td>
                 <td class="" style="padding: 20px">
-                    <div>' . $row["arr_exp"] . '</div>
+                    <div>' . date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['arr_exp'])))  . '</div>
                 </td>
                 <td class="text-center" style="padding: 20px">
                     <div>' . $row["dep_eff"] . '</div>

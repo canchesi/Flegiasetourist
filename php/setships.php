@@ -1,18 +1,28 @@
 <?php
 
-    require_once('config.php');
+    require_once("config.php");
 
-    $ships = array();
+    $city = $connection->real_escape_string($_GET["city"]);
+
     $sql = "
-                            
-        SELECT id, name 
+        
+        SELECT id, name  
             FROM ships JOIN routes 
-                ON trade_arr = '" . $_GET['lastCity'] . "'
+                ON ship_id = id
+            WHERE trade_arr = '$city'
         
     ";
 
-    if ($result = $connection->query($sql))
-        while($row = $result->fetch_array(MYSQLI_ASSOC))
-            $ships[$row['id']] = $row['name'];
 
-    echo json_encode($ships);
+    $captains = array();
+
+
+    if($result = $connection->query($sql)){
+        while($row =  $result->fetch_array(MYSQLI_ASSOC))
+            $captains[$row['id']] = $row['name'];
+        echo json_encode($captains);
+    } else {
+        echo "Error";
+    }
+
+    $connection->close();

@@ -37,7 +37,7 @@
         <script src="src/jquery/jquery.js"
                 integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-        <title>Crea Dipendente</title>
+        <title>Crea Rotta</title>
     </head>
     <body>
 
@@ -101,8 +101,7 @@
         <!-- Begin Header -->
         <header class="header header-sticky mb-4">
             <div class="container-fluid">
-                <button class="header-toggler px-md-0 me-md-3" type="button"
-                        onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
+                <button class="header-toggler px-md-0 me-md-3" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
                     <i class="icon icon-lg cil-menu"></i>
                 </button>
 
@@ -139,7 +138,8 @@
                                                 $sql = '
                                                 
                                                     SELECT harb_dep, harb_arr
-                                                    FROM trades
+                                                        FROM trades
+                                                        ORDER BY harb_dep
                                                 
                                                 ';
 
@@ -160,7 +160,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="dep_exp" class="form-label">Data di partenza*</label>
-                                        <input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" required>
+                                        <div class="" id="dep_div"></div>
                                     </div>
                                     <div class="col-md-4" >
                                         <label for="captain" class="form-label">Capitani disponibili*</label>
@@ -174,7 +174,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="arr_exp" class="form-label">Data di arrivo*</label>
-                                        <input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" required>
+                                        <div class="" id="arr_exp_div"></div>
                                     </div>
                                     <div class="col-md-4" >
                                         <label for="ship" class="form-label">Navi*</label>
@@ -210,17 +210,19 @@
 
     <?php
 
+    $dep = 'Messina'; //Porto di partenza
     if(isset($_POST['submitted'])) {
-        $id = $connection->real_escape_string();
-        $dep = $connection->real_escape_string($_POST['harb_dep']);
+
+        // Vars
 
         $sql = "
                 
-                        INSERT INTO routes
-                            VALUES ('$dep', '$arr', '$prad', '$prun');
-                        
-                    ";
+            INSERT INTO trades
+                VALUES ('$dep', '$arr', '$prad', '$prun');
+            
+        ";
 
+        // TODO Inserire controllo ed errore sulle date di arrivo e partenza.
             if (!$result = $connection->query($sql))
                 die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
@@ -234,12 +236,16 @@
                 $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" disabled><option disabled selected>Arrivo</option></select>');
                 $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
                 $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
+                $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
+                $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
         });
+
+
+        var datedep;
 
         $("#harb_dep").change(function (){
             $("#arr_div").empty();
             $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" required> <option disabled selected>Arrivo</option></select>');
-
             var cities = '<?php echo json_encode($cities);?>',
                 arr = $("#harb_arr");
             $.ajax({
@@ -250,52 +256,88 @@
                 success:function (response){
                     arr.empty();
                     arr.append("<option disabled selected>Arrivo</option>");
-                    response.forEach(function (city){
-                        $("#harb_arr").append("<option value = '"+city+"'>"+city+"</option>");
-                    })
+                    for (var e in response){
+                        if(e === 'time') {
+                            var dtToday = new Date(response[e]['date']);
+                            var month = dtToday.getMonth() + 1,
+                                day = dtToday.getDate(),
+                                year = dtToday.getFullYear(),
+                                hour = dtToday.getHours(),
+                                minute = dtToday.getMinutes(),
+                                second = dtToday.getSeconds();
+
+                            if (month < 10)
+                                month = '0' + month.toString();
+                            if (day < 10)
+                                day = '0' + day.toString();
+                            if(hour < 10)
+                                hour = '0' + hour.toString();
+                            if(minute < 10)
+                                minute = '0' + minute.toString();
+                            if(second < 10)
+                                second = '0' + second.toString();
+                            datedep = year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
+
+                        } else
+                            $("#harb_arr").append("<option value = '"+response[e]+"'>"+response[e]+"</option>");
+                    }
                 }
             });
         });
 
-        $('#arr_div').change(function () {
+        $('#arr_div').change(function (){
+
+            $("#dep_div").empty();
+            $("#arr_exp_div").empty();
+            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" min="'+ datedep +'" required>');
+            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" min="'+ datedep +'" required>');
+
+        });
+
+        $('#dep_div').change(function () {
 
             $("#cap_div").empty();
             $("#ship_div").empty();
             $("#ship_div").append('<select class="form-select" id="ship_id" name="ship_id" required><option disabled selected>Nave</option></select>');
             $("#cap_div").append('<select class="form-select" id="captain" name="captain" required><option disabled selected>Capitano</option></select>');
 
+            var city = $('#harb_dep option:selected').text().trim();
 
-            var arr = $("#captain");
             $.ajax({
                 url: "php/setcaptains.php",
+                data: {city: city, date: $('#dep_exp').val()},
                 type: "GET",
-                dataType: 'json',
-                success: function (response) {
-                    console.log(JSON.stringify(response));
-                    arr.empty();
-                    arr.append("<option disabled selected>Capitano</option>");
-                    for (var key in response)
-                        $("#captain").append("<option value = '" + key + "'>" + response[key] + "</option>");
+                dataType: "JSON",
+                success: function (response){
+
+
+                    $('#captain').empty();
+                    $('#captain').append('<option disabled selected>Capitano</option>');
+
+                    for (var element in response) {
+                        $('#captain').append('<option value="'+element+'">'+ response[element] +'</option>');
+
                     }
+
+                }
             });
 
-            arr = $("#ship_id");
-            var lastCity = '<?php echo $dep;?>';
             $.ajax({
                 url: "php/setships.php",
+                data: {city: city},
                 type: "GET",
-                dataType: 'json',
-                data: {lastCity: lastCity},
-                success: function (response) {
-                    console.log(JSON.stringify(response));
-                    arr.empty();
-                    arr.append("<option disabled selected>Nave</option>");
-                    for (var key in response)
-                        arr.append("<option value = '"+key+"'>"+response[key]+"</option>");
+                dataType: "JSON",
+                success: function (response){
+                    $('#ship_id').empty();
+                    $('#ship_id').append('<option disabled selected>Nave</option>');
+                    for (var element in response)
+                        $('#ship_id').append('<option value="'+element+'">'+ response[element] +'</option>');
                 }
             });
 
         });
+
+
 
     </script>
 
