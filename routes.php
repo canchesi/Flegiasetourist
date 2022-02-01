@@ -167,7 +167,7 @@ require_once('php/config.php');
                                             
                                                 SELECT name, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff
                                                     FROM ships JOIN routes
-                                                    
+
                                             ";
 
                                             if ($result = $connection->query($sql)) {

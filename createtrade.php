@@ -154,17 +154,7 @@
                                             ?>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="harb_arr" class="form-label">Porto di arrivo*</label>
-                                        <select class="form-select" id="harb_arr" name="harb_arr" required>
-                                            <option disabled selected>Arrivo</option>
-                                            <?php
-                                                foreach ($cities as $city)
-                                                    echo "
-                                                        <option value = '" . $city . "'> " . $city . " </option>
-                                                    ";
-                                            ?>
-                                        </select>
+                                    <div class="col-md-3" id="arr_div">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="PrezzoMag" class="form-label">Prezzo maggiorenni*</label>
@@ -224,7 +214,15 @@
     ?>
 
     <script>
+
+        $(document).ready(function (){
+            $("#arr_div").append('<label for="harb_arr" class="form-label">Porto di arrivo*</label> <select class="form-select" id="harb_arr" name="harb_arr" disabled><option disabled selected>Arrivo</option></select>');
+        });
+
         $("#harb_dep").change(function (){
+            $("#arr_div").empty();
+            $("#arr_div").append('<label for="harb_arr" class="form-label">Porto di arrivo*</label> <select class="form-select" id="harb_arr" name="harb_arr" required> <option disabled selected>Arrivo</option></select>');
+
             var cities = <?php echo json_encode($cities);?>,
                 arr = $("#harb_arr");
 

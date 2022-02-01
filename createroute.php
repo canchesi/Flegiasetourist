@@ -9,8 +9,8 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
-    if(isset($_POST['harb_dep']))
-        header('location: trades.php');
+/*    if(isset($_POST['harb_dep']))
+        header('location: routes.php');*/
 
 ?>
 
@@ -129,7 +129,7 @@
                             </div>
                             <div class="card-body">
                                 <form class="row g-3" method="POST">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <label for="harb_dep" class="form-label">Porto di partenza*</label>
                                         <select class="form-select" id="harb_dep" name="harb_dep" required>
                                             <option disabled selected>Partenza</option>
@@ -158,17 +158,28 @@
                                             ?>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
+                                        <label for="dep_exp" class="form-label">Data di partenza*</label>
+                                        <input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" required>
+                                    </div>
+                                    <div class="col-md-4" >
+                                        <label for="captain" class="form-label">Capitani disponibili*</label>
+                                        <div class="" id="cap_div">
+                                        </div>
+                                        <input type="text" value="1" name="submitted" hidden>
+                                    </div>
+                                    <div class="col-md-4">
                                         <label for="harb_arr" class="form-label">Porto di destinazione*</label>
                                         <div class="" id="arr_div"></div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="PrezzoMag" class="form-label">Prezzo maggiorenni*</label>
-                                        <input type="number" class="form-control" id="PrezzoMag" name="price_adult" placeholder="Prezzo O18" required>
+                                    <div class="col-md-4">
+                                        <label for="arr_exp" class="form-label">Data di arrivo*</label>
+                                        <input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" required>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="PrezzoMin" class="form-label">Prezzo minorenni*</label>
-                                        <input type="number" class="form-control" id="PrezzoMin" name="price_underage" placeholder="Prezzo U18" required>
+                                    <div class="col-md-4" >
+                                        <label for="ship" class="form-label">Navi*</label>
+                                        <div class="" id="ship_div">
+                                        </div>
                                         <input type="text" value="1" name="submitted" hidden>
                                     </div>
                                     <div class="col-12 mt-4">
@@ -199,13 +210,11 @@
 
     <?php
 
-        if(isset($_POST['submitted'])) {
-            $id = $connection->real_escape_string();
-            $arr = $connection->real_escape_string($_POST['harb_arr']);
-            $prad = $_POST['price_adult'];
-            $prun = $_POST['price_underage'];
+    if(isset($_POST['submitted'])) {
+        $id = $connection->real_escape_string();
+        $dep = $connection->real_escape_string($_POST['harb_dep']);
 
-            $sql = "
+        $sql = "
                 
                         INSERT INTO routes
                             VALUES ('$dep', '$arr', '$prad', '$prun');
@@ -223,6 +232,8 @@
 
         $(document).ready(function (){
                 $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" disabled><option disabled selected>Arrivo</option></select>');
+                $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
+                $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
         });
 
         $("#harb_dep").change(function (){
@@ -244,6 +255,46 @@
                     })
                 }
             });
+        });
+
+        $('#arr_div').change(function () {
+
+            $("#cap_div").empty();
+            $("#ship_div").empty();
+            $("#ship_div").append('<select class="form-select" id="ship_id" name="ship_id" required><option disabled selected>Nave</option></select>');
+            $("#cap_div").append('<select class="form-select" id="captain" name="captain" required><option disabled selected>Capitano</option></select>');
+
+
+            var arr = $("#captain");
+            $.ajax({
+                url: "php/setcaptains.php",
+                type: "GET",
+                dataType: 'json',
+                success: function (response) {
+                    console.log(JSON.stringify(response));
+                    arr.empty();
+                    arr.append("<option disabled selected>Capitano</option>");
+                    for (var key in response)
+                        $("#captain").append("<option value = '" + key + "'>" + response[key] + "</option>");
+                    }
+            });
+
+            arr = $("#ship_id");
+            var lastCity = '<?php echo $dep;?>';
+            $.ajax({
+                url: "php/setships.php",
+                type: "GET",
+                dataType: 'json',
+                data: {lastCity: lastCity},
+                success: function (response) {
+                    console.log(JSON.stringify(response));
+                    arr.empty();
+                    arr.append("<option disabled selected>Nave</option>");
+                    for (var key in response)
+                        arr.append("<option value = '"+key+"'>"+response[key]+"</option>");
+                }
+            });
+
         });
 
     </script>
