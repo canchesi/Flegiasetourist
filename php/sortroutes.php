@@ -7,9 +7,11 @@
 
     $sql = "
     
-        SELECT name, ship_id, trade_dep, trade_arr, dep_exp, arr_exp
+        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
             FROM ships JOIN routes
-            ON ship_id = id
+                ON ship_id = id
+            JOIN users
+                ON id_code = captain
             ORDER BY " . $_POST["column"] . " " . $_POST["order"] . " 
         
         ";
@@ -31,10 +33,9 @@
                     <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="trade_arr" data-order="' . $ord . '">Arrivo</a></th>
                     <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_exp" data-order="' . $ord . '">Data partenza prev.</a></th>
                     <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_exp" data-order="' . $ord . '">Data arrivo prev.</a></th>
-                     <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_eff" data-order="asc">Data partenza eff.</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_eff" data-order="asc">Data arrivo eff.</a></th>
-                    <th class="text-center"></th>
-                    <th class="text-end"></th>
+                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_eff" data-order="' . $ord . '">Data partenza eff.</a></th>
+                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_eff" data-order="' . $ord . '">Data arrivo eff.</a></th>
+                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="captain" data-order="' . $ord . '">Capitano</a></th>
                     <th></th>
                 </tr>
             </thead>
@@ -50,7 +51,7 @@
         
             <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
                 <td class="text-center">
-                    <div>' . $row["name"] . '</div>
+                    <div>' . $row["ship"] . '</div>
                 </td>
                 <td class="" style="padding: 20px">
                     <div>' . $row["trade_dep"] . '</div>
@@ -70,11 +71,14 @@
                 <td class="text-center" style="padding: 20px">
                     <div>' . $row["arr_eff"] . '</div>
                 </td>
+                <td class="text-center" style="">
+                    <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                </td>
                 <td>
-                <form method="GET" class="">
-                    <a href="php/editemployee.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                    <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                </form>
+                    <form method="GET" class="">
+                        <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                        <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                    </form>
                 </td>
             </tr>
         

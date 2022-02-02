@@ -284,7 +284,7 @@
                 }
             });
         });
-
+        
         $('#arr_div').change(function (){
 
             $("#dep_div").empty();
@@ -324,7 +324,7 @@
 
             $.ajax({
                 url: "php/setships.php",
-                data: {city: city},
+                data: {city: city, date: $('#dep_exp').val()},
                 type: "GET",
                 dataType: "JSON",
                 success: function (response){
