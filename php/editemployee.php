@@ -85,12 +85,6 @@ if($result = $connection->query($sql))
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="warehouse.php">
-                    <i class="cil-tags nav-icon"></i>
-                    Prenotazioni
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="../ships.php">
                     <i class="cil-boat-alt nav-icon"></i>
                     Navi

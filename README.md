@@ -16,7 +16,7 @@ Le navi possedute dall'azienda sono identificate da un ID numerico e possiedono 
 
 Le rotte sono viaggi identificati dalla nave che partirà per tale tratta in data e orario previsti, e sono composte da varie informazioni: un porto di partenza e uno di arrivo (uno per città), un orario di arrivo previsto, un orario di partenza e uno di arrivo effettivi inseribili dal capitano della nave, due prezzi base per passeggeri maggiorenni e minorenni e, qualora il capitano lo reputasse necessario, una scheda contenente delle note sul viaggio.
 
-Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare una prenotazione di più biglietti che verranno poi pagati prima dell'imbarco; le prenotazioni sono identificate da un codice numerico e in esse sono indicati il numero di passeggeri maggiorenni e minorenni, al fine di un corretto calcolo del prezzo totale e del numero di passeggeri in viaggio su una certa rotta, una data di effettuazione della prenotazione, e la presenza di un veicolo, il quale può essere al più uno per prenotazione; in base alla tipologia del veicolo (autoveicolo, motociclo, camion) vi sono dei sovrapprezzi e un'indicazione sullo spazio occupato, indicato come multipli di una dimensione ideale di un'automobile.
+Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare una prenotazione di più biglietti che verranno poi pagati prima dell'imbarco; le  sono identificate da un codice numerico e in esse sono indicati il numero di passeggeri maggiorenni e minorenni, al fine di un corretto calcolo del prezzo totale e del numero di passeggeri in viaggio su una certa rotta, una data di effettuazione della prenotazione, e la presenza di un veicolo, il quale può essere al più uno per prenotazione; in base alla tipologia del veicolo (autoveicolo, motociclo, camion) vi sono dei sovrapprezzi e un'indicazione sullo spazio occupato, indicato come multipli di una dimensione ideale di un'automobile.
 
 ### Operazioni
 
@@ -44,10 +44,10 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
 
   - **Visualizzazione delle rotte**: Può visualizzare le rotte offerte dall'azienda fino a sette giorni successivi.
 
-  - **Registrazione come cliente**: Può effettuare una registrazione come cliente inserendo i dati richiesti al fine di effettuare prenotazioni di biglietti.
+  - **Registrazione come cliente**: Può effettuare una registrazione come cliente inserendo i dati richiesti al fine di effettuare  di biglietti.
 
 - #### Cliente
 
-  - **Prenotazione e annullamento di biglietti**: Può effettuare prenotazioni di biglietti per determinate rotte, indicando i dati richiesti, o effettuare un annullamento entro 24 ore precedenti alla partenza.
+  - **Prenotazione e annullamento di biglietti**: Può effettuare  di biglietti per determinate rotte, indicando i dati richiesti, o effettuare un annullamento entro 24 ore precedenti alla partenza.
 
-  - **Visualizzazione delle prenotazioni**: Può visualizzare lo storico delle prenotazioni effettuate.
+  - **Visualizzazione delle **: Può visualizzare lo storico delle  effettuate.
