@@ -66,12 +66,6 @@ require_once('php/config.php');
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="warehouse.php">
-                    <i class="cil-tags nav-icon"></i>
-                    Prenotazioni
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="ships.php">
                     <i class="cil-boat-alt nav-icon"></i>
                     Navi
@@ -148,13 +142,13 @@ require_once('php/config.php');
                                         <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
                                             <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nave</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="trade_dep" data-order="asc">Partenza</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="trade_arr" data-order="asc">Arrivo</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_exp" data-order="asc">Data partenza prev.</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_exp" data-order="asc">Data arrivo prev.</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="dep_eff" data-order="asc">Data partenza eff.</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="arr_eff" data-order="asc">Data arrivo eff.</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Capitano</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="trade_dep" data-order="asc">Partenza</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="trade_arr" data-order="asc">Arrivo</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="dep_exp" data-order="asc">Data partenza prev.</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="arr_exp" data-order="asc">Data arrivo prev.</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="dep_eff" data-order="asc">Data partenza eff.</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="arr_eff" data-order="asc">Data arrivo eff.</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Capitano</a></th>
                                             <th></th>
                                         </tr>
                                         </thead>
@@ -177,29 +171,34 @@ require_once('php/config.php');
                                                 while ($row = $result->fetch_array()) {
                                                     if(!$row["dep_eff"])
                                                         $row["dep_eff"] = '/';
+                                                    else
+                                                        $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
                                                     if(!$row["arr_eff"])
                                                         $row["arr_eff"] = '/';
+                                                    else
+                                                        $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+
                                                     echo '
                                                     <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] .'">
                                                         <td class="text-center">
                                                             <div>' . $row["ship"] . '</div>
                                                         </td>
-                                                        <td class="" style="padding: 20px">
+                                                        <td class="text-center">
                                                             <div>' . $row['trade_dep'] . '</div>
                                                         </td>
-                                                        <td class="" style="padding: 20px">
+                                                        <td class="text-center" >
                                                             <div>' . $row["trade_arr"] . '</div>
                                                         </td>
-                                                        <td class="" style="padding: 20px">
-                                                           <div>' . date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                        <td class="text-center" >
+                                                           <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                                                         </td>
-                                                        <td class="" style="padding: 20px">
-                                                            <div>' .date('d/m/Y h:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                        <td class="text-center" >
+                                                            <div>' .date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                                                         </td>
-                                                        <td class="text-center" style="padding: 20px">
+                                                        <td class="text-center">
                                                             <div>' . $row["dep_eff"] . '</div>
                                                         </td>
-                                                        <td class="text-center" style="padding: 20px">
+                                                        <td class="text-center">
                                                             <div>' . $row["arr_eff"] . '</div>
                                                         </td>
                                                         <td class="text-center" style="">
@@ -207,10 +206,22 @@ require_once('php/config.php');
                                                         </td>
                                                         <td>
                                                             <form method="GET" class="">
-                                                                <a href="php/editeroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                                <a href="#" class="btn btn-danger m-1 deleteButton">
-                                                                    <i class="cil-trash"></i>
-                                                                </a>
+                                                                <div>
+                                                                    <a href="php/editeroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
+                                                                        <i class="cil-pen"></i>
+                                                                    </a>
+                                                                    <a href="#" class="btn btn-danger deleteButton m-1">
+                                                                        <i class="cil-trash"></i>
+                                                                    </a>
+                                                                </div>
+                                                                <div>
+                                                                    <a href="#" class="btn btn-info m-1" >
+                                                                        <i class="cil-people"></i>
+                                                                    </a>   
+                                                                    <a href="#" class="btn btn-warning m-1" >
+                                                                        <i class="cil-notes"></i>
+                                                                    </a> 
+                                                                </div>
                                                             </form>
                                                         </td>
                                                     </tr>
@@ -330,7 +341,7 @@ require_once('php/config.php');
             }
         }
 
-        $('.deleteButton').click(function(){
+        $(document).on('click', '.deleteButton', function(){
             var tr = $(this).closest('tr'),
                 del_id = $(tr).attr('id');
 

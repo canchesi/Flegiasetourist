@@ -9,8 +9,40 @@
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
-/*    if(isset($_POST['harb_dep']))
+/*    if(isset($_POST['trade_dep']))
         header('location: routes.php');*/
+
+
+    if(isset($_POST['submitted'])) {
+
+        // Vars
+
+        $shipID = $connection->real_escape_string($_POST['ship_id']);
+        $depExp = $connection->real_escape_string($_POST['dep_exp']);
+        $arrExp = $connection->real_escape_string($_POST['arr_exp']);
+        $captain = $connection->real_escape_string($_POST['captain']);
+        $tradeDep = $connection->real_escape_string($_POST['trade_dep']);
+        $tradeArr = $connection->real_escape_string($_POST['trade_arr']);
+
+        $error = false;
+
+        if ($depExp >= $arrExp)
+            $error = true;
+        else {
+            $sql = "
+                    
+                INSERT INTO routes (ship_id, dep_exp, arr_exp, captain, trade_dep, trade_arr)
+                    VALUES ('$shipID', '$depExp', '$arrExp', '$captain', '$tradeDep', '$tradeArr');
+                
+            ";
+
+            if (!($result = $connection->query($sql)))
+                echo "Errore nell\'invio dei dati.". $sql;
+
+        }
+    }
+
+
 
 ?>
 
@@ -128,9 +160,18 @@
                             </div>
                             <div class="card-body">
                                 <form class="row g-3" method="POST">
+                                    <?php
+
+                                    if($error)
+                                        echo '
+                                            <div class="alert alert-danger" role="alert">
+                                                Seleziona una data di arrivo successiva alla data di partenza.
+                                            </div>
+                                        ';
+                                    ?>
                                     <div class="col-md-4">
-                                        <label for="harb_dep" class="form-label">Porto di partenza*</label>
-                                        <select class="form-select" id="harb_dep" name="harb_dep" required>
+                                        <label for="trade_dep" class="form-label">Porto di partenza*</label>
+                                        <select class="form-select" id="trade_dep" name="trade_dep" required>
                                             <option disabled selected>Partenza</option>
                                             <?php
 
@@ -169,7 +210,7 @@
                                         <input type="text" value="1" name="submitted" hidden>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="harb_arr" class="form-label">Porto di destinazione*</label>
+                                        <label for="trade_arr" class="form-label">Porto di destinazione*</label>
                                         <div class="" id="arr_div"></div>
                                     </div>
                                     <div class="col-md-4">
@@ -208,32 +249,10 @@
     </div>
     </body>
 
-    <?php
-
-    $dep = 'Messina'; //Porto di partenza
-    if(isset($_POST['submitted'])) {
-
-        // Vars
-
-        $sql = "
-                
-            INSERT INTO trades
-                VALUES ('$dep', '$arr', '$prad', '$prun');
-            
-        ";
-
-        // TODO Inserire controllo ed errore sulle date di arrivo e partenza.
-            if (!$result = $connection->query($sql))
-                die('<script>alert("Errore nell\'invio dei dati.")</script>');
-
-        }
-
-    ?>
-
     <script>
 
         $(document).ready(function (){
-                $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" disabled><option disabled selected>Arrivo</option></select>');
+                $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
                 $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
                 $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
                 $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
@@ -242,45 +261,22 @@
 
 
         var datedep;
-
-        $("#harb_dep").change(function (){
+        $("#trade_dep").change(function (){
             $("#arr_div").empty();
-            $("#arr_div").append('<select class="form-select" id="harb_arr" name="harb_arr" required> <option disabled selected>Arrivo</option></select>');
+            $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" required> <option disabled selected>Arrivo</option></select>');
             var cities = '<?php echo json_encode($cities);?>',
-                arr = $("#harb_arr");
+                arr = $("#trade_arr");
             $.ajax({
-                url: "php/setroutes.php?city="+$("#harb_dep option:selected").text().trim(),
+                url: "php/setroutes.php?city="+$("#trade_dep option:selected").text().trim(),
                 type: "GET",
                 dataType: 'json',
                 data: {cities: cities},
                 success:function (response){
                     arr.empty();
                     arr.append("<option disabled selected>Arrivo</option>");
-                    for (var e in response){
-                        if(e === 'time') {
-                            var dtToday = new Date(response[e]['date']);
-                            var month = dtToday.getMonth() + 1,
-                                day = dtToday.getDate(),
-                                year = dtToday.getFullYear(),
-                                hour = dtToday.getHours(),
-                                minute = dtToday.getMinutes(),
-                                second = dtToday.getSeconds();
-
-                            if (month < 10)
-                                month = '0' + month.toString();
-                            if (day < 10)
-                                day = '0' + day.toString();
-                            if(hour < 10)
-                                hour = '0' + hour.toString();
-                            if(minute < 10)
-                                minute = '0' + minute.toString();
-                            if(second < 10)
-                                second = '0' + second.toString();
-                            datedep = year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second;
-
-                        } else
-                            $("#harb_arr").append("<option value = '"+response[e]+"'>"+response[e]+"</option>");
-                    }
+                    response.forEach(function (city) {
+                        $("#trade_arr").append("<option value = '"+city+"'>"+city+"</option>");
+                    })
                 }
             });
         });
@@ -289,8 +285,8 @@
 
             $("#dep_div").empty();
             $("#arr_exp_div").empty();
-            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" min="'+ datedep +'" required>');
-            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" min="'+ datedep +'" required>');
+            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" required>');
+            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" required>');
 
         });
 
@@ -301,37 +297,24 @@
             $("#ship_div").append('<select class="form-select" id="ship_id" name="ship_id" required><option disabled selected>Nave</option></select>');
             $("#cap_div").append('<select class="form-select" id="captain" name="captain" required><option disabled selected>Capitano</option></select>');
 
-            var city = $('#harb_dep option:selected').text().trim();
+            var city = $('#trade_dep option:selected').text().trim();
 
             $.ajax({
-                url: "php/setcaptains.php",
-                data: {city: city, date: $('#dep_exp').val()},
-                type: "GET",
-                dataType: "JSON",
-                success: function (response){
-
-
-                    $('#captain').empty();
-                    $('#captain').append('<option disabled selected>Capitano</option>');
-
-                    for (var element in response) {
-                        $('#captain').append('<option value="'+element+'">'+ response[element] +'</option>');
-
-                    }
-
-                }
-            });
-
-            $.ajax({
-                url: "php/setships.php",
+                url: "php/setcapships.php",
                 data: {city: city, date: $('#dep_exp').val()},
                 type: "GET",
                 dataType: "JSON",
                 success: function (response){
                     $('#ship_id').empty();
+                    $('#captain').empty();
                     $('#ship_id').append('<option disabled selected>Nave</option>');
-                    for (var element in response)
-                        $('#ship_id').append('<option value="'+element+'">'+ response[element] +'</option>');
+                    $('#captain').append('<option disabled selected>Capitano</option>');
+                    for (var id in response[0]) {
+                        $('#captain').append('<option value="'+id+'">'+ response[0][id] +'</option>');
+                    }
+                    for (id in response[1]) {
+                        $('#ship_id').append('<option value="'+id+'">'+ response[1][id] +'</option>');
+                    }
                 }
             });
 
