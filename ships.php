@@ -33,7 +33,7 @@ else if ($_SESSION['type'] === 'cliente')
     <script src="src/jquery/jquery.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-    <title>Dashboard</title>
+    <title>Navi</title>
 </head>
 <body>
 
@@ -48,7 +48,7 @@ else if ($_SESSION['type'] === 'cliente')
     </div>
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
         <li class="nav-item">
-            <a class="nav-link" href="index.php">
+            <a class="nav-link" href="dashboard.php">
                 <i class="cil-speedometer nav-icon"></i>
                 Dashboard
             </a>
@@ -100,6 +100,14 @@ else if ($_SESSION['type'] === 'cliente')
             <span class="fs-4">Flegias & Tourist</span>
 
             <a href="logout.php" class="btn btn-light">Esci</a>
+        </div>
+        <div class="header-divider"></div>
+        <div class="container-fluid">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb my-0 ms-2">
+                    <li class="breadcrumb-item"><span>Navi</span></li>
+                </ol>
+            </nav>
         </div>
     </header>
     <!-- End Header -->

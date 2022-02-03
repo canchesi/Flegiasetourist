@@ -110,7 +110,7 @@ if (isset($_POST['submitted']) && !$error)
     <script src="src/jquery/jquery.js"></script>
 
 
-    <title>Register</title>
+    <title>Registrazione</title>
 </head>
 
 <!-- Begin Body -->

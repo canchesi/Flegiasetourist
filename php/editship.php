@@ -48,7 +48,7 @@
         <script src="../src/jquery/jquery.js"
                 integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-        <title>Aggiorna informazioni nave</title>
+        <title>Modifica Nave</title>
     </head>
     <body>
 
@@ -63,7 +63,7 @@
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
             <li class="nav-item">
-                <a class="nav-link" href="../index.php">
+                <a class="nav-link" href="../dashboard.php">
                     <i class="cil-speedometer nav-icon"></i>
                     Dashboard
                 </a>
@@ -174,6 +174,7 @@
 <?php
 
     if(isset($_POST['name'])) {
+        $id = $_GET['id']; //easy
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
         $num_pass = $_POST['max_pass'];
         $num_veic = $_POST['max_veh'];

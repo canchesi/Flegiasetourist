@@ -1,11 +1,11 @@
 <?php
-    require_once('php/config.php');
+require_once('php/config.php');
 
-    session_start();
+session_start();
 
-    if (isset($_SESSION['id']))
-        if (!$_SESSION['type'] === 'cliente')
-            header('location: dashboard.php');
+if (isset($_SESSION['id']))
+    if (!$_SESSION['type'] === 'cliente')
+        header('location: dashboard.php');
 
 ?>
 
@@ -70,14 +70,19 @@
             </ul>
             <form class="d-flex">
                 <?php
-                    if (isset($_SESSION['type'])){
-                        echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';
-                    } else {
-                        echo '
+
+                if (isset($_SESSION['type'])) {
+                    if ($_SESSION['type'] != 'cliente') {
+                        echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
+                    }
+                    echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';
+                } else {
+                    echo '
                         <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
                         <a class="btn btn-outline-success" href="register.php">Registrati</a>
                         ';
-                    }
+                }
+
                 ?>
 
             </form>
@@ -143,22 +148,22 @@
                 <select class="form-select" id="harb_dep" name="harb_dep">
                     <option disabled selected>Partenza</option>
                     <?php
-                        $sql = "
+                    $sql = "
                                 
                             SELECT *
                             FROM harbors
                         
                         ";
 
-                        if ($result = $connection->query($sql)) {
-                            $cities = array();
-                            while ($row = $result->fetch_array(MYSQLI_ASSOC)){
-                                echo "
+                    if ($result = $connection->query($sql)) {
+                        $cities = array();
+                        while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                            echo "
                                     <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
                                 ";
-                                $cities[] = $row['city'];
-                            }
+                            $cities[] = $row['city'];
                         }
+                    }
                     ?>
                 </select>
             </div>
@@ -242,7 +247,7 @@
         $('#datepicker').datepicker();
     });
 
-    $("#harb_dep").change(function() {
+    $("#harb_dep").change(function () {
 
         var cities = <?php echo json_encode($cities);?>,
             arr = $("#harb_arr");

@@ -33,7 +33,7 @@ require_once('php/config.php');
         <!-- jQuery -->
         <script src="src/jquery/jquery.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
-        <title>Dashboard</title>
+        <title>Rotte</title>
     </head>
     <body>
 
@@ -48,7 +48,7 @@ require_once('php/config.php');
         </div>
         <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
             <li class="nav-item">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="dashboard.php">
                     <i class="cil-speedometer nav-icon"></i>
                     Dashboard
                 </a>
@@ -99,6 +99,14 @@ require_once('php/config.php');
 
                 <a href="logout.php" class="btn btn-light">Esci</a>
             </div>
+            <div class="header-divider"></div>
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb my-0 ms-2">
+                        <li class="breadcrumb-item"><span>Rotte</span></li>
+                    </ol>
+                </nav>
+            </div>
         </header>
         <!-- End Header -->
 
@@ -113,8 +121,6 @@ require_once('php/config.php');
                             <div class="card-header"><span class="fs-2">Rotte</span></div>
                             <div class="card-body">
                                 <div class=" d-flex flex-row-reverse">
-                                    <!-- <a href="#" class="btn btn-secondary m-2">Produttori</a>
-                                     <a href="#" class="btn btn-secondary m-2">Categorie</a>-->
                                     <a href="createroute.php" class="btn btn-primary m-2">Aggiungi</a>
                                     <div class="m-2"></div>
                                     <div class="lg-col-2">
@@ -201,13 +207,13 @@ require_once('php/config.php');
                                                         <td class="text-center">
                                                             <div>' . $row["arr_eff"] . '</div>
                                                         </td>
-                                                        <td class="text-center" style="">
+                                                        <td class="text-center">
                                                             <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
                                                         </td>
                                                         <td>
                                                             <form method="GET" class="">
                                                                 <div>
-                                                                    <a href="php/editeroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
+                                                                    <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
                                                                         <i class="cil-pen"></i>
                                                                     </a>
                                                                     <a href="#" class="btn btn-danger deleteButton m-1">
