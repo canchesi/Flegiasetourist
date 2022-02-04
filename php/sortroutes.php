@@ -7,7 +7,7 @@
 
     $sql = "
     
-        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
+        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
             FROM ships JOIN routes
                 ON ship_id = id
             JOIN users
@@ -43,6 +43,12 @@
     ';
 
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        if($row['ret']){
+            $tmp = $row['trade_dep'];
+            $row['trade_dep'] = $row['trade_arr'];
+            $row['trade_arr'] = $tmp;
+            unset($tmp);
+        }
         if(!$row["dep_eff"])
             $row["dep_eff"] = '/';
         else
@@ -76,7 +82,7 @@
                     <div>' . $row["arr_eff"] . '</div>
                 </td>
                 <td class="text-center">
-                    <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                    <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                 </td>
                 <td>
                     <form method="GET" class="">

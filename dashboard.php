@@ -198,7 +198,7 @@
                     <div class="col-md-12 mb-4">
                         <div class="card mb-12">
                             <div class="card-header"><span
-                                        class="fs-2">Rotte da oggi <?php $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                                        class="fs-2">Rotte di oggi <?php $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
                                     echo $formatter->format(time()); ?></span></div>
 
                             <div class="card-body">
@@ -222,17 +222,19 @@
                                         <?php
 
                                         $today = date("Y-m-d");
+                                        $tomorrow = (new DateTime($today))->modify('+1 day')->format('Y-m-d');
 
                                         $sql = "
                                                 
-                                                    SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
-                                                        FROM ships JOIN routes
-                                                            ON ship_id = id
-                                                        JOIN users
-                                                            ON id_code = captain
-                                                        WHERE dep_exp >= '$today' ORDER BY dep_exp ASC
-    
-                                                ";
+                                            SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
+                                                FROM ships JOIN routes
+                                                    ON ship_id = id
+                                                JOIN users
+                                                    ON id_code = captain
+                                                WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow' 
+                                            ORDER BY dep_exp ASC
+
+                                        ";
 
                                         if ($result = $connection->query($sql)) {
                                             $row = $result->fetch_array();
@@ -244,14 +246,20 @@
                                                 ';
                                             else {
                                                 while ($row) {
+                                                    if($row['ret']){
+                                                        $tmp = $row['trade_dep'];
+                                                        $row['trade_dep'] = $row['trade_arr'];
+                                                        $row['trade_arr'] = $tmp;
+                                                        unset($tmp);
+                                                    }
                                                     if (!$row["dep_eff"])
                                                         $row["dep_eff"] = '/';
                                                     else
-                                                        $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+                                                        $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
                                                     if (!$row["arr_eff"])
                                                         $row["arr_eff"] = '/';
                                                     else
-                                                        $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+                                                        $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                     echo '
                                                             <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
@@ -265,10 +273,10 @@
                                                                     <div>' . $row["trade_arr"] . '</div>
                                                                 </td>
                                                                 <td class="text-center" >
-                                                                   <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                                   <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                                                                 </td>
                                                                 <td class="text-center" >
-                                                                    <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                                    <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     <div>' . $row["dep_eff"] . '</div>
@@ -406,23 +414,35 @@
                                                 ";
 
                                                 if ($result = $connection->query($sql)) {
-
+                                                    $reserve = array();
                                                     while ($row = $result->fetch_array()) {
-                                                        echo '
-                                                            <tr class="align-middle" id="' . $row["id"] . '">
-                                                                <td class="text-center">
-                                                                    <div>' . $row["id"] . '</div>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div>' . $row["name"] . '</div>
-                                                                </td>
-                                                                <td class="text-center">';
                                                         if($row['harb1'] && $row['harb2'])
-                                                            echo "<div>" . $row['harb1'] . "-" . $row['harb2'] . "</div>";
+                                                            echo '
+                                                                <tr class="align-middle" id="' . $row["id"] . '">
+                                                                    <td class="text-center">
+                                                                        <div>' . $row["id"] . '</div>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <div>' . $row["name"] . '</div>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <div>' . $row["harb1"] . '-' . $row["harb2"] . '</div>
+                                                                    </td><td></td></tr>';
                                                         else
-                                                            echo "<div>Riserva</div>";
-                                                        echo "</td><td></td></tr>";
+                                                            $reserve[] = '
+                                                                    <tr class="align-middle table-warning" id="' . $row["id"] . '">
+                                                                        <td class="text-center">
+                                                                            <div>' . $row["id"] . '</div>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <div>' . $row["name"] . '</div>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <div>Riserva</div>
+                                                                        </td><td></td></tr>';
                                                     }
+                                                    foreach($reserve as $res)
+                                                        echo $res;
 
                                                 }
                                             ?>
@@ -479,7 +499,7 @@
                     <input type="text" name="AddShip" value="1" hidden>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary addshipButton">Close</button>
+                    <button type="button" class="btn btn-secondary addshipButton">Chiudi</button>
                     <button type="submit" class="btn btn-primary" form="add_ship">Aggiungi</button>
                 </div>
             </div>

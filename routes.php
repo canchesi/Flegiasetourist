@@ -164,7 +164,7 @@ require_once('php/config.php');
 
                                             $sql = "
                                             
-                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
+                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
                                                     FROM ships JOIN routes
                                                         ON ship_id = id
                                                     JOIN users
@@ -175,14 +175,21 @@ require_once('php/config.php');
                                             if ($result = $connection->query($sql)) {
 
                                                 while ($row = $result->fetch_array()) {
+                                                    if($row['ret']){
+                                                        $tmp = $row['trade_dep'];
+                                                        $row['trade_dep'] = $row['trade_arr'];
+                                                        $row['trade_arr'] = $tmp;
+                                                        unset($tmp);
+                                                    }
+
                                                     if(!$row["dep_eff"])
                                                         $row["dep_eff"] = '/';
                                                     else
-                                                        $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+                                                        $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
                                                     if(!$row["arr_eff"])
                                                         $row["arr_eff"] = '/';
                                                     else
-                                                        $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+                                                        $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                     echo '
                                                     <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] .'">
@@ -196,10 +203,10 @@ require_once('php/config.php');
                                                             <div>' . $row["trade_arr"] . '</div>
                                                         </td>
                                                         <td class="text-center" >
-                                                           <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                           <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                                                         </td>
                                                         <td class="text-center" >
-                                                            <div>' .date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                            <div>' .date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                                                         </td>
                                                         <td class="text-center">
                                                             <div>' . $row["dep_eff"] . '</div>

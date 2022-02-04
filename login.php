@@ -26,6 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
             $_SESSION['id'] = $row['id_code'];
             $_SESSION['type'] = $row['type'];
 
+            if($row['deleted'])
+                header('location: logout.php');
+
             if($_SESSION['type'] === 'cliente')
                 header('location: index.php');
             else

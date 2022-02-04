@@ -10,7 +10,7 @@
 
     $id = $connection->real_escape_string($_GET['id']);
 
-    $sql = "DELETE FROM users WHERE id_code = $id ";
+    $sql = "UPDATE users SET deleted = 1 WHERE id_code = $id ";
 
 
     if ($connection->query($sql) === FALSE) {

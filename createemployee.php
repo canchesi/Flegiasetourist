@@ -329,7 +329,6 @@
             </div>
         </div>
         <!--End Content -->
-        <!--End Content -->
 
         <!--Begin Footer -->
         <footer class="footer">
@@ -469,13 +468,17 @@
     });
 
     $("#ProvR").change(function(){
-        var deptid = $(this).val();
 
         $("#ComuneRid").empty();
         $("#ComuneRid").append('<label for="ComuneR" class="form-label"><br></label><select id="ComuneR" class="form-select" name="city_r" required><option disabled selected>Comune</option></select>');
 
+        var city = $("#ProvR option:selected").text().trim();
+
+        if(city === "Aosta")
+            city = "Valle d'Aosta";
+
         $.ajax({
-            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
+            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+ city,
             type: 'get',
             dataType: 'json',
             success:function(response) {
@@ -498,13 +501,17 @@
 
     <script>
         $("#ProvD").change(function(){
-            var deptid = $(this).val();
 
             $("#ComuneDid").empty();
             $("#ComuneDid").append('<label for="ComuneD" class="form-label"><br></label><select id="ComuneD" class="form-select" name="city_d" required><option disabled selected>Comune</option></select>');
 
+            var city = $("#ProvD option:selected").text().trim();
+
+            if(city === "Aosta")
+                city = "Valle d'Aosta";
+
             $.ajax({
-                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvD option:selected").text().replace(/\s+/g, ''),
+                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+city,
                 type: 'get',
                 dataType: 'json',
                 success:function(response) {

@@ -13,7 +13,7 @@
         while($row = $result->fetch_array(MYSQLI_ASSOC))
             if($_GET['city'] == $row['harb_dep'])
                 $arr[] = $row['harb_arr'];
-            else if($_GET['city'] == $row['harb_arr'])
+            else if ($_GET['city'] == $row['harb_arr'])
                 $arr[] = $row['harb_dep'];
     }
 
