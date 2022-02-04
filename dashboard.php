@@ -1,414 +1,528 @@
 <?php
-require_once('php/config.php');
+    require_once('php/config.php');
 
-session_start();
+    session_start();
 
-if (!isset($_SESSION['id']))
-    header("location: login.php");
-else if ($_SESSION['type'] === 'cliente')
-    header('location: index.php');
+    if (!isset($_SESSION['id']))
+        header("location: login.php");
+    else if ($_SESSION['type'] === 'cliente')
+        header('location: index.php');
 
 
-$sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
+    $sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
 
-if ($result = $connection->query($sql)) {
-    $employeesCount = $result->fetch_assoc();
-}
+    if ($result = $connection->query($sql))
+        $employeesCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
+    $sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
 
-if ($result = $connection->query($sql)) {
-    $customersCount = $result->fetch_assoc();
-}
+    if ($result = $connection->query($sql))
+        $customersCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(code) AS reservations FROM reservations";
+    $sql = "SELECT COUNT(code) AS reservations FROM reservations";
 
-if ($result = $connection->query($sql)) {
-    $reservationsCount = $result->fetch_assoc();
-}
+    if ($result = $connection->query($sql))
+        $reservationsCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
+    $sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
 
-if ($result = $connection->query($sql)) {
-    $routesCount = $result->fetch_assoc();
-}
+    if ($result = $connection->query($sql))
+        $routesCount = $result->fetch_assoc();
+
+    $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
+
+    if(isset($_POST['AddShip']) && $_POST['AddShip'] == 1){
+
+        $name = $connection->real_escape_string(ucfirst($_POST['name']));
+        $trade = explode('-',$_POST['trade'],2);
+
+        $sql = "
+            
+                    INSERT INTO ships (name, harb1, harb2)
+                        VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
+                    
+                ";
+
+        if(!($result = $connection->query($sql)))
+            die('<script>alert("Errore nell\'invio dei dati.")</script>');
+        else
+            header('location: dashboard.php');
+    }
 
 
 ?>
 
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" type="image/x-icon" href="/img/logo.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="icon" type="image/x-icon" href="/img/logo.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
 
-    <!-- Style -->
-    <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
+        <!-- Style -->
+        <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
+        <!-- Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
 
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.1.0/dist/js/coreui.bundle.min.js"></script>
+        <!-- JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.1.0/dist/js/coreui.bundle.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="src/jquery/jquery.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-            crossorigin="anonymous"></script>
+        <!-- jQuery -->
+        <script src="src/jquery/jquery.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+                crossorigin="anonymous"></script>
 
-    <title>Dashboard</title>
-</head>
-<body>
-
-
-<!-- Begin Sidebar -->
-<div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
-    <div class="sidebar-brand d-md-flex">
-        <button class="header-toggler px-md-0 me-md-3" type="button"
-                onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
-            <span class="text-light fs-3">Menu</span>
-        </button>
-    </div>
-    <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
-        <li class="nav-item">
-            <a class="nav-link" href="dashboard.php">
-                <i class="cil-speedometer nav-icon"></i>
-                Dashboard
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="routes.php">
-                <i class="cil-compass nav-icon"></i>
-                Rotte
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="employees.php">
-                <i class="cil-contact nav-icon "></i>
-                Dipendenti
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="ships.php">
-                <i class="cil-boat-alt nav-icon"></i>
-                Navi
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="clients.php">
-                <i class="cil-user nav-icon"></i>
-                Clienti
-            </a>
-        </li>
-
-    </ul>
-    <button class="sidebar-toggler" type="button"
-            onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
-</div>
-<!--End Sidebar-->
+        <title>Dashboard</title>
+    </head>
+    <body>
 
 
-<div class="wrapper d-flex flex-column min-vh-100 bg-light">
-
-
-    <!-- Begin Header -->
-    <header class="header header-sticky mb-4">
-        <div class="container-fluid">
+    <!-- Begin Sidebar -->
+    <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
+        <div class="sidebar-brand d-md-flex">
             <button class="header-toggler px-md-0 me-md-3" type="button"
                     onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
-                <i class="icon icon-lg cil-menu"></i>
+                <span class="text-light fs-3">Menu</span>
             </button>
-
-            <span class="fs-4">Flegias & Tourist</span>
-
-            <a href="logout.php" class="btn btn-light">Esci</a>
         </div>
-        <div class="header-divider"></div>
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb my-0 ms-2">
-                    <!--
-                        <li class="breadcrumb-item">
-                            <span>
-                                Home
-                            </span>
-                        </li>
-                    -->
-                    <li class="breadcrumb-item"><span>Dashboard</span></li>
-                </ol>
-            </nav>
-        </div>
-    </header>
-    <!-- End Header -->
+        <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.php">
+                    <i class="cil-speedometer nav-icon"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="routes.php">
+                    <i class="cil-compass nav-icon"></i>
+                    Rotte
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="employees.php">
+                    <i class="cil-contact nav-icon "></i>
+                    Dipendenti
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="ships.php">
+                    <i class="cil-boat-alt nav-icon"></i>
+                    Navi
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="clients.php">
+                    <i class="cil-user nav-icon"></i>
+                    Clienti
+                </a>
+            </li>
+
+        </ul>
+        <button class="sidebar-toggler" type="button"
+                onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
+    </div>
+    <!--End Sidebar-->
 
 
-    <!--Begin Content -->
-    <div class="body flex-grow-1 px-3">
-        <div class="container-lg">
+    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
 
-            <!-- BEGIN WIDGETS -->
-            <div class="row mb-4">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="card text-white bg-primary">
-                        <div class="card-body">
-                            <div class="fs-4 fw-semibold"><?php echo $employeesCount['employees']; ?></div>
-                            <div><h5>Dipendenti</h5></div>
 
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-3">
-                    <div class="card text-white bg-warning">
-                        <div class="card-body">
-                            <div class="fs-4 fw-semibold"><?php echo $customersCount['customers']; ?></div>
-                            <div><h5>Clienti</h5></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-3">
-                    <div class="card text-white bg-danger">
-                        <div class="card-body">
-                            <div class="fs-4 fw-semibold"><?php echo $reservationsCount['reservations']; ?></div>
-                            <div><h5>Prenotazioni</h5></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col-->
-                <div class="col-sm-6 col-lg-3">
-                    <div class="card text-white bg-info">
-                        <div class="card-body">
-                            <div class="fs-4 fw-semibold"><?php echo $routesCount['routes']; ?></div>
-                            <div><h5>Rotte</h5></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.col-->
+        <!-- Begin Header -->
+        <header class="header header-sticky mb-4">
+            <div class="container-fluid">
+                <button class="header-toggler px-md-0 me-md-3" type="button"
+                        onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()">
+                    <i class="icon icon-lg cil-menu"></i>
+                </button>
+
+                <span class="fs-4">Flegias & Tourist</span>
+
+                <a href="logout.php" class="btn btn-light">Esci</a>
             </div>
+        </header>
+        <!-- End Header -->
 
-            <!-- END WIDGETS -->
 
+        <!--Begin Content -->
+        <div class="body flex-grow-1 px-3">
+            <div class="container-lg">
 
-            <div class="row">
+                <!-- BEGIN WIDGETS -->
+                <div class="row mb-4">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <div class="fs-4 fw-semibold"><?php echo $employeesCount['employees']; ?></div>
+                                <div><h5>Dipendenti</h5></div>
 
-                <!--Begin Routes List-->
-                <div class="col-md-12 mb-4">
-                    <div class="card mb-12">
-                        <div class="card-header"><span
-                                    class="fs-2">Rotte da oggi <?php $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-                                echo $formatter->format(time()); ?></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-->
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <div class="fs-4 fw-semibold"><?php echo $customersCount['customers']; ?></div>
+                                <div><h5>Clienti</h5></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-->
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-danger">
+                            <div class="card-body">
+                                <div class="fs-4 fw-semibold"><?php echo $reservationsCount['reservations']; ?></div>
+                                <div><h5>Prenotazioni</h5></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-->
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <div class="fs-4 fw-semibold"><?php echo $routesCount['routes']; ?></div>
+                                <div><h5>Rotte</h5></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col-->
+                </div>
 
-                        <div class="card-body">
-                            <div class="table-responsive" id="warehouseTable">
-                                <table class="table border">
-                                    <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <th class="text-center">Nave</th>
-                                        <th class="text-center">Partenza</th>
-                                        <th class="text-center">Arrivo</th>
-                                        <th class="text-center">Data partenza prev.</th>
-                                        <th class="text-center">Data arrivo prev. </th>
-                                        <th class="text-center">Data partenza eff.</th>
-                                        <th class="text-center">Data arrivo eff.</th>
-                                        <th class="text-center">Capitano</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
+                <!-- END WIDGETS -->
+                <div class="row">
 
-                                    <?php
+                    <!--Begin Routes List-->
+                    <div class="col-md-12 mb-4">
+                        <div class="card mb-12">
+                            <div class="card-header"><span
+                                        class="fs-2">Rotte da oggi <?php $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                                    echo $formatter->format(time()); ?></span></div>
 
-                                    $today = date("Y-m-d");
+                            <div class="card-body">
+                                <div class="table-responsive" id="warehouseTable">
+                                    <table class="table border">
+                                        <thead class="table-light fw-semibold">
+                                        <tr class="align-middle">
+                                            <th class="text-center">Nave</th>
+                                            <th class="text-center">Partenza</th>
+                                            <th class="text-center">Arrivo</th>
+                                            <th class="text-center">Data partenza prev.</th>
+                                            <th class="text-center">Data arrivo prev. </th>
+                                            <th class="text-center">Data partenza eff.</th>
+                                            <th class="text-center">Data arrivo eff.</th>
+                                            <th class="text-center">Capitano</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
 
-                                    $sql = "
+                                        <?php
+
+                                        $today = date("Y-m-d");
+
+                                        $sql = "
+                                                
+                                                    SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
+                                                        FROM ships JOIN routes
+                                                            ON ship_id = id
+                                                        JOIN users
+                                                            ON id_code = captain
+                                                        WHERE dep_exp >= '$today' ORDER BY dep_exp ASC
+    
+                                                ";
+
+                                        if ($result = $connection->query($sql)) {
+
+                                            while ($row = $result->fetch_array()) {
+                                                if (!$row["dep_eff"])
+                                                    $row["dep_eff"] = '/';
+                                                else
+                                                    $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+                                                if (!$row["arr_eff"])
+                                                    $row["arr_eff"] = '/';
+                                                else
+                                                    $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+
+                                                echo '
+                                                        <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                            <td class="text-center">
+                                                                <div>' . $row["ship"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row['trade_dep'] . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                                <div>' . $row["trade_arr"] . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                               <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                                <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["dep_eff"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["arr_eff"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                                                            </td>
+                                                            <td>
+                                                        </tr>
+                                                    ';
+                                            }
+                                        }
+
+                                        ?>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Routes List-->
+
+                    <!--Begin Captains List-->
+                    <div class="col-md-8">
+                        <div class="card mb-5">
+                            <div class="card-header">
+                                <span class="fs-2">
+                                    Capitani
+                                </span>
+                                <span class="fs-3" style="float: right">
+                                    <a href="createemployee.php?type=capitano" type="button" class="btn btn-primary">
+                                        Aggiungi
+                                    </a>
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 320px;overflow-y: auto;" id="captains">
+                                    <table class="table border">
+                                        <thead class="table-light fw-semibold">
+                                        <tr class="align-middle">
+                                            <th class="text-center">ID</th>
+                                            <th class="text-center">Cognome</th>
+                                            <th class="text-center">Nome</th>
+                                            <th class="text-center">Email</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <?php
+
+                                            $sql = "
+                                                
+                                                SELECT id_code, name, surname, email FROM users
+                                                    WHERE type = 'capitano' ORDER BY id_code ASC
                                             
-                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
-                                                    FROM ships JOIN routes
-                                                        ON ship_id = id
-                                                    JOIN users
-                                                        ON id_code = captain
-                                                    WHERE dep_exp >= '$today' ORDER BY dep_exp ASC
-
                                             ";
 
-                                    if ($result = $connection->query($sql)) {
+                                            if ($result = $connection->query($sql)) {
 
-                                        while ($row = $result->fetch_array()) {
-                                            if (!$row["dep_eff"])
-                                                $row["dep_eff"] = '/';
-                                            else
-                                                $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
-                                            if (!$row["arr_eff"])
-                                                $row["arr_eff"] = '/';
-                                            else
-                                                $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+                                                while ($row = $result->fetch_array()) {
+                                                    echo '
+                                                        <tr class="align-middle" id="' . $row["id_code"] . '">
+                                                            <td class="text-center">
+                                                                <div>' . $row["id_code"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["surname"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["name"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                               <div>' . $row["email"] . '</div>
+                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                    ';
+                                                }
+                                            }
+                                        ?>
 
-                                            echo '
-                                                    <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
-                                                        <td class="text-center">
-                                                            <div>' . $row["ship"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row['trade_dep'] . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                            <div>' . $row["trade_arr"] . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                           <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                            <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["dep_eff"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["arr_eff"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
-                                                        </td>
-                                                        <td>
-                                                    </tr>
-                                                ';
-                                        }
-                                    }
-
-                                    ?>
-
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!--End Captains List-->
+
+                    <!--Begin Ships List-->
+                    <div class="col-md-4">
+                        <div class="card mb-5">
+                            <div class="card-header">
+                                <span class="fs-2">
+                                    Navi
+                                </span>
+                                <span class="fs-3" style="float: right">
+                                    <button type="button" class="btn btn-primary addshipButton">
+                                        Aggiungi
+                                    </button>
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 320px;overflow-y: auto;" id="ships">
+                                    <table class="table border">
+                                        <thead class="table-light fw-semibold ">
+                                        <tr class="align-middle">
+                                            <th class="text-center">
+                                                ID
+                                            </th>
+                                            <th class="text-center">
+                                                Nome
+                                            </th>
+                                            <th class="text-center">
+                                                Tratta
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <?php
+
+                                                $sql = "
+                                                    
+                                                    SELECT * FROM ships
+                                                       ORDER BY id ASC
+                                                
+                                                ";
+
+                                                if ($result = $connection->query($sql)) {
+
+                                                    while ($row = $result->fetch_array()) {
+                                                        echo '
+                                                            <tr class="align-middle" id="' . $row["id"] . '">
+                                                                <td class="text-center">
+                                                                    <div>' . $row["id"] . '</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div>' . $row["name"] . '</div>
+                                                                </td>
+                                                                <td class="text-center">';
+                                                        if($row['harb1'] && $row['harb2'])
+                                                            echo "<div>" . $row['harb1'] . "-" . $row['harb2'] . "</div>";
+                                                        else
+                                                            echo "<div>Riserva</div>";
+                                                        echo "</td><td></td></tr>";
+                                                    }
+
+                                                }
+                                            ?>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Ships List-->
                 </div>
-                <!--End Routes List-->
+            </div>
+        </div>
+        <!--End Content -->
 
-                <!--Begin Captains List-->
-                <div class="col-md-9">
-                    <div class="card mb-5">
-                        <div class="card-header"><span class="fs-2">Ultimi Capitani</span></div>
+        <!--Begin Footer -->
+        <footer class="footer">
+            <div class="">Flegias & Tourist</a>
+            </div>
+            <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
+        </footer>
+        <!-- End Footer -->
+    </div>
 
-                        <div class="card-body">
-                            <div class="table-responsive" id="warehouseTable">
-                                <table class="table border">
-                                    <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <th class="text-center">ID</th>
-                                        <th class="">Cognome</th>
-                                        <th class="">Nome</th>
-                                        <th class="">Email</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
+    <!-- Modals -->
 
-                                    <?php
-
-                                    $sql = "
-                                        
-                                        SELECT id_code, name, surname, email FROM users
-                                            WHERE type = 'capitano' ORDER BY id_code DESC LIMIT 5
-                                    
-                                    ";
-
-                                    if ($result = $connection->query($sql)) {
-
-                                        while ($row = $result->fetch_array()) {
+    <div class="modal fade" id="AddShips" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" id="add_ship">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="AddShipsTitle">Aggiungi nave</h5>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Nome*</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="trade" class="form-label">Tratte*</label>
+                            <select class="form-select" name="trade" required>
+                                <option value="-" selected>Riserva</option>
+                                <?php
+                                    if($result = $connection->query($sqltrades))
+                                        while($row = $result->fetch_array(MYSQLI_ASSOC))
                                             echo '
-                                                <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
-                                                        <div>' . $row["id_code"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . $row["surname"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . $row["name"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                       <div>' . $row["email"] . '</div>
-                                                    </td>
-                                                </tr>
+                                                <option value="' . $row['harb_dep']. '-' . $row['harb_arr'] . '">' . $row['harb_dep']. '-' . $row['harb_arr'] . '</option>
                                             ';
-                                        }
-                                    }
-                                    ?>
-
-                                    </tbody>
-                                </table>
-                            </div>
+                                ?>
+                            </select>
                         </div>
                     </div>
+                    <input type="text" name="AddShip" value="1" hidden>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary addshipButton">Close</button>
+                    <button type="submit" class="btn btn-primary" form="add_ship">Aggiungi</button>
                 </div>
-                <!--End Captains List-->
-
-                <!--Begin Ships List-->
-                <div class="col-md-3">
-                    <div class="card mb-5">
-                        <div class="card-header"><span class="fs-2">Ultime Navi</span></div>
-
-                        <div class="card-body">
-                            <div class="table-responsive" id="warehouseTable">
-                                <table class="table border">
-                                    <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <th class="text-center">ID</th>
-                                        <th class="">Nome</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    <?php
-
-                                    $sql = "
-                                        
-                                        SELECT * FROM ships
-                                           ORDER BY id DESC LIMIT 5
-                                    
-                                    ";
-
-                                    if ($result = $connection->query($sql)) {
-
-                                        while ($row = $result->fetch_array()) {
-                                            echo '
-                                                <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
-                                                        <div>' . $row["id"] . '</div>
-                                                    </td>
-                                                    <td class="" style="padding: 20px">
-                                                        <div>' . $row["name"] . '</div>
-                                                    </td>
-                                                </tr>
-                                            ';
-                                        }
-                                    }
-                                    ?>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--End Ships List-->
             </div>
         </div>
     </div>
-    <!--End Content -->
 
-    <!--Begin Footer -->
-    <footer class="footer">
-        <div class="">Flegias & Tourist</a>
-        </div>
-        <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
-    </footer>
-    <!-- End Footer -->
-</div>
-</body>
+
+    </body>
+
+    <script>
+
+        var myModal = new coreui.Modal($('#AddShips'), {
+            keyboard: false
+        })
+
+        $(document).on('click', '.addshipButton', function (){
+            $('#AddShips').modal('toggle');
+        })
+
+
+        $('.deleteButton').click(function(){
+            var tr = $(this).closest('tr'),
+                del_id = $(tr).attr('id');
+
+            $.ajax({
+                method: 'GET',
+                url: "php/deleteship.php?id="+ del_id,
+                cache: false,
+                success:function(result){
+                    tr.fadeOut(1000, function(){
+                        $(this).remove();
+                    });
+                }
+            });
+        });
+
+        $(document).on("click", ".orderButton", function () {
+            var column = $(this).attr("id"),
+                order = $(this).data("order");
+
+            $.ajax({
+                url: "php/sortships.php",
+                method: "POST",
+                data: {column: column, order: order},
+                success: function (data) {
+                    $('#ships').html(data);
+                }
+            });
+        });
+
+    </script>
 
 </html>

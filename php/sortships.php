@@ -26,9 +26,9 @@
             <thead class="table-light fw-semibold">
                 <tr class="align-middle">
                     <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="' . $ord . '">ID</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="' . $ord . '">Nome</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="max_pass" data-order="' . $ord . '">Max passeggeri</a></th>
-                    <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="max_veh" data-order="' . $ord . '">Max veicoli</a></th>
+                    <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="' . $ord . '">Nome</a></th>
+                    <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="harb1" data-order="' . $ord . '">Porto n. 1</a></th>
+                    <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="harb2" data-order="' . $ord . '">Porto n. 2</a></th>
                     <th class="text-center"></th>
                     <th class="text-center"></th>
                     <th class="text-end"></th>
@@ -38,21 +38,21 @@
             <tbody>
     ';
 
-    while($row = $result->fetch_array(MYSQLI_ASSOC))
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
         $out .= '
         
             <tr class="align-middle" id="' . $row["id"] . '">
                 <td class="text-center">
                     <div>' . $row["id"] . '</div>
                 </td>
-                <td class="" style="padding: 20px">
+                <td class="text-center">
                     <div>' . $row["name"] . '</div>
                 </td>
-                <td class="" style="padding: 20px">
-                    <div>' . $row["max_pass"] . '</div>
+                <td class="text-center">
+                    <div>'; $out .= $row["harb1"] ? $row["harb1"] : "/"; $out .= '</div>
                 </td>
-                <td class="" style="padding: 20px">
-                   <div>' . $row["max_veh"] . '</div>
+                <td class="text-center">
+                   <div>'; $out .= $row["harb2"] ? $row["harb2"] : "/"; $out .= '</div>
                 </td>
                 <td></td>
                 <td></td>
@@ -64,8 +64,8 @@
                 </form>
                 </td>
             </tr>
-        
         ';
+    }
 
     $out .= '</tbody></table>';
 

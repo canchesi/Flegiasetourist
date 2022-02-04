@@ -141,7 +141,7 @@
                                             <option value="amministratore">
                                                 Amministratore
                                             </option>
-                                            <option value="capitano">
+                                            <option value="capitano" <?php if(isset($_GET['type']) && $_GET['type'] == 'capitano') echo 'selected';?>>
                                                 Capitano
                                             </option>
                                         </select>
