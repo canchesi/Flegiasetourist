@@ -235,53 +235,60 @@
                                                 ";
 
                                         if ($result = $connection->query($sql)) {
-
-                                            while ($row = $result->fetch_array()) {
-                                                if (!$row["dep_eff"])
-                                                    $row["dep_eff"] = '/';
-                                                else
-                                                    $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
-                                                if (!$row["arr_eff"])
-                                                    $row["arr_eff"] = '/';
-                                                else
-                                                    $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
-
+                                            $row = $result->fetch_array();
+                                            if(!$row)
                                                 echo '
-                                                        <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
-                                                            <td class="text-center">
-                                                                <div>' . $row["ship"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row['trade_dep'] . '</div>
-                                                            </td>
-                                                            <td class="text-center" >
-                                                                <div>' . $row["trade_arr"] . '</div>
-                                                            </td>
-                                                            <td class="text-center" >
-                                                               <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
-                                                            </td>
-                                                            <td class="text-center" >
-                                                                <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row["dep_eff"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row["arr_eff"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
-                                                            </td>
-                                                            <td>
-                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="text-center">Nessuna rotta per oggi</div>
+                                                ';
+                                            else {
+                                                while ($row) {
+                                                    if (!$row["dep_eff"])
+                                                        $row["dep_eff"] = '/';
+                                                    else
+                                                        $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+                                                    if (!$row["arr_eff"])
+                                                        $row["arr_eff"] = '/';
+                                                    else
+                                                        $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+
+                                                    echo '
+                                                            <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                                <td class="text-center">
+                                                                    <div>' . $row["ship"] . '</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div>' . $row['trade_dep'] . '</div>
+                                                                </td>
+                                                                <td class="text-center" >
+                                                                    <div>' . $row["trade_arr"] . '</div>
+                                                                </td>
+                                                                <td class="text-center" >
+                                                                   <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                                </td>
+                                                                <td class="text-center" >
+                                                                    <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div>' . $row["dep_eff"] . '</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div>' . $row["arr_eff"] . '</div>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                                                                </td>
+                                                                <td>
+                                                            </tr>
                                                     ';
+                                                    $row = $result->fetch_array();
+                                                }
+                                                echo '</tbody></table>';
                                             }
                                         }
 
                                         ?>
-
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -306,13 +313,13 @@
                                 <div class="table-responsive" style="max-height: 320px;overflow-y: auto;" id="captains">
                                     <table class="table border">
                                         <thead class="table-light fw-semibold">
-                                        <tr class="align-middle">
-                                            <th class="text-center">ID</th>
-                                            <th class="text-center">Cognome</th>
-                                            <th class="text-center">Nome</th>
-                                            <th class="text-center">Email</th>
-                                            <th></th>
-                                        </tr>
+                                            <tr class="align-middle">
+                                                <th class="text-center">ID</th>
+                                                <th class="text-center">Cognome</th>
+                                                <th class="text-center">Nome</th>
+                                                <th class="text-center">Email</th>
+                                                <th></th>
+                                            </tr>
                                         </thead>
                                         <tbody>
 

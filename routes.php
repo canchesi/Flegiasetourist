@@ -208,7 +208,7 @@ require_once('php/config.php');
                                                             <div>' . $row["arr_eff"] . '</div>
                                                         </td>
                                                         <td class="text-center">
-                                                            <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                                                            <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                                                         </td>
                                                         <td>
                                                             <form method="GET" class="">

@@ -37,7 +37,7 @@
             ";
 
             if (!($result = $connection->query($sql)))
-                echo "Errore nell\'invio dei dati.". $sql;
+                echo "<script>alert('Errore nell'invio dei dati.')</script>";
 
         }
     }
@@ -168,28 +168,10 @@
                                         <select class="form-select" id="trade_dep" name="trade_dep" required>
                                             <option disabled selected>Partenza</option>
                                             <?php
-
-                                                $cities = array();
-                                                $sql = '
-                                                
-                                                    SELECT harb_dep, harb_arr
-                                                        FROM trades
-                                                        ORDER BY harb_dep
-                                                
-                                                ';
-
-                                                if ($result = $connection->query($sql)) {
-                                                    $last = '';
-                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                                                        if ($row['harb_dep'] != $last) {
-                                                            $last = $row['harb_dep'];
-                                                            echo "
-                                                                <option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>
-                                                            ";
-                                                        }
-                                                        $cities[] = array($row['harb_dep'] => $row['harb_arr']);
-                                                    }
-                                                }
+                                                $sql = "SELECT * FROM harbors";
+                                                if ($result = $connection->query($sql))
+                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                                        echo "<option value = '" . $row['city'] . "'> " . $row['city'] . " </option>";
                                             ?>
                                         </select>
                                     </div>
