@@ -7,6 +7,8 @@ session_start();
 
 if (!isset($_SESSION['id']))
     header("location: login.php");
+else if ($_SESSION['type'] === 'capitano')
+    header('location: dashboard.php');
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
@@ -129,13 +131,19 @@ if(isset($_POST['name']))
                                     <label for="name" class="form-label">Nome*</label>
                                     <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="name" class="form-label">Max passeggeri*</label>
-                                    <input type="number" class="form-control" id="max_pass" name="max_pass" placeholder="Max passeggeri" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="name" class="form-label">Max veicoli*</label>
-                                    <input type="number" class="form-control" id="max_veh" name="max_veh" placeholder="Max veicoli" required>
+                                <div class="col-md-6">
+                                    <label for="trade" class="form-label">Tratta*</label>
+                                    <select class="form-select" name="trade" required>
+                                        <option value="-" selected>Riserva</option>
+                                        <?php
+                                            $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
+                                            if($result = $connection->query($sqltrades))
+                                                while($row = $result->fetch_array(MYSQLI_ASSOC))
+                                                    echo '
+                                                        <option value="' . $row['harb_dep']. '-' . $row['harb_arr'] . '">' . $row['harb_dep']. '-' . $row['harb_arr'] . '</option>
+                                                    ';
+                                        ?>
+                                    </select>
                                 </div>
                                 <div class="col-12 mt-4">
                                     <button type="submit" class="btn btn-primary">Aggiungi</button>
@@ -166,16 +174,16 @@ if(isset($_POST['name']))
 <?php
 
 if(isset($_POST['name'])) {
+
     $name = $connection->real_escape_string(ucfirst($_POST['name']));
-    $num_pass = $_POST['max_pass'];
-    $num_veic = $_POST['max_veh'];
+    $trade = explode('-',$_POST['trade'],2);
 
     $sql = "
         
-                INSERT INTO ships (name, max_pass, max_veh)
-                    VALUES ('$name', '$num_pass', '$num_veic');
-                
-            ";
+        INSERT INTO ships (name, harb1, harb2)
+            VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
+        
+    ";
 
     if (!$result = $connection->query($sql))
                 die('<script>alert("Errore nell\'invio dei dati.")</script>');

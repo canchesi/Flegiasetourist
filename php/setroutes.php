@@ -1,11 +1,20 @@
 <?php
 
     require_once("config.php");
+    $sql = '
+                                                
+        SELECT harb_dep, harb_arr
+            FROM trades
+            
+    ';
+    $arr = array();
 
-    $row = array();
-    foreach (json_decode($_GET['cities']) as $cities)
-        foreach ($cities as $dep => $arr)
-            if ($dep == $_GET['city'])
-                $row[] = $arr;
+    if($result = $connection->query($sql)){
+        while($row = $result->fetch_array(MYSQLI_ASSOC))
+            if($_GET['city'] == $row['harb_dep'])
+                $arr[] = $row['harb_arr'];
+            else if ($_GET['city'] == $row['harb_arr'])
+                $arr[] = $row['harb_dep'];
+    }
 
-    echo json_encode($row);
+    echo json_encode($arr);

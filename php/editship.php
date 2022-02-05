@@ -6,6 +6,8 @@
 
     if (!isset($_SESSION['id']))
         header("location: login.php");
+    else if ($_SESSION['type'] === 'capitano')
+        header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
@@ -16,7 +18,7 @@
     
         SELECT *
         FROM ships
-        WHERE id = " . $_GET['id'] . " 
+        WHERE id = '" . $_GET['id'] . "' 
         
         ";
 
@@ -137,13 +139,25 @@
                                         <label for="name" class="form-label">Nome</label>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Nome" value="<?php echo $row['name'] ?>" required>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="max_pass" class="form-label">Max passeggeri</label>
-                                        <input type="number" class="form-control" id="max_pass" name="max_pass" placeholder="Max passeggeri" value="<?php echo $row['max_pass'] ?>" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="max_veh" class="form-label">Max veicoli</label>
-                                        <input type="number" class="form-control" id="max_veh" name="max_veh" placeholder="Max veicoli" value="<?php echo $row['max_veh'] ?>" required>
+                                    <div class="col-md-6">
+                                        <label for="max_veh" class="form-label">Tratta</label>
+                                        <select class="form-select" name="trade">
+                                            <option value="" selected></option>
+                                            <?php
+
+                                            $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
+
+                                            if($result2 = $connection->query($sqltrades)){
+                                                while($row2 = $result2->fetch_array(MYSQLI_ASSOC)){
+                                                    echo '
+                                                        <option value="' . $row2['harb_dep']. '-' . $row2['harb_arr'] . '"';
+                                                        if($row2['harb_dep'] == $row['harb1'] && $row2['harb_arr'] == $row['harb2'])
+                                                            echo 'selected';
+                                                        echo '>' . $row2['harb_dep']. '-' . $row2['harb_arr'] . '</option>';
+                                                }
+                                            }
+                                            ?>
+                                        </select>
                                     </div>
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary">Aggiorna</button>
@@ -176,16 +190,14 @@
     if(isset($_POST['name'])) {
         $id = $_GET['id']; //easy
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
-        $num_pass = $_POST['max_pass'];
-        $num_veic = $_POST['max_veh'];
-
+        $trades = explode('-', $_POST['trade'], 2);
         $sql = "
         
                 UPDATE ships
                     SET
                         name = '$name',
-                        max_pass = '$num_pass',
-                        max_veh = '$num_veic'
+                        harb1 = NULLIF('$trades[0]',''),
+                        harb2 = NULLIF('$trades[1]','')
                     WHERE id = $id
                 
             ";

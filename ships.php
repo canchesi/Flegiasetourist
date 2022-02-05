@@ -5,6 +5,8 @@ session_start();
 
 if (!isset($_SESSION['id']))
     header("location: login.php");
+else if ($_SESSION['type'] === 'capitano')
+    header('location: dashboard.php');
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
@@ -147,19 +149,19 @@ else if ($_SESSION['type'] === 'cliente')
                                                     ID
                                                 </a>
                                             </th>
-                                            <th class="">
+                                            <th class="text-center">
                                                 <a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">
                                                     Nome
                                                 </a>
                                             </th>
-                                            <th class="">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="max_pass" data-order="asc">
-                                                    Max passeggeri
+                                            <th class="text-center">
+                                                <a href="#" class="btn btn-ghost-dark orderButton" id="harb1" data-order="asc">
+                                                    Porto n. 1
                                                 </a>
                                             </th>
-                                            <th class="">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="max_veh" data-order="asc">
-                                                    Max veicoli
+                                            <th class="text-center">
+                                                <a href="#" class="btn btn-ghost-dark orderButton" id="harb2" data-order="asc">
+                                                    Porto n. 2
                                                 </a>
                                             </th>
                                             <th class="text-center"></th>
@@ -170,45 +172,45 @@ else if ($_SESSION['type'] === 'cliente')
                                     </thead>
                                     <tbody>
 
-                                    <?php
+                                        <?php
 
-                                        $sql = "
+                                            $sql = "
+                                                
+                                                SELECT * 
+                                                FROM ships
                                             
-                                            SELECT * 
-                                            FROM ships
-                                        
-                                        ";
+                                            ";
 
-                                        if ($result = $connection->query($sql)) {
+                                            if ($result = $connection->query($sql)) {
 
-                                            while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                                                echo '
-                                                    <tr class="align-middle" id="' . $row["id"] . '">
-                                                        <td class="text-center">
-                                                            <div>' . $row["id"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                            <div>' . $row["name"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                            <div>' . $row["max_pass"] . '</div>
-                                                        </td>
-                                                        <td class="" style="padding: 20px">
-                                                           <div>' . $row["max_veh"] . '</div>
-                                                        </td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td>
-                                                        <form method="GET" class="">
-                                                            <a href="php/editship.php?id=' . $row['id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                            <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                                                        </form>
-                                                        </td>
-                                                    </tr>
-                                                ';
+                                                while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                                                    echo '
+                                                        <tr class="align-middle" id="' . $row["id"] . '">
+                                                            <td class="text-center">
+                                                                <div>' . $row["id"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["name"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>'; echo $row["harb1"] ? $row["harb1"] : "/"; echo '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                               <div>'; echo $row["harb2"] ? $row["harb2"] : "/"; echo '</div>
+                                                            </td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>
+                                                            <form method="GET" class="">
+                                                                <a href="php/editship.php?id=' . $row['id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                                <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                                                            </form>
+                                                            </td>
+                                                        </tr>
+                                                    ';
+                                                }
                                             }
-                                        }
                                         ?>
 
                                     </tbody>

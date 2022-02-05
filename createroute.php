@@ -6,6 +6,8 @@
 
     if (!isset($_SESSION['id']))
         header("location: login.php");
+    else if ($_SESSION['type'] === 'capitano')
+        header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
@@ -29,20 +31,51 @@
         if ($depExp >= $arrExp)
             $error = true;
         else {
+            $ret = 1;
+            $sql = "SELECT harb_dep FROM trades";
+
+            if($result = $connection->query($sql))
+                while(($row = $result->fetch_array()) && $ret)
+                    if($tradeDep == $row['harb_dep'])
+                        $ret = 0;
+
+            if($ret) {
+                $tmp = $tradeDep;
+                $tradeDep = $tradeArr;
+                $tradeArr = $tmp;
+            }
+
             $sql = "
                     
-                INSERT INTO routes (ship_id, dep_exp, arr_exp, captain, trade_dep, trade_arr)
-                    VALUES ('$shipID', '$depExp', '$arrExp', '$captain', '$tradeDep', '$tradeArr');
+                INSERT INTO routes (ship_id, dep_exp, arr_exp, captain, trade_dep, trade_arr, ret)
+                    VALUES ('$shipID', '$depExp', '$arrExp', '$captain', '$tradeDep', '$tradeArr', $ret);
                 
             ";
 
             if (!($result = $connection->query($sql)))
-                echo "Errore nell\'invio dei dati.". $sql;
+                echo "<script>alert('Errore nell'invio dei dati.')</script>";
 
         }
+
     }
 
+    if(isset($_GET['ajax'])) {
 
+        $sql = "SELECT harb_dep, harb_arr FROM trades";
+        $out = '<option disabled selected>Partenza</option>';
+        if ($result = $connection->query($sql)) {
+            if ($_GET['ret'] == 0) {
+                while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                    $out .= "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
+            } else {
+                while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                    $out .= "<option value = '" . $row['harb_arr'] . "'> " . $row['harb_arr'] . " </option>";
+            }
+            echo $out;
+        }
+
+        exit();
+    }
 
 ?>
 
@@ -165,31 +198,17 @@
                                     ?>
                                     <div class="col-md-4">
                                         <label for="trade_dep" class="form-label">Porto di partenza*</label>
+                                        <span class="" style="float: right">
+                                            <label for="return" class="form-label">Inverti</label>
+                                            <input type="checkbox" id="return">
+                                        </span>
                                         <select class="form-select" id="trade_dep" name="trade_dep" required>
                                             <option disabled selected>Partenza</option>
                                             <?php
-
-                                                $cities = array();
-                                                $sql = '
-                                                
-                                                    SELECT harb_dep, harb_arr
-                                                        FROM trades
-                                                        ORDER BY harb_dep
-                                                
-                                                ';
-
-                                                if ($result = $connection->query($sql)) {
-                                                    $last = '';
-                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                                                        if ($row['harb_dep'] != $last) {
-                                                            $last = $row['harb_dep'];
-                                                            echo "
-                                                                <option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>
-                                                            ";
-                                                        }
-                                                        $cities[] = array($row['harb_dep'] => $row['harb_arr']);
-                                                    }
-                                                }
+                                                $sql = "SELECT harb_dep FROM trades";
+                                                if ($result = $connection->query($sql))
+                                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                                        echo "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
                                             ?>
                                         </select>
                                     </div>
@@ -245,6 +264,32 @@
 
     <script>
 
+        $(document).ready(function () {
+            var checkbox = $('#return');
+
+            checkbox.change(function () {
+                if (checkbox.is(':checked')) {
+                    $.ajax({
+                        type: "GET",
+                        data: {ajax: 1, ret: 1},
+                        success: function (data) {
+                            $('#trade_dep').empty();
+                            $('#trade_dep').html(data);
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        data: {ajax: 1, ret: 0},
+                        success: function (data) {
+                            $('#trade_dep').empty();
+                            $('#trade_dep').html(data);
+                        }
+                    });
+                }
+            });
+        });
+
         $(document).ready(function (){
                 $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
                 $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
@@ -253,18 +298,14 @@
                 $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
         });
 
-
-        var datedep;
-        $("#trade_dep").change(function (){
+        $("#trade_dep").on('change', function (){
             $("#arr_div").empty();
-            $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" required> <option disabled selected>Arrivo</option></select>');
-            var cities = '<?php echo json_encode($cities);?>',
-                arr = $("#trade_arr");
+            $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" required></select>');
+            var arr = $("#trade_arr");
             $.ajax({
                 url: "php/setroutes.php?city="+$("#trade_dep option:selected").text().trim(),
                 type: "GET",
                 dataType: 'json',
-                data: {cities: cities},
                 success:function (response){
                     arr.empty();
                     arr.append("<option disabled selected>Arrivo</option>");
@@ -308,6 +349,9 @@
                     }
                     for (id in response[1]) {
                         $('#ship_id').append('<option value="'+id+'">'+ response[1][id] +'</option>');
+                    }
+                    for (id in response[2]) {
+                        $('#ship_id').append('<option value="'+id+'">'+ response[2][id] +'</option>');
                     }
                 }
             });

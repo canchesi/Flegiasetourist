@@ -1,19 +1,23 @@
 <?php
 
     require_once('config.php');
-
+    session_start();
     $out = "";
     $ord = $_POST["order"];
 
     $sql = "
     
-        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
+        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
             FROM ships JOIN routes
                 ON ship_id = id
             JOIN users
-                ON id_code = captain
+                ON id_code = captain ";
+
+    if($_SESSION['type'] === 'capitano')
+        $sql .= " WHERE id_code = '" . $_SESSION['id'] . "'";
+
+        $sql .= "
             ORDER BY " . $_POST["column"] . " " . $_POST["order"] . " 
-        
         ";
 
     if(!($result = $connection->query($sql)))
@@ -43,6 +47,12 @@
     ';
 
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        if($row['ret']){
+            $tmp = $row['trade_dep'];
+            $row['trade_dep'] = $row['trade_arr'];
+            $row['trade_arr'] = $tmp;
+            unset($tmp);
+        }
         if(!$row["dep_eff"])
             $row["dep_eff"] = '/';
         else
@@ -76,30 +86,35 @@
                     <div>' . $row["arr_eff"] . '</div>
                 </td>
                 <td class="text-center">
-                    <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                    <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                 </td>
                 <td>
                     <form method="GET" class="">
-                        <div>
-                            <a href="php/editeroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
-                                <i class="cil-pen"></i>
-                            </a>
-                            <a href="#" class="btn btn-danger deleteButton m-1">
-                                <i class="cil-trash"></i>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="#" class="btn btn-info m-1" >
-                                <i class="cil-people"></i>
-                            </a>   
-                            <a href="#" class="btn btn-warning m-1" >
-                                <i class="cil-notes"></i>
-                            </a> 
-                        </div>
-                    </form>
-                </td>
-            </tr>
-        
+                        ';
+        if($_SESSION['type'] !== 'capitano')
+            $out .= '
+                <div>
+                    <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
+                        <i class="cil-pen"></i>
+                    </a>
+                    <a href="#" class="btn btn-danger deleteButton m-1">
+                        <i class="cil-trash"></i>
+                    </a>
+                </div>';
+        $out .= '<div>';
+        if($_SESSION['type'] !== 'capitano')
+            $out .= '
+                <a href="#" class="btn btn-info m-1" >
+                    <i class="cil-people"></i>
+                </a>';
+        $out .= '
+                <a href="#" class="btn btn-warning m-1" >
+                    <i class="cil-notes"></i>
+                </a> 
+            </div>
+        </form>
+    </td>
+</tr>
         ';
     }
 

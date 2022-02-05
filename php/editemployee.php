@@ -7,6 +7,8 @@
 
     if (!isset($_SESSION['id']))
         header("location: login.php");
+    else if ($_SESSION['type'] === 'capitano')
+        header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
@@ -521,14 +523,14 @@ if($result = $connection->query($sql))
 
     <script>
         $("#ProvR").change(function(){
-            var deptid = $(this).val();
 
-            /*
-                    alert($("#ProvR option:selected").text().replace(/\s+/g, ''));
-            */
+            var city = $("#ProvR option:selected").text().trim();
+
+            if(city === "Aosta")
+                city = "Valle d'Aosta";
 
             $.ajax({
-                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvR option:selected").text().trim(),
+                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+ city,
                 type: 'get',
                 dataType: 'json',
                 success:function(response) {
@@ -553,10 +555,14 @@ if($result = $connection->query($sql))
 
     <script>
         $("#ProvD").change(function(){
-            var deptid = $(this).val();
+
+            var city = $("#ProvD option:selected").text().trim();
+
+            if(city === "Aosta")
+                city = "Valle d'Aosta";
 
             $.ajax({
-                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/'+$("#ProvD option:selected").text().replace(/\s+/g, ''),
+                url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + city,
                 type: 'get',
                 dataType: 'json',
                 success:function(response) {

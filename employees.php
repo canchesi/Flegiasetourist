@@ -7,6 +7,8 @@ if (!isset($_SESSION['id']))
     header("location: login.php");
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
+else if ($_SESSION['type'] === 'capitano')
+    header('location: dashboard.php');
 
 ?>
 
@@ -33,7 +35,11 @@ else if ($_SESSION['type'] === 'cliente')
     <script src="src/jquery/jquery.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"
+            integrity="sha256-xH4q8N0pEzrZMaRmd7gQVcTZiFei+HfRTBPJ1OGXC0k=" crossorigin="anonymous"></script>
+
     <title>Dipendenti</title>
+
 </head>
 <body>
 
@@ -138,16 +144,21 @@ else if ($_SESSION['type'] === 'cliente')
                             <div class="table-responsive" id="warehouseTable">
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
-                                        <tr class="align-middle">
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="asc">ID</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type" data-order="asc">Grado</a></th>
-                                            <th class="text-center"></th>
-                                            <th class="text-end"></th>
-                                            <th></th>
-                                        </tr>
+                                    <tr class="align-middle">
+                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                   id="id_code" data-order="asc">ID</a></th>
+                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname"
+                                                        data-order="asc">Cognome</a></th>
+                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name"
+                                                        data-order="asc">Nome</a></th>
+                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email"
+                                                        data-order="asc">Email</a></th>
+                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type"
+                                                        data-order="asc">Grado</a></th>
+                                        <th class="text-center"></th>
+                                        <th class="text-end"></th>
+                                        <th></th>
+                                    </tr>
                                     </thead>
                                     <tbody>
 
@@ -157,13 +168,40 @@ else if ($_SESSION['type'] === 'cliente')
                                         
                                         SELECT * FROM users
                                             WHERE type != 'cliente'
+                                            ORDER BY deleted ASC
                                     
                                     ";
 
                                     if ($result = $connection->query($sql)) {
 
                                         while ($row = $result->fetch_array()) {
-                                            echo '
+
+                                            if ($row['deleted']) {
+                                                echo '
+                                                <tr class="align-middle" id="' . $row["id_code"] . '">
+                                                    <td class="text-center">
+                                                        <div class="text-decoration-line-through">' . $row["id_code"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                        <div class="text-decoration-line-through">' . $row["surname"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                        <div class="text-decoration-line-through">' . $row["name"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                       <div class="text-decoration-line-through">' . $row["email"] . '</div>
+                                                    </td>
+                                                    <td class="" style="padding: 20px">
+                                                        <div class="text-decoration-line-through">' . ucfirst($row["type"]) . '</div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            ';
+                                            } else {
+                                                echo '
                                                 <tr class="align-middle" id="' . $row["id_code"] . '">
                                                     <td class="text-center">
                                                         <div>' . $row["id_code"] . '</div>
@@ -183,13 +221,14 @@ else if ($_SESSION['type'] === 'cliente')
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                    <form method="GET" class="">
+                                                    <form method="GET" >
                                                         <a href="php/editemployee.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                                                         <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
                                                     </form>
                                                     </td>
                                                 </tr>
                                             ';
+                                            }
                                         }
                                     }
                                     ?>
@@ -247,17 +286,19 @@ else if ($_SESSION['type'] === 'cliente')
         }
     }
 
-    $('.deleteButton').click(function(){
+    $('.deleteButton').on('click',function () {
         var tr = $(this).closest('tr'),
+            btns = $(this).closest('form'),
             del_id = $(tr).attr('id');
 
         $.ajax({
             method: 'GET',
-            url: "php/deleteuser.php?id="+ del_id,
+            url: "php/deleteuser.php?id=" + del_id,
             cache: false,
-            success:function(result){
-                tr.fadeOut(1000, function(){
-                    $(this).remove();
+            success: function (result) {
+                tr.addClass("text-decoration-line-through");
+                btns.fadeOut(1000, function(){
+                    btns.remove();
                 });
             }
         });
@@ -276,6 +317,7 @@ else if ($_SESSION['type'] === 'cliente')
             }
         });
     });
+
 
 </script>
 

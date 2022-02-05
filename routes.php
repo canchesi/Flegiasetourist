@@ -59,25 +59,29 @@ require_once('php/config.php');
                     Rotte
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="employees.php">
-                    <i class="cil-contact nav-icon "></i>
-                    Dipendenti
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="ships.php">
-                    <i class="cil-boat-alt nav-icon"></i>
-                    Navi
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="clients.php">
-                    <i class="cil-user nav-icon"></i>
-                    Clienti
-                </a>
-            </li>
-
+            <?php
+            if($_SESSION['type'] !== 'capitano')
+                echo '
+                    <li class="nav-item">
+                        <a class="nav-link" href="employees.php">
+                            <i class="cil-contact nav-icon "></i>
+                            Dipendenti
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ships.php">
+                            <i class="cil-boat-alt nav-icon"></i>
+                            Navi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="clients.php">
+                            <i class="cil-user nav-icon"></i>
+                            Clienti
+                        </a>
+                    </li>
+                ';
+            ?>
         </ul>
         <button class="sidebar-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>
     </div>
@@ -121,7 +125,10 @@ require_once('php/config.php');
                             <div class="card-header"><span class="fs-2">Rotte</span></div>
                             <div class="card-body">
                                 <div class=" d-flex flex-row-reverse">
-                                    <a href="createroute.php" class="btn btn-primary m-2">Aggiungi</a>
+                                    <?php
+                                        if($_SESSION['type'] !== 'capitano')
+                                            echo '<a href="createroute.php" class="btn btn-primary m-2">Aggiungi</a>';
+                                    ?>
                                     <div class="m-2"></div>
                                     <div class="lg-col-2">
                                         <input class="form-control m-2 me-1" id="searchInputDate" onkeyup="searchElementsDate()"
@@ -140,8 +147,7 @@ require_once('php/config.php');
                                         type="text"
                                         placeholder="Cerca per nave">
                                     </div>
-                                    <div class="col-md-3"></div>
-                                    <a href="trades.php" class="btn btn-primary m-2 col-md-2">Vedi tratte</a>
+                                    <div class="m-2"></div>
                                 </div>
                                 <div class="table-responsive" id="warehouseTable">
                                     <table class="table border">
@@ -164,75 +170,89 @@ require_once('php/config.php');
 
                                             $sql = "
                                             
-                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname
+                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
                                                     FROM ships JOIN routes
                                                         ON ship_id = id
                                                     JOIN users
                                                         ON id_code = captain
 
                                             ";
-
+                                            if($_SESSION['type'] === 'capitano')
+                                                $sql .= 'WHERE id_code = ' . $_SESSION['id'];
                                             if ($result = $connection->query($sql)) {
-
                                                 while ($row = $result->fetch_array()) {
+                                                    if($row['ret']){
+                                                        $tmp = $row['trade_dep'];
+                                                        $row['trade_dep'] = $row['trade_arr'];
+                                                        $row['trade_arr'] = $tmp;
+                                                        unset($tmp);
+                                                    }
+
                                                     if(!$row["dep_eff"])
                                                         $row["dep_eff"] = '/';
                                                     else
-                                                        $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+                                                        $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
                                                     if(!$row["arr_eff"])
                                                         $row["arr_eff"] = '/';
                                                     else
-                                                        $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+                                                        $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                     echo '
-                                                    <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] .'">
-                                                        <td class="text-center">
-                                                            <div>' . $row["ship"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row['trade_dep'] . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                            <div>' . $row["trade_arr"] . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                           <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
-                                                        </td>
-                                                        <td class="text-center" >
-                                                            <div>' .date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["dep_eff"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["arr_eff"] . '</div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
-                                                        </td>
-                                                        <td>
+                                                        <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] .'">
+                                                            <td class="text-center">
+                                                                <div>' . $row["ship"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row['trade_dep'] . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                                <div>' . $row["trade_arr"] . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                               <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                            </td>
+                                                            <td class="text-center" >
+                                                                <div>' .date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["dep_eff"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["arr_eff"] . '</div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
+                                                            </td>
+                                                            <td>
                                                             <form method="GET" class="">
-                                                                <div>
-                                                                    <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
-                                                                        <i class="cil-pen"></i>
-                                                                    </a>
-                                                                    <a href="#" class="btn btn-danger deleteButton m-1">
-                                                                        <i class="cil-trash"></i>
-                                                                    </a>
-                                                                </div>
-                                                                <div>
-                                                                    <a href="#" class="btn btn-info m-1" >
-                                                                        <i class="cil-people"></i>
-                                                                    </a>   
-                                                                    <a href="#" class="btn btn-warning m-1" >
-                                                                        <i class="cil-notes"></i>
-                                                                    </a> 
-                                                                </div>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                ';
+                                                    ';
+                                                    if($_SESSION['type'] !== 'capitano')
+                                                        echo'
+                                                            <div>
+                                                                <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
+                                                                    <i class="cil-pen"></i>
+                                                                </a>
+                                                                <a href="#" class="btn btn-danger deleteButton m-1">
+                                                                    <i class="cil-trash"></i>
+                                                                </a>
+                                                            </div>';
+                                                    echo'<div>';
+                                                    if($_SESSION['type'] !== 'capitano')
+                                                        echo'
+                                                                <a href="#" class="btn btn-info m-1" >
+                                                                    <i class="cil-people"></i>
+                                                                </a>';
+                                                    echo'
+                                                                <a href="#" class="btn btn-warning m-1" >
+                                                                    <i class="cil-notes"></i>
+                                                                </a> 
+                                                            </div>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                    ';
                                                 }
+
                                             }
                                         ?>
 

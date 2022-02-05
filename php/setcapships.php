@@ -4,33 +4,42 @@
 
     $city = $connection->real_escape_string($_GET["city"]);
     $date = $connection->real_escape_string($_GET["date"]);
-    $capship = array(array(),array());
+    $capship = array(array(),array(),array());
 
     $sql = "
         
-        SELECT id_code, name, surname
+        SELECT id_code, name, surname, ret
             FROM users LEFT JOIN routes
                 ON id_code = captain
-            WHERE type ='capitano' AND ship_id IS NULL
+            WHERE type ='capitano' AND deleted = 0 AND ship_id IS NULL
     
     ";
 
     if ($result = $connection->query($sql))
-        while($row = $result->fetch_array(MYSQLI_ASSOC))
-            $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
-
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            if($row['ret']){
+                $tmp = $row['trade_dep'];
+                $row['trade_dep'] = $row['trade_arr'];
+                $row['trade_arr'] = $tmp;
+                unset($tmp);
+            }
+                $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
+        }
     $sql = "
             
-        SELECT id, name
+        SELECT id, name, harb1, harb2, ret
             FROM ships LEFT JOIN routes
                 ON id = ship_id
-            WHERE captain IS NULL
+            WHERE captain IS NULL AND (harb1 = '$city' OR harb2 = '$city' OR harb1 IS NULL)
     
     ";
 
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC))
-            $capship[1][$row['id']] = $row['name'];
+            if(!$row['harb1'])
+                $capship[2][$row['id']] = $row['name'] . ' - Riserva';
+            else
+                $capship[1][$row['id']] = $row['name'];
 
     $sql = "
             
@@ -48,7 +57,7 @@
 
             $sql2 = "
             
-                SELECT id_code, surname, users.name, arr_exp, trade_arr, ship_id, ships.name AS ship
+                SELECT id_code, surname, users.name, arr_exp, trade_dep, trade_arr, ship_id, ships.name AS ship, ret
                     FROM users JOIN routes
                         ON id_code = captain
                     JOIN ships                    	
@@ -58,11 +67,18 @@
             ";
 
             if($result2 = $connection->query($sql2))
-                while($row = $result2->fetch_array(MYSQLI_ASSOC))
-                    if($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
+                while($row = $result2->fetch_array(MYSQLI_ASSOC)) {
+                    if($row['ret']){
+                        $tmp = $row['trade_dep'];
+                        $row['trade_dep'] = $row['trade_arr'];
+                        $row['trade_arr'] = $tmp;
+                        unset($tmp);
+                    }
+                    if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
                         $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
                         $capship[1][$row['ship_id']] = $row['ship'];
                     }
+                }
         }
 
 

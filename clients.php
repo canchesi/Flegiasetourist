@@ -5,6 +5,8 @@ session_start();
 
 if (!isset($_SESSION['id']))
     header("location: login.php");
+else if ($_SESSION['type'] === 'capitano')
+    header('location: dashboard.php');
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
@@ -137,9 +139,9 @@ else if ($_SESSION['type'] === 'cliente')
                                     <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
                                             <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="asc">ID</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
-                                            <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
                                             <th class="text-center"></th>
                                             <th class="text-center"></th>
                                             <th class="text-end"></th>
@@ -166,23 +168,23 @@ else if ($_SESSION['type'] === 'cliente')
                                                     <td class="text-center">
                                                         <div>' . $row["id_code"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class="text-center">
                                                         <div>' . $row["surname"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class="text-center">
                                                         <div>' . $row["name"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class="text-center">
                                                        <div>' . $row["email"] . '</div>
                                                     </td>
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                    <form method="GET" class="">
-                                                        <a href="php/editclient.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                        <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                                                    </form>
+                                                        <form method="GET" class="">
+                                                            <a href="php/editclient.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                            <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             ';
@@ -262,7 +264,7 @@ else if ($_SESSION['type'] === 'cliente')
             order = $(this).data("order");
 
         $.ajax({
-            url: "php/sort.php",
+            url: "php/sortclient.php",
             method: "POST",
             data: {column: column, order: order},
             success: function (data) {

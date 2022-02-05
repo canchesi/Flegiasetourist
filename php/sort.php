@@ -62,7 +62,7 @@
                 <td></td>
                 <td>
                 <form method="GET" class="">
-                    <a href="modifyitem.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                    <a href="php/edituser.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                     <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
                 </form>
                 </td>
