@@ -7,6 +7,8 @@
 
     if (!isset($_SESSION['id']))
         header("location: login.php");
+    else if ($_SESSION['type'] === 'capitano')
+        header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
@@ -82,7 +84,6 @@
                     Clienti
                 </a>
             </li>
-
         </ul>
         <button class="sidebar-toggler" type="button"
                 onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle(); "></button>

@@ -5,6 +5,8 @@ session_start();
 
 if (!isset($_SESSION['id']))
     header("location: login.php");
+else if ($_SESSION['type'] === 'capitano')
+    header('location: dashboard.php');
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
