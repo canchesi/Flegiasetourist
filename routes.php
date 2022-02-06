@@ -9,6 +9,23 @@ require_once('php/config.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
 
+    if(isset($_POST['ajax'])) {
+
+        $ids = explode('-', $_POST['id'], 2);
+        $sql = "
+        
+            SELECT content
+                FROM notes
+                WHERE ship_id = '" . $ids[0] . "' AND dep_exp = '" . $ids[1] . "' 
+        
+        ";
+
+        if($result = $connection->query($sql))
+            if($row = $result->fetch_array(MYSQLI_ASSOC))
+                echo $row['content'];
+        exit();
+    }
+
 ?>
 
 <!doctype html>
@@ -101,7 +118,22 @@ require_once('php/config.php');
 
                 <span class="fs-4">Flegias & Tourist</span>
 
-                <a href="logout.php" class="btn btn-light">Esci</a>
+                <div class="btn-group">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-coreui-toggle="dropdown" aria-expanded="false">
+
+                        <?php
+                        echo $_SESSION['name'] . ' ' . $_SESSION['surname'];
+                        ?>
+
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="<?php echo "php/editcaptain.php?id=".$_SESSION['id'];?>">Modifica Profilo</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li> <a href="logout.php" class="dropdown-item">Esci</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="header-divider"></div>
             <div class="container-fluid">
@@ -224,7 +256,6 @@ require_once('php/config.php');
                                                                 <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                                                             </td>
                                                             <td>
-                                                            <form method="GET" class="">
                                                     ';
                                                     if($_SESSION['type'] !== 'capitano')
                                                         echo'
@@ -243,11 +274,11 @@ require_once('php/config.php');
                                                                     <i class="cil-people"></i>
                                                                 </a>';
                                                     echo'
-                                                                <a href="#" class="btn btn-warning m-1" >
+                                                                <button class="btn btn-warning m-1 notes">
                                                                     <i class="cil-notes"></i>
-                                                                </a> 
+                                                                </button> 
                                                             </div>
-                                                        </form>
+                                                        
                                                     </td>
                                                 </tr>
                                                     ';
@@ -268,6 +299,28 @@ require_once('php/config.php');
         </div>
         <!--End Content -->
 
+        <!-- Begin Modal-->
+
+        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nota di Viaggio</h5>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-md-12 noteblock">
+                        </div>
+                    </div>
+                    <input type="text" value="-1" name="submittedNote" hidden>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary closenotes">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Modal-->
+
         <!--Begin Footer -->
         <footer class="footer">
             <div class="">
@@ -282,6 +335,32 @@ require_once('php/config.php');
     </body>
 
     <script>
+
+        var myModal = new coreui.Modal($('.notes'), {
+            keyboard: false
+        })
+
+        $(document).on('click', '.closenotes', function () {
+            $('#noteModal').modal('toggle');
+        })
+
+        $(document).on('click', '.notes', function () {
+            var tr = $(this).closest('tr'),
+                note_id = $(tr).attr('id');
+
+            $.ajax({
+                url: 'routes.php',
+                type: "POST",
+                data: {id: note_id, ajax: 1},
+                success:function (data){
+                    $('.noteblock').empty();
+                    $('.noteblock').html(data);
+                    $('#noteModal').modal('toggle');
+                }
+            })
+        });
+
+
         function searchElementsHarb() {
             // Declare variables
             var input, filter, table, tr, td_dep, td_arr, i, txtValue_dep, txtValue_arr;

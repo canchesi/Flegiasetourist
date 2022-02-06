@@ -25,6 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
 
             $_SESSION['id'] = $row['id_code'];
             $_SESSION['type'] = $row['type'];
+            $_SESSION['name'] = $row['name'];
+            $_SESSION['surname'] = $row['surname'];
 
             if($row['deleted'])
                 header('location: logout.php');
