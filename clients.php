@@ -100,7 +100,22 @@ else if ($_SESSION['type'] === 'cliente')
 
             <span class="fs-4">Flegias & Tourist</span>
 
-            <a href="logout.php" class="btn btn-light">Esci</a>
+            <div class="btn-group">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-coreui-toggle="dropdown" aria-expanded="false">
+
+                    <?php
+                    echo $_SESSION['name'] . ' ' . $_SESSION['surname'];
+                    ?>
+
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="<?php echo "php/editcaptain.php?id=".$_SESSION['id'];?>">Modifica Profilo</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li> <a href="logout.php" class="dropdown-item">Esci</a>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="header-divider"></div>
         <div class="container-fluid">

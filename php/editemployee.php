@@ -191,6 +191,24 @@ if($result = $connection->query($sql))
                                         <label for="cf" class="form-label">Codice Fiscale*</label>
                                         <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
                                     </div>
+
+                                    <div class="col-md-3">
+                                        <label for="cf" class="form-label">Codice Fiscale*</label>
+                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cf" class="form-label">Codice Fiscale*</label>
+                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cf" class="form-label">Codice Fiscale*</label>
+                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
+                                    </div>
+
+
+                                    <!-- END PASSWORD EDIT-->
+
+
                                     <div class="col-md-3">
                                         <label for="ProvR" class="form-label">Residenza*</label>
                                         <select id="ProvR" class="form-select" name="prov_r" required>

@@ -38,10 +38,10 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
     $sql = "
             
-                    INSERT INTO ships (name, harb1, harb2)
-                        VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
-                    
-                ";
+        INSERT INTO ships (name, harb1, harb2)
+            VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
+        
+    ";
 
     if (!($result = $connection->query($sql)))
         die('<script>alert("Errore nell\'invio dei dati.")</script>');
@@ -145,7 +145,22 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
             <span class="fs-4">Flegias & Tourist</span>
 
-            <a href="logout.php" class="btn btn-light">Esci</a>
+            <div class="btn-group">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-coreui-toggle="dropdown" aria-expanded="false">
+
+                    <?php
+                    echo $_SESSION['name'] . ' ' . $_SESSION['surname'];
+                    ?>
+
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="<?php echo "php/editcaptain.php?id=".$_SESSION['id'];?>">Modifica Profilo</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li> <a href="logout.php" class="dropdown-item">Esci</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
     <!-- End Header -->
@@ -204,7 +219,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                     <div class="card mb-12">
                         <div class="card-header"><span
                                     class="fs-2"><?php
-                                if($_SESSION['type'] === 'capitano')
+                                if ($_SESSION['type'] === 'capitano')
                                     echo 'Le tue rotte di oggi ';
                                 else
                                     echo 'Rotte di oggi ';
@@ -214,20 +229,20 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                         </div>
 
 
-                        <div class="card-body">
+                        <div class="card-body pt-0">
 
                             <?php
 
                             if ($_SESSION['type'] == 'capitano')
                                 echo '
-                                    <span>
+                                    <div class="m-2">
                                         <button class="btn btn-success my-2" id="startTripBtn">Avvia Viaggio</button>
-                                    </span>
+                                    </div>
                                 ';
                             ?>
 
                             <div class="table-responsive" id="warehouseTable">
-                                <table class="table border">
+                                <table class="table border" id="routes">
                                     <thead class="table-light fw-semibold">
                                     <tr class="align-middle">
                                         <th class="text-center">Nave</th>
@@ -260,7 +275,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                         ";
 
                                     if ($_SESSION['type'] === 'capitano')
-                                        $sql .=  "AND captain = '$id'";
+                                        $sql .= "AND captain = '$id'";
 
                                     $sql .= "ORDER BY dep_exp ASC";
 
@@ -282,11 +297,11 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                                     unset($tmp);
                                                 }
                                                 if (!$row["dep_eff"])
-                                                    $row["dep_eff"] = '/';
+                                                    $row["dep_eff"] = '~';
                                                 else
                                                     $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
                                                 if (!$row["arr_eff"])
-                                                    $row["arr_eff"] = '/';
+                                                    $row["arr_eff"] = '~';
                                                 else
                                                     $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
@@ -574,25 +589,52 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 <div class="modal fade" id="startTrip" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="AddShipsTitle">Attenzione</h5>
-                </div>
-                <div class="modal-body row">
-                    <div class="col-md-6">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AddShipsTitle">Attenzione</h5>
+            </div>
+            <div class="modal-body row">
+                <div class="col-md-6">
 
-                        Nessuna rotta per oggi!
+                    Nessuna rotta per oggi!
 
-                    </div>
                 </div>
-                <input type="text" name="AddShip" value="1" hidden>
+            </div>
+            <input type="text" name="AddShip" value="1" hidden>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="startTripBtn">Chiudi</button>
-<!--                <button type="submit" class="btn btn-primary" form="add_ship">Aggiungi</button>-->
+                <!--                <button type="submit" class="btn btn-primary" form="add_ship">Aggiungi</button>-->
             </div>
         </div>
     </div>
 </div>
 
+
+<!-- END Trip Modal -->
+
+<!-- Modal -->
+
+<div class="modal fade" id="addNote" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" id="add_Note">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AddShipsTitle">Nota di Viaggio</h5>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-12">
+                        <label for="note" class="form-label">Nota</label>
+                        <textarea class="form-control" id="note" rows="5" name="note" placeholder="Inserisci nota..."
+                                  required></textarea>
+                    </div>
+                </div>
+                <input type="text" value="-1" name="submittedNote" hidden>
+            </form>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary submitNote" form="add_Note">Aggiungi</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- END Modal -->
 
@@ -605,40 +647,65 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
         keyboard: false
     })
 
+    var myModal2 = new coreui.Modal($('#addNote'), {
+        keyboard: false,
+        backdrop: 'static'
+    })
+
     $(document).on('click', '.addshipButton', function () {
         $('#AddShips').modal('toggle');
     })
 
+    $(document).ready(function () {
 
+        if ($('#routes tr:last td:eq(5) div').text() !== '~' && $('#routes tr:last td:eq(6) div').text() !== '~')
+            $('#startTripBtn').toggleClass('btn-success btn-warning');
 
-    $(document) . on('click', '#startTripBtn', function () {
-        if(!($('#tbody').html()))
-            $('#startTrip').modal('toggle');
-    })
-
-
-
-    $(document).ready(function (){
-        if(<?php echo isset($_SESSION['start']) ? 1 : 0 ?>){
-            $('#startTripBtn').toggleClass('btn-success btn-danger');
-            $('#startTripBtn').text('Fine Viaggio');
-        }
-
-    })
-
-    $(document).on('click', '#startTripBtn', function (){
-        var txt = $('#startTripBtn').text();
-        $.ajax({
-            url: 'php/starttrip.php',
-            type: 'GET',
-            success:function(response){
+        $('#routes tbody tr').each(function (i, tr){
+            if ($(tr).find('td:eq(5) div').text() !== '~' && $(tr).find('td:eq(6) div').text() === '~') {
                 $('#startTripBtn').toggleClass('btn-success btn-danger');
-                $('#startTripBtn').text( txt === 'Avvia Viaggio' ? 'Fine Viaggio' : 'Avvia Viaggio');
-                window.location.replace('dashboard.php');
+                $('#startTripBtn').text('Fine Viaggio');
+
+                return false;
             }
         })
+
+    });
+
+    $(document).on('click', '#startTripBtn, .submitNote', function () {
+        var txt = $('#startTripBtn').text(),
+            today = '<?php echo $today;?>',
+            tomorrow = '<?php echo $tomorrow;?>',
+            start = 0,
+            note = "";
+
+        if ($('#startTripBtn').hasClass('btn-danger')) {
+            $('#addNote').modal('toggle');
+            start = 1;
+            note += $('#note').val();
+        }
+
+        if ($('#startTripBtn').hasClass('btn-warning'))
+            $('#startTrip').modal('toggle');
+
+        if ($(this).hasClass('btn-success') || $(this).hasClass('submitNote')) {
+            $.ajax({
+                url: 'php/starttrip.php',
+                type: 'GET',
+                data: {today: today, tomorrow: tomorrow, start: start, note: note},
+                success: function (response) {
+                    if (response) {
+                        $('#startTripBtn').toggleClass('btn-success btn-danger');
+                        $('#startTripBtn').text(txt === 'Avvia Viaggio' ? 'Fine Viaggio' : 'Avvia Viaggio');
+                        window.location.replace('dashboard.php');
+                    } else {
+                        $('#startTrip').modal('toggle');
+                    }
+                }
+            })
+        }
     })
-    
+
 
     $('.deleteButton').click(function () {
         var tr = $(this).closest('tr'),
