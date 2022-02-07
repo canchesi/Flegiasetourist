@@ -29,7 +29,8 @@ if (isset($_SESSION['id']))
 
     <!-- JavaScript -->
     <script src="src/js/coreui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"></script>
@@ -51,22 +52,27 @@ if (isset($_SESSION['id']))
 <!-- Begin Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Flegias & Tourist</a>
+        <a class="navbar-brand" href="index.php">Flegias & Tourist</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
                 aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">I miei ordini</a>
-                </li>
+                <?php
+                if(isset($_SESSION['id']))
+                    echo '
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">I miei ordini</a>
+                        </li>  
+                    ';
+                ?>
             </ul>
             <form class="d-flex">
                 <?php
@@ -137,7 +143,7 @@ if (isset($_SESSION['id']))
 
 <div class="card">
     <div class="card-body">
-        <form class="row text-center h-100" method="POST">
+        <form class="row text-center h-100" id="form">
             <div class="col-12 h1 text-center mb-4">Cerca soluzioni</div>
             <div class="col-1">
 
@@ -150,10 +156,10 @@ if (isset($_SESSION['id']))
                     <?php
                     $sql = "
                                 
-                            SELECT *
-                            FROM harbors
-                        
-                        ";
+                        SELECT *
+                        FROM harbors
+                    
+                    ";
 
                     if ($result = $connection->query($sql)) {
                         $cities = array();
@@ -169,34 +175,29 @@ if (isset($_SESSION['id']))
             </div>
             <div class="col-md-3">
                 <label for="harb_arr" class="form-label">Porto di arrivo*</label>
-                <select class="form-select" id="harb_arr" name="harb_arr" required>
-                    <option disabled selected>Arrivo</option>
-                    <?php
-                    foreach ($cities as $city)
-                        echo "
-                            <option value = '" . $city . "'> " . $city . " </option>
-                        ";
-                    ?>
-                </select>
+                <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo" style="background-color: white" readonly>
+                </input>
             </div>
 
 
             <div class="mb-3 col-md-3">
                 <label for="date" class="form-label">Data di partenza</label>
-                <input type="date" class="form-control" id="date">
+                <input type="date" class="form-control" id="date" min="<?php echo date("Y-m-d");?>">
 
             </div>
 
             <div class="col-md-auto">
                 <label for="date" class="form-label">&nbsp;</label>
-                <input type="submit" class="btn btn-primary form-control">
+                <button type="button" class="btn btn-primary form-control sub">Cerca</button>
             </div>
         </form>
     </div>
 </div>
 
-
-<div class="b-example-divider"></div>
+<div class="container-sm align-content-center">
+    <div class="row table-responsive routetable">
+    </div>
+</div>
 
 <div class="container px-4 py-5" id="hanging-icons">
     <h2 class="pb-2 border-bottom">Flegias & Tourist</h2>
@@ -225,7 +226,6 @@ if (isset($_SESSION['id']))
         </div>
     </div>
 </div>
-</div>
 
 
 <div class="container">
@@ -243,30 +243,57 @@ if (isset($_SESSION['id']))
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
+/*    $(document).ready(function () {
         $('#datepicker').datepicker();
-    });
+    });*/
 
-    $("#harb_dep").change(function () {
-
-        var cities = <?php echo json_encode($cities);?>,
-            arr = $("#harb_arr");
-
+    $("#harb_dep").on('change', function (){
+        var arr = $("#harb_arr");
         $.ajax({
-            url: "php/settrades.php?city=" + $("#harb_dep option:selected").text().trim(),
+            url: "php/setroutes.php?city="+$("#harb_dep option:selected").text().trim(),
             type: "GET",
             dataType: 'json',
-            data: {cities: cities},
-            success: function (response) {
-                console.log(JSON.stringify(response));
+            success:function (response){
                 arr.empty();
-                arr.append("<option disabled selected>Arrivo</option>");
                 response.forEach(function (city) {
-                    arr.append("<option value = '" + city + "'>" + city + "</option>");
+                    $("#harb_arr").val(city);
                 })
             }
         });
     });
+
+/*    $(document).ready(function() {
+        $('form').on('submit', function(e){
+            // validation code here
+            if(!valid) {
+                e.preventDefault();
+            }
+        });
+    });*/
+
+    $('.sub').on('click', function (){
+        var trade_dep = $('#harb_dep').val(),
+            trade_arr = $('#harb_arr').val(),
+            date = $('#date').val();
+
+        $.ajax({
+
+            url: "php/searchroute.php",
+            type: "GET",
+            data: {trade_dep: trade_dep, trade_arr: trade_arr, dep_exp: date},
+            success:function (response){
+/*                var json = $.parseJSON(response)
+                console.log(json.ship_id);*/
+                console.log(response);
+                $('.routetable').empty();
+                $('.routetable').html(response);
+            }
+
+        })
+
+
+    })
+
 
 </script>
 

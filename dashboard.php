@@ -239,6 +239,8 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                         <button class="btn btn-success my-2" id="startTripBtn">Avvia Viaggio</button>
                                     </div>
                                 ';
+                            else
+                                echo '<div class="m-4"></div>';
                             ?>
 
                             <div class="table-responsive" id="warehouseTable">
@@ -388,32 +390,32 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
                     $sql = "
                                                 
-                                                SELECT id_code, name, surname, email FROM users
-                                                    WHERE type = 'capitano' ORDER BY id_code ASC
-                                            
-                                            ";
+                        SELECT id_code, name, surname, email FROM users
+                            WHERE type = 'capitano' ORDER BY id_code ASC
+                    
+                    ";
 
                     if ($result = $connection->query($sql)) {
 
                         while ($row = $result->fetch_array()) {
                             echo '
-                                                        <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                            <td class="text-center">
-                                                                <div>' . $row["id_code"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row["surname"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div>' . $row["name"] . '</div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                               <div>' . $row["email"] . '</div>
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                    ';
-                        }
+                                <tr class="align-middle" id="' . $row["id_code"] . '">
+                                    <td class="text-center">
+                                        <div>' . $row["id_code"] . '</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div>' . $row["surname"] . '</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div>' . $row["name"] . '</div>
+                                    </td>
+                                    <td class="text-center">
+                                       <div>' . $row["email"] . '</div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            ';
+                    }
                     }
                 }
                 ?>
