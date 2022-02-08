@@ -15,9 +15,9 @@
                 ON trade_dep = harb_dep
                 OR trade_dep = harb_arr
             WHERE 
-                (trade_dep = '$tradeDep' AND trade_arr = '$tradeArr') 
+                (trade_dep = '$tradeDep' AND trade_arr = '$tradeArr' AND ret = 0) 
                 OR
-                (trade_dep = '$tradeArr' AND trade_arr = '$tradeDep')
+                (trade_dep = '$tradeArr' AND trade_arr = '$tradeDep' AND ret = 1)
                 AND dep_exp >= '$depExp' AND dep_eff IS NULL
                 
     ";
