@@ -29,7 +29,7 @@ if (isset($_SESSION['id']))
 
     <!-- JavaScript -->
     <script src="src/js/coreui.js"></script>
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -59,29 +59,49 @@ if (isset($_SESSION['id']))
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                <?php
-                if(isset($_SESSION['id']))
-                    echo '
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Account</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">I miei ordini</a>
-                        </li>  
-                    ';
-                ?>
+
             </ul>
             <form class="d-flex">
+
+
                 <?php
 
                 if (isset($_SESSION['type'])) {
-                    if ($_SESSION['type'] != 'cliente') {
-                        echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
+                    /*   if ($_SESSION['type'] != 'cliente') {
+                           echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
+                       }
+                       echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';*/
+
+                    $sql = "SELECT name, surname FROM users WHERE id_code = " . $_SESSION['id'];
+
+                    if ($result = $connection->query($sql)) {
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+
+                        echo '
+                            <div class="dropstart">
+                              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                '.$row['name'].' '.$row['surname'].'
+                              </a>
+                            
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        ';
+
+                        if($_SESSION['type'] == 'cliente')
+                            echo '
+                             <li><a class="dropdown-item" href="#">I miei ordini</a></li>
+                                <li><a class="dropdown-item" href="php/editclientinfo.php">Gestione profilo</a></li>
+                                <li class="dropdown-divider"></li>
+                            ';
+
+
+                        echo '
+                           <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                              </ul>
+                            </div>
+                        ';
                     }
-                    echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';
+
+
                 } else {
                     echo '
                         <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
@@ -175,14 +195,15 @@ if (isset($_SESSION['id']))
             </div>
             <div class="col-md-3">
                 <label for="harb_arr" class="form-label">Porto di arrivo*</label>
-                <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo" style="background-color: white" readonly>
+                <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo"
+                       style="background-color: white" readonly>
                 </input>
             </div>
 
 
             <div class="mb-3 col-md-3">
                 <label for="date" class="form-label">Data di partenza</label>
-                <input type="date" class="form-control" id="date" min="<?php echo date("Y-m-d");?>">
+                <input type="date" class="form-control" id="date" min="<?php echo date("Y-m-d"); ?>">
 
             </div>
 
@@ -243,17 +264,17 @@ if (isset($_SESSION['id']))
 
 <script type="text/javascript">
 
-/*    $(document).ready(function () {
-        $('#datepicker').datepicker();
-    });*/
+    /*    $(document).ready(function () {
+            $('#datepicker').datepicker();
+        });*/
 
-    $("#harb_dep").on('change', function (){
+    $("#harb_dep").on('change', function () {
         var arr = $("#harb_arr");
         $.ajax({
-            url: "php/setroutes.php?city="+$("#harb_dep option:selected").text().trim(),
+            url: "php/setroutes.php?city=" + $("#harb_dep option:selected").text().trim(),
             type: "GET",
             dataType: 'json',
-            success:function (response){
+            success: function (response) {
                 arr.empty();
                 response.forEach(function (city) {
                     $("#harb_arr").val(city);
@@ -262,16 +283,16 @@ if (isset($_SESSION['id']))
         });
     });
 
-/*    $(document).ready(function() {
-        $('form').on('submit', function(e){
-            // validation code here
-            if(!valid) {
-                e.preventDefault();
-            }
-        });
-    });*/
+    /*    $(document).ready(function() {
+            $('form').on('submit', function(e){
+                // validation code here
+                if(!valid) {
+                    e.preventDefault();
+                }
+            });
+        });*/
 
-    $('.sub').on('click', function (){
+    $('.sub').on('click', function () {
         var trade_dep = $('#harb_dep').val(),
             trade_arr = $('#harb_arr').val(),
             date = $('#date').val();
@@ -281,9 +302,9 @@ if (isset($_SESSION['id']))
             url: "php/searchroute.php",
             type: "GET",
             data: {trade_dep: trade_dep, trade_arr: trade_arr, dep_exp: date},
-            success:function (response){
-/*                var json = $.parseJSON(response)
-                console.log(json.ship_id);*/
+            success: function (response) {
+                /*                var json = $.parseJSON(response)
+                                console.log(json.ship_id);*/
                 console.log(response);
                 $('.routetable').empty();
                 $('.routetable').html(response);
