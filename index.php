@@ -6,7 +6,6 @@ session_start();
 if (isset($_SESSION['id']))
     if (!$_SESSION['type'] === 'cliente')
         header('location: dashboard.php');
-
 ?>
 
 
@@ -59,7 +58,6 @@ if (isset($_SESSION['id']))
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-
             </ul>
             <form class="d-flex">
 
@@ -79,16 +77,15 @@ if (isset($_SESSION['id']))
 
                         echo '
                             <div class="dropstart">
-                              <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                '.$row['name'].' '.$row['surname'].'
-                              </a>
-                            
+                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ' . $row['name'] . ' ' . $row['surname'] . '
+                                </a>
                               <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         ';
 
-                        if($_SESSION['type'] == 'cliente')
+                        if ($_SESSION['type'] == 'cliente')
                             echo '
-                             <li><a class="dropdown-item" href="#">I miei ordini</a></li>
+                                <li><a class="dropdown-item" href="#">I miei ordini</a></li>
                                 <li><a class="dropdown-item" href="php/editclientinfo.php">Gestione profilo</a></li>
                                 <li class="dropdown-divider"></li>
                             ';
@@ -106,7 +103,7 @@ if (isset($_SESSION['id']))
                     echo '
                         <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
                         <a class="btn btn-outline-success" href="register.php">Registrati</a>
-                        ';
+                    ';
                 }
 
                 ?>
@@ -185,8 +182,8 @@ if (isset($_SESSION['id']))
                         $cities = array();
                         while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                             echo "
-                                    <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
-                                ";
+                                <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
+                            ";
                             $cities[] = $row['city'];
                         }
                     }
@@ -194,16 +191,15 @@ if (isset($_SESSION['id']))
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="harb_arr" class="form-label">Porto di arrivo*</label>
+                <label for="harb_arr" class="form-label">Porto di arrivo</label>
                 <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo"
                        style="background-color: white" readonly>
-                </input>
             </div>
 
 
             <div class="mb-3 col-md-3">
                 <label for="date" class="form-label">Data di partenza</label>
-                <input type="date" class="form-control" id="date" min="<?php echo date("Y-m-d"); ?>">
+                <input type="datetime-local" class="form-control" id="date" min="<?php echo date("Y-m-d"); ?>">
 
             </div>
 
@@ -260,13 +256,103 @@ if (isset($_SESSION['id']))
     </footer>
 </div>
 
+
+<!-- BEGIN MODAL -->
+<div class="modal" id="reservationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prenota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="reservationModal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="row">
+                        <input type="text" id="id" hidden>
+                        <div class="col-md-6">
+                            <label for="partenza" class="col-form-label">Partenza</label>
+                            <div class="form-control" id="partenza"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="arrivo" class="col-form-label">Arrivo</label>
+                            <div class="form-control" id="arrivo"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dep_exp" class="col-form-label">Data partenza</label>
+                            <div class="form-control" id="dep_exp"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="arr_exp" class="col-form-label">Data arrivo</label>
+                            <div class="form-control" id="arr_exp"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maggiorenni" class="col-form-label">Maggiorenni</label>
+                            <input type="number" class="form-control mb-3" value="1" id="maggiorenni" min="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="minorenni" class="col-form-label">Minorenni</label>
+                            <input type="number" class="form-control mb-3" value="0" id="minorenni" min="0">
+                        </div>
+                        <div class="col-12">
+                            <label for="veicolo" class="col-form-label">Tipo di veicolo</label>
+                            <select class="form-select" id="veicolo" required>
+                                <option value="0">Nessuno</option>
+                                <?php
+                                $sql = "SELECT * FROM vehicles";
+
+                                if ($result = $connection->query($sql))
+                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                        echo '<option value="' . $row['charge'] . '">' . $row['type'] . ' +€' . $row['charge'] . '</option>';
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mt-2">
+                            <h3 class="mt-2">Totale:</h3>
+                            <h5 id="price"></h5>
+                        </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary reservationModalBtn close">Annulla</button>
+            <button type="button" class="btn btn-primary book">Prenota</button>
+        </div>
+    </div>
+</div>
+<!-- END MODAL -->
+
 </body>
 
 <script type="text/javascript">
 
-    /*    $(document).ready(function () {
-            $('#datepicker').datepicker();
-        });*/
+    var myModal = new coreui.Modal($('#reservationModal'), {
+        keyboard: false
+    });
+
+    $(document).on('click', '.reservationModalBtn', function () {
+        if(!($(this).hasClass('close'))) {
+            var tr = $(this).closest('tr'),
+                ids = $(tr).attr('id'),
+                harbs = $(tr).find('td:eq(0)').text().split(' - ', 2),
+                price = $(tr).find('td:eq(3)').text().split('Minore:\t', 2)[0].replace('Adulto:\t', ''),
+                dep_exp = $(tr).find('td:eq(1)').text(),
+                arr_exp = $(tr).find('td:eq(2)').text();
+
+            $('#id').attr('value', ids);
+
+            $('#dep_exp').text(dep_exp);
+            $('#arr_exp').text(arr_exp);
+            $('#partenza').text(harbs[0]);
+            $('#arrivo').text(harbs[1]);
+            $('#maggiorenni').val('1').change();
+            $('#minorenni').val('0').change();
+            $('#veicolo').val('0').change();
+            $('#price').text(price);
+        }
+
+        $('#reservationModal').modal('toggle');
+
+    });
 
     $("#harb_dep").on('change', function () {
         var arr = $("#harb_arr");
@@ -283,14 +369,14 @@ if (isset($_SESSION['id']))
         });
     });
 
-    /*    $(document).ready(function() {
-            $('form').on('submit', function(e){
-                // validation code here
-                if(!valid) {
-                    e.preventDefault();
-                }
-            });
-        });*/
+    $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function (){
+        var prices = $('#routes tr td:eq(3)').text().split('Minore:\t€', 2);
+        prices[0] = prices[0].replace('Adulto:\t€', '');
+
+        var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
+        $('#price').text('€'+total);
+
+    });
 
     $('.sub').on('click', function () {
         var trade_dep = $('#harb_dep').val(),
@@ -298,22 +384,40 @@ if (isset($_SESSION['id']))
             date = $('#date').val();
 
         $.ajax({
-
             url: "php/searchroute.php",
             type: "GET",
             data: {trade_dep: trade_dep, trade_arr: trade_arr, dep_exp: date},
             success: function (response) {
-                /*                var json = $.parseJSON(response)
-                                console.log(json.ship_id);*/
-                console.log(response);
                 $('.routetable').empty();
                 $('.routetable').html(response);
             }
+        })
+    });
 
+    $(document).on('click', '.book', function (){
+        var id = $('#id').val(),
+            dep_exp = $('#dep_exp').val(),
+            adult = $('#maggiorenni').val(),
+            minori = $('#minorenni').val(),
+            veicolo = $('#veicolo option:selected').text();
+
+        $.ajax({
+            url: "php/book.php",
+            type: "GET",
+            data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo},
+            success:function (response){
+                if(response === '0'){
+                    alert("Prenotazione effettuata.");
+                    //TODO Fare pagina delle prenotazioni - window.location.replace("");
+                } else if(response === '-1') {
+                    alert("Errore nell\'invio dei dati");
+                } else
+                    alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: "+response);
+            }
         })
 
 
-    })
+    });
 
 
 </script>
