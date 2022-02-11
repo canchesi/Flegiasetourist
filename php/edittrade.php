@@ -151,7 +151,7 @@
                                         <input type="text" name="submitted" value="1" hidden>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="price_adult" class="form-label">Prezzo minorenni</label>
+                                        <label for="price_adult" class="form-label">Prezzo ragazzi</label>
                                         <input type="number" class="form-control" id="price_adult" name="price_underage" placeholder="Prezzo U18" value="<?php echo $row['price_underage'] ?>" required>
                                         <input type="text" name="submitted" value="1" hidden>
                                     </div>

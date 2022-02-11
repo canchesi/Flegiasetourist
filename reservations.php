@@ -137,7 +137,7 @@ if (isset($_SESSION['id']))
                                 ON reservations.ship_id = routes.ship_id AND reservations.dep_exp = routes.dep_exp 
                             JOIN trades 
                                 ON trade_dep = harb_dep AND trade_arr = harb_arr 
-                            JOIN vehicles 
+                            LEFT JOIN vehicles 
                                 ON type = vehicle 
                             WHERE user_id ='". $_SESSION['id'] . "'";
 
@@ -154,20 +154,20 @@ if (isset($_SESSION['id']))
                         echo '<tr id="'.$row['code'].'"';
                         if($row['undone'])
                             echo 'class="text-decoration-line-through"';
+                        if (!$row['vehicle'])
+                            $row['vehicle'] = 'Nessuno';
                         echo '>
                                   <td>'.date("d/m/Y H:i", strtotime($row["date_res"])).'</td>
                                   <td>'.$row["trade_dep"].'-'.$row["trade_arr"].'</td>
                                   <td>'.date("d/m/Y H:i", strtotime($row["dep_exp"])).'</td>
-                                  <td>Adulti: '.$row["adults"].' | Minorenni: '.$row['underages'];
+                                  <td>Adulti: '.$row["adults"].' | Ragazzi: '.$row['underages'].'<br>Veicolo: '.$row["vehicle"];
 
-                        if ($row['vehicle'])
-                            echo '<br>Veicolo: '.$row['vehicle'];
-
-                        echo'
+                            echo'
                                   </td>
                                   <td>€'.number_format($total, 2).'</td>
                                   
                                ';
+
 
                         if(date('Y-m-d H:i') <= ((new DateTime($row['dep_exp']))->modify('-1 day')->format('Y-m-d H:i')) && $row['undone'] === '0')
                             echo '<td class="text-center"><form><a href="#" class="btn btn-danger delete">Annulla</a></form></td>';

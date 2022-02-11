@@ -57,7 +57,7 @@ require_once('php/config.php');
                     $out .= '>
                         <td>'.$row["surname"] . ' ' . $row["name"] . '</td>
                         <td>'.$row["email"].'</td>
-                        <td>Adulti: '.$row["adults"].' | Minorenni: '.$row['underages'].'</td>
+                        <td>Adulti: '.$row["adults"].' | Ragazzi: '.$row['underages'].'</td>
                     ';
 
                     if (!$row['vehicle'])

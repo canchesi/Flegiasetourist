@@ -171,7 +171,7 @@
                                         <input type="number" class="form-control" id="PrezzoMag" name="price_adult" placeholder="Prezzo O18" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="PrezzoMin" class="form-label">Prezzo minorenni*</label>
+                                        <label for="PrezzoMin" class="form-label">Prezzo ragazzi*</label>
                                         <input type="number" class="form-control" id="PrezzoMin" name="price_underage" placeholder="Prezzo U18" required>
                                         <input type="text" value="1" name="submitted" hidden>
                                     </div>

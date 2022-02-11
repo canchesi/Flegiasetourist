@@ -47,7 +47,7 @@
                         <td>$tradeDep - $tradeArr</td>
                         <td>" . date("d/m/Y H:i", strtotime($row['dep_exp'])) . "</td>
                         <td>" . date("d/m/Y H:i", strtotime($row['arr_exp'])) . "</td>
-                        <td>Adulto:\t€" . number_format((float)$row['price_adult'], 2) . "<br>Minore:\t€" . number_format((float)$row['price_underage'], 2) . "</td>
+                        <td>Adulto:\t€" . number_format((float)$row['price_adult'], 2) . "<br>Ragazzo:\t€" . number_format((float)$row['price_underage'], 2) . "</td>
                         <td>" . $rem . "</td>
                         <td class='text-center'><button class='btn btn-warning mt-1 reservationModalBtn'>Prenota</button></td>
                     </tr>

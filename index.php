@@ -230,7 +230,7 @@ if (isset($_SESSION['id']))
         <div class="col d-flex align-items-start">
             <div>
                 <h2>Sconti</h2>
-                <p>Offriamo sconti per i minorenni a partire dal 10% per tutti gli itinerari.</p>
+                <p>Offriamo sconti per i ragazzi a partire dal 10% per tutti gli itinerari.</p>
             </div>
         </div>
         <div class="col d-flex align-items-start">
@@ -282,11 +282,11 @@ if (isset($_SESSION['id']))
                             <div class="form-control" id="arr_exp"></div>
                         </div>
                         <div class="col-md-6">
-                            <label for="maggiorenni" class="col-form-label">Maggiorenni</label>
+                            <label for="maggiorenni" class="col-form-label">Adulti</label>
                             <input type="number" class="form-control mb-3" value="1" id="maggiorenni" min="1" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="minorenni" class="col-form-label">Minorenni</label>
+                            <label for="minorenni" class="col-form-label">Ragazzi</label>
                             <input type="number" class="form-control mb-3" value="0" id="minorenni" min="0">
                         </div>
                         <div class="col-12">
@@ -330,7 +330,7 @@ if (isset($_SESSION['id']))
             var tr = $(this).closest('tr'),
                 ids = $(tr).attr('id'),
                 harbs = $(tr).find('td:eq(0)').text().split(' - ', 2),
-                price = $(tr).find('td:eq(3)').text().split('Minore:\t', 2)[0].replace('Adulto:\t', ''),
+                price = $(tr).find('td:eq(3)').text().split('Ragazzo:\t', 2)[0].replace('Adulto:\t', ''),
                 dep_exp = $(tr).find('td:eq(1)').text(),
                 arr_exp = $(tr).find('td:eq(2)').text();
 
@@ -366,9 +366,8 @@ if (isset($_SESSION['id']))
     });
 
     $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function (){
-        var prices = $('#routes tr td:eq(3)').text().split('Minore:\t€', 2);
+        var prices = $('#routes tr td:eq(3)').text().split('Ragazzo:\t€', 2);
         prices[0] = prices[0].replace('Adulto:\t€', '');
-    //TODO totale
         var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
         $('#price').text('€'+total);
 
@@ -405,9 +404,11 @@ if (isset($_SESSION['id']))
                 if(response === '0'){
                     alert("Prenotazione effettuata.");
                     window.location.replace("reservations.php");
-                } else if(response === '-1') {
+                } else if(response === '-1')
                     alert("Errore nell\'invio dei dati");
-                } else
+                else if(response === '-2')
+                    window.location.replace("login.php");
+                else
                     alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: "+response);
             }
         })
