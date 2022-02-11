@@ -99,7 +99,7 @@ else if ($_SESSION['type'] === 'cliente')
                 <i class="icon icon-lg cil-menu"></i>
             </button>
 
-            <span class="fs-4">Flegias & Tourist</span>
+            <a href="index.php" style="text-decoration: none; color: #374253"><span class="fs-4">Flegias & Tourist</span></a>
 
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -153,7 +153,7 @@ else if ($_SESSION['type'] === 'cliente')
                                         <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="price_adult"
                                                         data-order="asc">Prezzo maggiorenni</a></th>
                                         <th class=""><a href="#" class="btn btn-ghost-dark orderButton"
-                                                        id="price_underage" data-order="asc">Prezzo minorenni</a></th>
+                                                        id="price_underage" data-order="asc">Prezzo ragazzi</a></th>
                                         <th class="text-center"></th>
                                         <th class="text-center"></th>
                                         <th class="text-end"></th>

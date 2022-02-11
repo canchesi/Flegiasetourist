@@ -6,7 +6,6 @@ session_start();
 if (isset($_SESSION['id']))
     if (!$_SESSION['type'] === 'cliente')
         header('location: dashboard.php');
-
 ?>
 
 
@@ -29,7 +28,7 @@ if (isset($_SESSION['id']))
 
     <!-- JavaScript -->
     <script src="src/js/coreui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"></script>
@@ -51,36 +50,64 @@ if (isset($_SESSION['id']))
 <!-- Begin Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Flegias & Tourist</a>
+        <a class="navbar-brand" href="index.php">Flegias & Tourist</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
                 aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
             <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Account</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">I miei ordini</a>
-                </li>
             </ul>
             <form class="d-flex">
+
+
                 <?php
 
                 if (isset($_SESSION['type'])) {
-                    if ($_SESSION['type'] != 'cliente') {
-                        echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
+                    /*   if ($_SESSION['type'] != 'cliente') {
+                           echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
+                       }
+                       echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';*/
+
+                    $sql = "SELECT name, surname FROM users WHERE id_code = " . $_SESSION['id'];
+
+                    if ($result = $connection->query($sql)) {
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+
+                        echo '
+                            <div class="dropstart">
+                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ' . $row['name'] . ' ' . $row['surname'] . '
+                                </a>
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        ';
+
+                        if ($_SESSION['type'] == 'cliente')
+                            echo '
+                                <li><a class="dropdown-item" href="reservations.php">I miei ordini</a></li>
+                                <li><a class="dropdown-item" href="php/editclientinfo.php">Gestione profilo</a></li>
+                                <li class="dropdown-divider"></li>
+                            ';
+                        else
+                            echo '
+                                <li><a class="dropdown-item" href="dashboard.php">Area Privata</a></li>
+                                <li class="dropdown-divider"></li>
+                            ';
+
+
+                        echo '
+                           <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                              </ul>
+                            </div>
+                        ';
                     }
-                    echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';
+
+
                 } else {
                     echo '
                         <a class="btn btn-outline-primary me-2" href="login.php">Accedi</a>
                         <a class="btn btn-outline-success" href="register.php">Registrati</a>
-                        ';
+                    ';
                 }
 
                 ?>
@@ -120,7 +147,7 @@ if (isset($_SESSION['id']))
             <img src="src/img/img3.jpg" class="d-block w-100" alt="...">
             <div class="carousel-caption text-end d-md-block">
                 <h1>Iscriviti</h1>
-                <p>Iscriviti per acquistare...</p>
+                <p>Iscriviti per prenotare il tuo prossimo viaggio...</p>
             </div>
         </div>
     </div>
@@ -137,7 +164,7 @@ if (isset($_SESSION['id']))
 
 <div class="card">
     <div class="card-body">
-        <form class="row text-center h-100" method="POST">
+        <form class="row text-center h-100" id="form">
             <div class="col-12 h1 text-center mb-4">Cerca soluzioni</div>
             <div class="col-1">
 
@@ -150,17 +177,17 @@ if (isset($_SESSION['id']))
                     <?php
                     $sql = "
                                 
-                            SELECT *
-                            FROM harbors
-                        
-                        ";
+                        SELECT *
+                        FROM harbors
+                    
+                    ";
 
                     if ($result = $connection->query($sql)) {
                         $cities = array();
                         while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                             echo "
-                                    <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
-                                ";
+                                <option value = '" . $row['city'] . "'> " . $row['city'] . " </option>
+                            ";
                             $cities[] = $row['city'];
                         }
                     }
@@ -168,35 +195,30 @@ if (isset($_SESSION['id']))
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="harb_arr" class="form-label">Porto di arrivo*</label>
-                <select class="form-select" id="harb_arr" name="harb_arr" required>
-                    <option disabled selected>Arrivo</option>
-                    <?php
-                    foreach ($cities as $city)
-                        echo "
-                            <option value = '" . $city . "'> " . $city . " </option>
-                        ";
-                    ?>
-                </select>
+                <label for="harb_arr" class="form-label">Porto di arrivo</label>
+                <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo"
+                       style="background-color: white" readonly>
             </div>
 
 
             <div class="mb-3 col-md-3">
                 <label for="date" class="form-label">Data di partenza</label>
-                <input type="date" class="form-control" id="date">
+                <input type="datetime-local" class="form-control" id="date" min="<?php echo date("Y-m-d"); ?>">
 
             </div>
 
             <div class="col-md-auto">
                 <label for="date" class="form-label">&nbsp;</label>
-                <input type="submit" class="btn btn-primary form-control">
+                <button type="button" class="btn btn-primary form-control sub">Cerca</button>
             </div>
         </form>
     </div>
 </div>
 
-
-<div class="b-example-divider"></div>
+<div class="container-sm align-content-center">
+    <div class="row table-responsive routetable">
+    </div>
+</div>
 
 <div class="container px-4 py-5" id="hanging-icons">
     <h2 class="pb-2 border-bottom">Flegias & Tourist</h2>
@@ -213,7 +235,7 @@ if (isset($_SESSION['id']))
         <div class="col d-flex align-items-start">
             <div>
                 <h2>Sconti</h2>
-                <p>Offriamo sconti per i minorenni a partire dal 10% per tutti gli itinerari.</p>
+                <p>Offriamo sconti per i ragazzi a partire dal 10% per tutti gli itinerari.</p>
             </div>
         </div>
         <div class="col d-flex align-items-start">
@@ -225,48 +247,180 @@ if (isset($_SESSION['id']))
         </div>
     </div>
 </div>
-</div>
 
 
 <div class="container">
     <footer class="py-3 my-4">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Accedi</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Registrati</a></li>
         </ul>
         <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
     </footer>
 </div>
 
+
+<!-- BEGIN MODAL -->
+<div class="modal" id="reservationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prenota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="reservationModal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="row">
+                        <input type="text" id="id" hidden>
+                        <div class="col-md-6">
+                            <label for="partenza" class="col-form-label">Partenza</label>
+                            <div class="form-control" id="partenza"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="arrivo" class="col-form-label">Arrivo</label>
+                            <div class="form-control" id="arrivo"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dep_exp" class="col-form-label">Data partenza</label>
+                            <div class="form-control" id="dep_exp"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="arr_exp" class="col-form-label">Data arrivo</label>
+                            <div class="form-control" id="arr_exp"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="maggiorenni" class="col-form-label">Adulti</label>
+                            <input type="number" class="form-control mb-3" value="1" id="maggiorenni" min="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="minorenni" class="col-form-label">Ragazzi</label>
+                            <input type="number" class="form-control mb-3" value="0" id="minorenni" min="0">
+                        </div>
+                        <div class="col-12">
+                            <label for="veicolo" class="col-form-label">Tipo di veicolo</label>
+                            <select class="form-select" id="veicolo" required>
+                                <option value="0">Nessuno</option>
+                                <?php
+                                $sql = "SELECT * FROM vehicles";
+
+                                if ($result = $connection->query($sql))
+                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                        echo '<option value="' . $row['charge'] . '">' . $row['type'] . ' +€' . $row['charge'] . '</option>';
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mt-2">
+                            <h3 class="mt-2">Totale:</h3>
+                            <h5 id="price"></h5>
+                        </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary reservationModalBtn close">Annulla</button>
+            <button type="button" class="btn btn-primary book">Prenota</button>
+        </div>
+    </div>
+</div>
+<!-- END MODAL -->
+
 </body>
 
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        $('#datepicker').datepicker();
+    var myModal = new coreui.Modal($('#reservationModal'), {
+        keyboard: false
     });
 
-    $("#harb_dep").change(function () {
+    $(document).on('click', '.reservationModalBtn', function () {
+        if(!($(this).hasClass('close'))) {
+            var tr = $(this).closest('tr'),
+                ids = $(tr).attr('id'),
+                harbs = $(tr).find('td:eq(0)').text().split(' - ', 2),
+                price = $(tr).find('td:eq(3)').text().split('Ragazzo:\t', 2)[0].replace('Adulto:\t', ''),
+                dep_exp = $(tr).find('td:eq(1)').text(),
+                arr_exp = $(tr).find('td:eq(2)').text();
 
-        var cities = <?php echo json_encode($cities);?>,
-            arr = $("#harb_arr");
+            $('#id').attr('value', ids);
 
+            $('#dep_exp').text(dep_exp);
+            $('#arr_exp').text(arr_exp);
+            $('#partenza').text(harbs[0]);
+            $('#arrivo').text(harbs[1]);
+            $('#maggiorenni').val('1').change();
+            $('#minorenni').val('0').change();
+            $('#veicolo').val('0').change();
+            $('#price').text(price);
+        }
+
+        $('#reservationModal').modal('toggle');
+
+    });
+
+    $("#harb_dep").on('change', function () {
+        var arr = $("#harb_arr");
         $.ajax({
-            url: "php/settrades.php?city=" + $("#harb_dep option:selected").text().trim(),
+            url: "php/setroutes.php?city=" + $("#harb_dep option:selected").text().trim(),
             type: "GET",
             dataType: 'json',
-            data: {cities: cities},
             success: function (response) {
-                console.log(JSON.stringify(response));
                 arr.empty();
-                arr.append("<option disabled selected>Arrivo</option>");
                 response.forEach(function (city) {
-                    arr.append("<option value = '" + city + "'>" + city + "</option>");
+                    $("#harb_arr").val(city);
                 })
             }
         });
     });
+
+    $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function (){
+        var prices = $('#routes tr td:eq(3)').text().split('Ragazzo:\t€', 2);
+        prices[0] = prices[0].replace('Adulto:\t€', '');
+        var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
+        $('#price').text('€'+total);
+
+    });
+
+    $('.sub').on('click', function () {
+        var trade_dep = $('#harb_dep').val(),
+            trade_arr = $('#harb_arr').val(),
+            date = $('#date').val();
+
+        $.ajax({
+            url: "php/searchroute.php",
+            type: "GET",
+            data: {trade_dep: trade_dep, trade_arr: trade_arr, dep_exp: date},
+            success: function (response) {
+                $('.routetable').empty();
+                $('.routetable').html(response);
+            }
+        })
+    });
+
+    $(document).on('click', '.book', function (){
+        var id = $('#id').val(),
+            dep_exp = $('#dep_exp').val(),
+            adult = $('#maggiorenni').val(),
+            minori = $('#minorenni').val(),
+            veicolo = $('#veicolo option:selected').text();
+
+        $.ajax({
+            url: "php/book.php",
+            type: "GET",
+            data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo},
+            success:function (response){
+                if(response === '0'){
+                    alert("Prenotazione effettuata.");
+                    window.location.replace("reservations.php");
+                } else if(response === '-1')
+                    alert("Errore nell\'invio dei dati");
+                else if(response === '-2')
+                    window.location.replace("login.php");
+                else
+                    alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: "+response);
+            }
+        })
+
+
+    });
+
 
 </script>
 
