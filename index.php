@@ -88,6 +88,11 @@ if (isset($_SESSION['id']))
                                 <li><a class="dropdown-item" href="php/editclientinfo.php">Gestione profilo</a></li>
                                 <li class="dropdown-divider"></li>
                             ';
+                        else
+                            echo '
+                                <li><a class="dropdown-item" href="dashboard.php">Area Privata</a></li>
+                                <li class="dropdown-divider"></li>
+                            ';
 
 
                         echo '
@@ -142,7 +147,7 @@ if (isset($_SESSION['id']))
             <img src="src/img/img3.jpg" class="d-block w-100" alt="...">
             <div class="carousel-caption text-end d-md-block">
                 <h1>Iscriviti</h1>
-                <p>Iscriviti per acquistare...</p>
+                <p>Iscriviti per prenotare il tuo prossimo viaggio...</p>
             </div>
         </div>
     </div>

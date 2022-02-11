@@ -143,7 +143,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                 <i class="icon icon-lg cil-menu"></i>
             </button>
 
-            <span class="fs-4">Flegias & Tourist</span>
+            <a href="index.php" style="text-decoration: none; color: #374253"><span class="fs-4">Flegias & Tourist</span></a>
 
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"

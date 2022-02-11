@@ -37,7 +37,8 @@ require_once('php/config.php');
                     JOIN users  
                         ON user_id = id_code
                     WHERE routes.ship_id = '" . $ids[0] . "' AND routes.dep_exp = '" . $ids[1] ."'
-
+                    ORDER BY undone, surname
+                
             ";
 
             if($result = $connection->query($sql)) {
@@ -163,7 +164,7 @@ require_once('php/config.php');
                     <i class="icon icon-lg cil-menu"></i>
                 </button>
 
-                <span class="fs-4">Flegias & Tourist</span>
+                <a href="index.php" style="text-decoration: none; color: #374253"><span class="fs-4">Flegias & Tourist</span></a>
 
                 <div class="btn-group">
                     <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -254,6 +255,7 @@ require_once('php/config.php');
                                                         ON ship_id = id
                                                     JOIN users
                                                         ON id_code = captain
+                                                    ORDER BY dep_exp DESC
 
                                             ";
                                             if($_SESSION['type'] === 'capitano')
