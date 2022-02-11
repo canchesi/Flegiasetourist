@@ -29,8 +29,8 @@
 
                 $sql = "
                 
-                    INSERT INTO reservations(user_id, date_res, adults, underages, vehicle)
-                        VALUES('" . $_SESSION['id'] . "', '" . date('Y-m-d H:i:s') . "', '$num_ad', '$num_un', NULLIF('$veh',''));
+                    INSERT INTO reservations(user_id, date_res, adults, underages, vehicle, ship_id, dep_exp)
+                        VALUES('" . $_SESSION['id'] . "', '" . date('Y-m-d H:i:s') . "', '$num_ad', '$num_un', NULLIF('$veh',''), '" . $ids[0] . "', '" . $ids[1] ."');
                         
                     UPDATE routes SET num_pass = num_pass +'$pass' WHERE ship_id = '" . $ids[0] . "' AND dep_exp = '" . $ids[1] . "';
                 

@@ -10,7 +10,7 @@
 
     $sql = "
 
-        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage
+        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass
             FROM routes JOIN trades 
                 ON trade_dep = harb_dep
                 OR trade_dep = harb_arr
@@ -30,6 +30,7 @@
                 <th class="">Data partenza</th>
                 <th class="">Data arrivo</th>
                 <th class="">Prezzi</th>
+                <th class="">Posti rimanenti</th>
             
     ';
     if ($result = $connection->query($sql)) {
@@ -37,7 +38,8 @@
         if (!$row)
             $out .= '</thead></table><div class="text-center">Nessuna rotta programmata</div>';
         else {
-            $out .= "<th></th></thead><tbody>";
+            $rem = '200'-$row['num_pass'];
+            $out .= "</thead><tbody>";
             while ($row) {
                 $out .= "
                 
@@ -46,6 +48,7 @@
                         <td>" . date("d/m/Y H:i", strtotime($row['dep_exp'])) . "</td>
                         <td>" . date("d/m/Y H:i", strtotime($row['arr_exp'])) . "</td>
                         <td>Adulto:\t€" . number_format((float)$row['price_adult'], 2) . "<br>Minore:\t€" . number_format((float)$row['price_underage'], 2) . "</td>
+                        <td>" . $rem . "</td>
                         <td class='text-center'><button class='btn btn-warning mt-1 reservationModalBtn'>Prenota</button></td>
                     </tr>
                 

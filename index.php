@@ -28,7 +28,6 @@ if (isset($_SESSION['id']))
 
     <!-- JavaScript -->
     <script src="src/js/coreui.js"></script>
-    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -85,7 +84,7 @@ if (isset($_SESSION['id']))
 
                         if ($_SESSION['type'] == 'cliente')
                             echo '
-                                <li><a class="dropdown-item" href="#">I miei ordini</a></li>
+                                <li><a class="dropdown-item" href="reservations.php">I miei ordini</a></li>
                                 <li><a class="dropdown-item" href="php/editclientinfo.php">Gestione profilo</a></li>
                                 <li class="dropdown-divider"></li>
                             ';
@@ -248,9 +247,6 @@ if (isset($_SESSION['id']))
 <div class="container">
     <footer class="py-3 my-4">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Accedi</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Registrati</a></li>
         </ul>
         <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
     </footer>
@@ -372,7 +368,7 @@ if (isset($_SESSION['id']))
     $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function (){
         var prices = $('#routes tr td:eq(3)').text().split('Minore:\t€', 2);
         prices[0] = prices[0].replace('Adulto:\t€', '');
-
+    //TODO totale
         var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
         $('#price').text('€'+total);
 
@@ -408,7 +404,7 @@ if (isset($_SESSION['id']))
             success:function (response){
                 if(response === '0'){
                     alert("Prenotazione effettuata.");
-                    //TODO Fare pagina delle prenotazioni - window.location.replace("");
+                    window.location.replace("reservations.php");
                 } else if(response === '-1') {
                     alert("Errore nell\'invio dei dati");
                 } else

@@ -8,9 +8,6 @@ if (isset($_SESSION['id']))
     if ($_SESSION['type'] !== 'cliente')
         header('location: dashboard.php');
 
-
-
-
 ?>
 
 
@@ -62,22 +59,8 @@ if (isset($_SESSION['id']))
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarScroll">
-            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                <?php
-                if (isset($_SESSION['id']))
-                    echo '
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Account</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">I miei ordini</a>
-                        </li>  
-                    ';
-                ?>
-            </ul>
+            <div class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+            </div>
             <form class="d-flex">
 
 
@@ -101,8 +84,8 @@ if (isset($_SESSION['id']))
                               </a>
                             
                               <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a class="dropdown-item" href="#">I miei ordini</a></li>
-                                <li><a class="dropdown-item" href="#">Gestione profilo</a></li>
+                                <li><a class="dropdown-item" href="../reservations.php">I miei ordini</a></li>
+                                <li><a class="dropdown-item" href="editclientinfo.php">Gestione profilo</a></li>
                                 <li class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="../logout.php">Logout</a></li>
                               </ul>
@@ -453,11 +436,7 @@ if (isset($_POST['submitted'])) {
 <!-- Begin Footer-->
 <div class="container fixed-bottom">
     <footer class="py-3 my-4">
-        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Accedi</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Registrati</a></li>
-        </ul>
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
         <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
     </footer>
 </div>

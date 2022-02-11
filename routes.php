@@ -11,8 +11,9 @@ require_once('php/config.php');
 
     if(isset($_POST['ajax'])) {
 
-        $ids = explode('-', $_POST['id'], 2);
-        $sql = "
+        if($_POST['ajax'] == 1) {
+            $ids = explode('-', $_POST['id'], 2);
+            $sql = "
         
             SELECT content
                 FROM notes
@@ -20,10 +21,56 @@ require_once('php/config.php');
         
         ";
 
-        if($result = $connection->query($sql))
-            if($row = $result->fetch_array(MYSQLI_ASSOC))
-                echo $row['content'];
-        exit();
+            if ($result = $connection->query($sql))
+                if ($row = $result->fetch_array(MYSQLI_ASSOC))
+                    echo $row['content'];
+            exit();
+
+        } else if($_POST['ajax'] == 2) {
+
+            $ids = explode('-', $_POST['id'], 2);
+            $sql = "
+
+                SELECT surname, name, email, adults, underages, vehicle, undone
+                    FROM reservations JOIN routes
+                        on reservations.ship_id = routes.ship_id AND reservations.dep_exp = routes.dep_exp
+                    JOIN users  
+                        ON user_id = id_code
+                    WHERE routes.ship_id = '" . $ids[0] . "' AND routes.dep_exp = '" . $ids[1] ."'
+
+            ";
+
+            if($result = $connection->query($sql)) {
+                $out = "";
+                while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+
+                    if ($row['ret']) {
+                        $tmp = $row["trade_dep"];
+                        $row["trade_dep"] = $row['trade_arr'];
+                        $row["trade_arr"] = $tmp;
+                        unset($tmp);
+                    }
+
+                    $out .= '<tr id="'.$row['code'].'"';
+                    if($row['undone'])
+                        $out .= 'class="text-decoration-line-through"';
+                    $out .= '>
+                        <td>'.$row["surname"] . ' ' . $row["name"] . '</td>
+                        <td>'.$row["email"].'</td>
+                        <td>Adulti: '.$row["adults"].' | Minorenni: '.$row['underages'].'</td>
+                    ';
+
+                    if (!$row['vehicle'])
+                        $row['vehicle'] = 'Nessuno';
+                    $out .= '<td>Veicolo: ' . $row['vehicle'] . '</td>';
+
+                }
+                echo $out;
+            } else
+                echo '0';
+
+            exit();
+        }
     }
 
 ?>
@@ -270,7 +317,7 @@ require_once('php/config.php');
                                                     echo'<div>';
                                                     if($_SESSION['type'] !== 'capitano')
                                                         echo'
-                                                                <a href="#" class="btn btn-info m-1" >
+                                                                <a href="#" class="btn btn-info reservationModalBtn m-1" >
                                                                     <i class="cil-people"></i>
                                                                 </a>';
                                                     echo'
@@ -332,16 +379,57 @@ require_once('php/config.php');
         </footer>
         <!-- End Footer -->
     </div>
+
+
+
+
+    <!-- BEGIN MODAL -->
+    <div class="modal fade" id="reservationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header resnum">
+                    Prenotazioni (0)
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead class="table-light fw-semibold">
+                            <th>Utente</th>
+                            <th>Mail</th>
+                            <th> Passeggeri</th>
+                            <th>Veicolo</th>
+                        </thead>
+                        <tbody id="tableres">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary reservationModalBtn close">Chiudi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MODAL -->
+
+
+
     </body>
 
     <script>
 
-        var myModal = new coreui.Modal($('.notes'), {
+        var myModal = new coreui.Modal($('#noteModal'), {
+            keyboard: false
+        })
+
+        var myModal2 = new coreui.Modal($('#reservationModal'), {
             keyboard: false
         })
 
         $(document).on('click', '.closenotes', function () {
             $('#noteModal').modal('toggle');
+        })
+
+        $(document).on('click', '.close', function () {
+            $('#reservationModal').modal('toggle');
         })
 
         $(document).on('click', '.notes', function () {
@@ -356,6 +444,28 @@ require_once('php/config.php');
                     $('.noteblock').empty();
                     $('.noteblock').html(data);
                     $('#noteModal').modal('toggle');
+                }
+            })
+        });
+
+        $(document).on('click', '.reservationModalBtn', function () {
+            $('#reservationModal').modal('toggle');
+
+            var tr = $(this).closest('tr'),
+                id = $(tr).attr('id');
+
+            $.ajax({
+                type: "POST",
+                data: {id: id, ajax: 2},
+                success: function (response) {
+                    if (response === '-1')
+                        alert('Errore nella ricezione dei dati.');
+                    else {
+                        $('#tableres').empty();
+                        $('.resnum').empty();
+                        $('#tableres').html(response);
+                        $('.resnum').append('<h5 class="modal-title">Prenotazioni (' + $('#tableres tr').length + ')</h5>');
+                    }
                 }
             })
         });
