@@ -41,6 +41,7 @@
 
         <!-- Style -->
         <link href="../src/css/style.css" rel="stylesheet">
+        <link href="../src/favicon.png" rel="icon">
 
         <!-- Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">

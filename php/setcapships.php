@@ -11,7 +11,7 @@
         SELECT id_code, name, surname, ret
             FROM users LEFT JOIN routes
                 ON id_code = captain
-            WHERE type ='capitano' AND deleted = 0 AND ship_id IS NULL
+            WHERE type ='capitano' AND ship_id IS NULL AND NOT users.deleted
     
     ";
 
@@ -30,7 +30,7 @@
         SELECT id, name, harb1, harb2, ret
             FROM ships LEFT JOIN routes
                 ON id = ship_id
-            WHERE captain IS NULL AND (harb1 = '$city' OR harb2 = '$city' OR harb1 IS NULL)
+            WHERE captain IS NULL AND NOT ships.unused
     
     ";
 
@@ -46,6 +46,7 @@
             SELECT MAX(arr_exp) AS arr_exp
                 FROM users JOIN routes
                     ON captain = id_code
+                WHERE NOT routes.deleted AND NOT users.deleted
                 GROUP BY captain
     
         ";
@@ -60,8 +61,8 @@
                 SELECT id_code, surname, users.name, arr_exp, trade_dep, trade_arr, ship_id, ships.name AS ship, ret
                     FROM users JOIN routes
                         ON id_code = captain
-                    JOIN ships                    	
-                        ON ship_id = id                
+                    JOIN ships
+                        ON ship_id = id
                     WHERE arr_exp = '" . $row['arr_exp'] . "'
             
             ";

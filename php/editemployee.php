@@ -43,6 +43,7 @@ if($result = $connection->query($sql))
 
         <!-- Style -->
         <link href="../src/css/style.css" rel="stylesheet">
+        <link href="../src/favicon.png" rel="icon">
 
         <!-- Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
@@ -191,23 +192,6 @@ if($result = $connection->query($sql))
                                         <label for="cf" class="form-label">Codice Fiscale*</label>
                                         <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
                                     </div>
-
-                                    <div class="col-md-3">
-                                        <label for="cf" class="form-label">Codice Fiscale*</label>
-                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="cf" class="form-label">Codice Fiscale*</label>
-                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="cf" class="form-label">Codice Fiscale*</label>
-                                        <input type="text" class="form-control" id="cf" name="cf" maxlength="16" minlength="16" placeholder="Form. ABCDEF01G23H456J" value="<?php echo $row['cf'] ?>" required>
-                                    </div>
-
-
-                                    <!-- END PASSWORD EDIT-->
-
 
                                     <div class="col-md-3">
                                         <label for="ProvR" class="form-label">Residenza*</label>
@@ -431,14 +415,10 @@ if($result = $connection->query($sql))
                 $tel = $_POST['tel'];
                 $birth = $_POST['birth_date'];
                 $gender = $connection->real_escape_string($_POST['gender']);
-                $provr = $connection->real_escape_string($_POST['prov_r']);
-                $cityr = $connection->real_escape_string($_POST['city_r']);
-                $zipr = $connection->real_escape_string($_POST['zip_r']);
-                $addrr = $connection->real_escape_string($_POST['addr_r']);
-                $provd = $connection->real_escape_string($_POST['prov_d']);
-                $cityd = $connection->real_escape_string($_POST['city_d']);
-                $zipd = $connection->real_escape_string($_POST['zip_d']);
-                $addrd = $connection->real_escape_string($_POST['addr_d']);
+                $prov = $connection->real_escape_string($_POST['prov_r']);
+                $city = $connection->real_escape_string($_POST['city_r']);
+                $zip = $connection->real_escape_string($_POST['zip_r']);
+                $addr = $connection->real_escape_string($_POST['addr_r']);
                 $blood = $connection->real_escape_string($_POST['blood']);
                 $hair = $connection->real_escape_string($_POST['hair']);
                 $eyes = $connection->real_escape_string($_POST['eyes']);
@@ -460,14 +440,10 @@ if($result = $connection->query($sql))
                             tel = '$tel',
                             birth_date = '$birth',
                             gender = '$gender',
-                            prov_r = '$provr',
-                            city_r = '$cityr',
-                            zip_r = '$zipr',
-                            addr_r = '$addrr',
-                            prov_d = NULLIF('$provd', ''),
-                            city_d = NULLIF('$cityd', ''),
-                            zip_d = NULLIF('$zipd', ''),
-                            addr_d = NULLIF('$addrd', '')
+                            prov_r = '$prov',
+                            city_r = '$city',
+                            zip_r = '$zip',
+                            addr_r = '$addr'
                         WHERE infos.user_id = " . $row['id_code'] . ";
                         
                     UPDATE generalities
@@ -479,6 +455,22 @@ if($result = $connection->query($sql))
                         WHERE generalities.user_id = " . $row['id_code'] . ";
     
                     ";
+
+                if ($result = $connection->multi_query($sql))
+                    if (!isset($_POST['domicile'])) {
+
+                        $prov = $connection->real_escape_string($_POST['prov_d']);
+                        $city = $connection->real_escape_string($_POST['city_d']);
+                        $zip = $connection->real_escape_string($_POST['zip_d']);
+                        $addr = $connection->real_escape_string($_POST['addr_d']);
+
+                        $sql = "
+                    
+                                    UPDATE infos
+                                        SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
+                                
+                                ";
+                    }
 
                 if (!($result = $connection->multi_query($sql)))
                     die('<script>alert("Errore nell\'invio dei dati.")</script>');

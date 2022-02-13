@@ -96,6 +96,7 @@ if (isset($_POST['submitted']) && !$error)
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/x-icon" href="/img/logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
+    <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
     <link href="src/css/style.css" rel="stylesheet">

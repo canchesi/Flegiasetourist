@@ -16,8 +16,10 @@ if (isset($_SESSION['id']))
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
+    <link href="../src/favicon.png" rel="icon">
     <link href="src/css/style.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -159,8 +161,12 @@ if (isset($_SESSION['id']))
                         echo '>
                                   <td>'.date("d/m/Y H:i", strtotime($row["date_res"])).'</td>
                                   <td>'.$row["trade_dep"].'-'.$row["trade_arr"].'</td>
-                                  <td>'.date("d/m/Y H:i", strtotime($row["dep_exp"])).'</td>
-                                  <td>Adulti: '.$row["adults"].' | Ragazzi: '.$row['underages'].'<br>Veicolo: '.$row["vehicle"];
+                                  <td>'.date("d/m/Y H:i", strtotime($row["dep_exp"]));
+
+                        if($row['deleted'])
+                            echo '<br><span class="badge bg-danger">Annullata</span>';
+
+                        echo '</td><td>Adulti: '.$row["adults"].' | Ragazzi: '.$row['underages'].'<br>Veicolo: '.$row["vehicle"];
 
                             echo'
                                   </td>
@@ -169,9 +175,9 @@ if (isset($_SESSION['id']))
                                ';
 
 
-                        if(date('Y-m-d H:i') <= ((new DateTime($row['dep_exp']))->modify('-1 day')->format('Y-m-d H:i')) && $row['undone'] === '0')
+                        if(date('Y-m-d H:i') <= ((new DateTime($row['dep_exp']))->modify('-1 day')->format('Y-m-d H:i')) && $row['undone'] === '0' && !$row['deleted'])
                             echo '<td class="text-center"><form><a href="#" class="btn btn-danger delete">Annulla</a></form></td>';
-                        else if($row['undone'] === '1')
+                        else
                             echo '<td class="text-center"><a class="btn btn-secondary" disabled>Annulla</a></td>';
 
                         echo '</tr>';

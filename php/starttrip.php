@@ -9,7 +9,7 @@
         SELECT MIN(dep_exp) AS dep
             FROM users JOIN routes
                 ON captain = id_code
-            WHERE id_code = '" . $_SESSION['id'] . "' AND dep_exp >= '" . $_GET['today'] . "' AND dep_exp < '" . $_GET['tomorrow'] . "' 
+            WHERE id_code = '" . $_SESSION['id'] . "' AND dep_exp >= '" . $_GET['today'] . "' AND dep_exp < '" . $_GET['tomorrow'] . "' AND NOT routes.deleted 
             
     ";
 
@@ -27,7 +27,7 @@
                 SELECT ship_id, dep_exp
                     FROM users JOIN routes
                        ON captain = id_code
-                    WHERE id_code = '" . $_SESSION['id'] . "' AND dep_exp = '" . $row['dep'] . "' 
+                    WHERE id_code = '" . $_SESSION['id'] . "' AND dep_exp = '" . $row['dep'] . "'
             ";
 
             if ($result = $connection->query($sql)) {
@@ -44,17 +44,13 @@
                         $sql = "
                     
                         UPDATE routes
-                            SET arr_eff = '" . date('Y-m-d H:i') . "'
+                            SET
+                                arr_eff = '" . date('Y-m-d H:i') . "',
+                                notes = '" . $_GET['note'] . "'
                         WHERE ship_id = '" . $row['ship_id'] . "' AND dep_exp = '" . $row['dep_exp'] . "';
                     
                     ";
-
-                    if(($result = $connection->query($sql)) && $_GET['note'] !== ""){
-
-                        $sql = "INSERT INTO notes VALUES('" . $row['ship_id'] . "', '" . $row['dep_exp'] . "', '" . $_GET['note'] . "')";
                         $connection->query($sql);
-
-                    }
                     echo  1;
 
                 }

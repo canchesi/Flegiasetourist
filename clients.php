@@ -21,6 +21,7 @@ else if ($_SESSION['type'] === 'cliente')
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/x-icon" href="/img/logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
+    <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
     <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
@@ -171,7 +172,7 @@ else if ($_SESSION['type'] === 'cliente')
                                         
                                         SELECT id_code, surname, name, email
                                             FROM users
-                                            WHERE type = 'cliente'
+                                            WHERE type = 'cliente' AND NOT deleted
                                     
                                     ";
 

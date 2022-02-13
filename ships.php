@@ -21,6 +21,7 @@ else if ($_SESSION['type'] === 'cliente')
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/x-icon" href="/img/logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
+    <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
     <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
@@ -99,7 +100,8 @@ else if ($_SESSION['type'] === 'cliente')
                 <i class="icon icon-lg cil-menu"></i>
             </button>
 
-            <a href="index.php" style="text-decoration: none; color: #374253"><span class="fs-4">Flegias & Tourist</span></a>
+            <a href="index.php" style="text-decoration: none; color: #374253"><span
+                        class="fs-4">Flegias & Tourist</span></a>
 
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -111,9 +113,12 @@ else if ($_SESSION['type'] === 'cliente')
 
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="<?php echo "php/editcaptain.php?id=".$_SESSION['id'];?>">Modifica Profilo</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li> <a href="logout.php" class="dropdown-item">Esci</a>
+                    <li><a class="dropdown-item" href="<?php echo "php/editcaptain.php?id=" . $_SESSION['id']; ?>">Modifica
+                            Profilo</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a href="logout.php" class="dropdown-item">Esci</a>
                     </li>
                 </ul>
             </div>
@@ -151,55 +156,59 @@ else if ($_SESSION['type'] === 'cliente')
                                 </a>
                                 <div class="m-2"></div>
                                 <div class="lg-col-2">
-                                    <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()" type="text" placeholder="Cerca">
+                                    <input class="form-control m-2 me-1" id="searchInput" onkeyup="searchElements()"
+                                           type="text" placeholder="Cerca">
                                 </div>
 
                             </div>
                             <div class="table-responsive" id="warehouseTable">
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
-                                        <tr class="align-middle">
-                                            <th class="text-center">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="asc">
-                                                    ID
-                                                </a>
-                                            </th>
-                                            <th class="text-center">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">
-                                                    Nome
-                                                </a>
-                                            </th>
-                                            <th class="text-center">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="harb1" data-order="asc">
-                                                    Porto n. 1
-                                                </a>
-                                            </th>
-                                            <th class="text-center">
-                                                <a href="#" class="btn btn-ghost-dark orderButton" id="harb2" data-order="asc">
-                                                    Porto n. 2
-                                                </a>
-                                            </th>
-                                            <th class="text-center"></th>
-                                            <th class="text-center"></th>
-                                            <th class="text-end"></th>
-                                            <th></th>
-                                        </tr>
+                                    <tr class="align-middle">
+                                        <th class="text-center">
+                                            <a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="asc">
+                                                ID
+                                            </a>
+                                        </th>
+                                        <th class="text-center">
+                                            <a href="#" class="btn btn-ghost-dark orderButton" id="name"
+                                               data-order="asc">
+                                                Nome
+                                            </a>
+                                        </th>
+                                        <th class="text-center">
+                                            <a href="#" class="btn btn-ghost-dark orderButton" id="harb1"
+                                               data-order="asc">
+                                                Porto n. 1
+                                            </a>
+                                        </th>
+                                        <th class="text-center">
+                                            <a href="#" class="btn btn-ghost-dark orderButton" id="harb2"
+                                               data-order="asc">
+                                                Porto n. 2
+                                            </a>
+                                        </th>
+                                        <th class="text-center"></th>
+                                        <th class="text-center"></th>
+                                        <th class="text-end"></th>
+                                        <th></th>
+                                    </tr>
                                     </thead>
                                     <tbody>
 
-                                        <?php
+                                    <?php
 
-                                            $sql = "
+                                    $sql = "
                                                 
                                                 SELECT * 
                                                 FROM ships
                                             
                                             ";
 
-                                            if ($result = $connection->query($sql)) {
+                                    if ($result = $connection->query($sql)) {
 
-                                                while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                                                    echo '
+                                        while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                                            echo '
                                                         <tr class="align-middle" id="' . $row["id"] . '">
                                                             <td class="text-center">
                                                                 <div>' . $row["id"] . '</div>
@@ -208,25 +217,35 @@ else if ($_SESSION['type'] === 'cliente')
                                                                 <div>' . $row["name"] . '</div>
                                                             </td>
                                                             <td class="text-center">
-                                                                <div>'; echo $row["harb1"] ? $row["harb1"] : "/"; echo '</div>
+                                                                <div>';
+                                            echo $row["harb1"] ? $row["harb1"] : "/";
+                                            echo '</div>
                                                             </td>
                                                             <td class="text-center">
-                                                               <div>'; echo $row["harb2"] ? $row["harb2"] : "/"; echo '</div>
+                                                               <div>';
+                                            echo $row["harb2"] ? $row["harb2"] : "/";
+                                            echo '</div>
                                                             </td>
                                                             <td></td>
                                                             <td></td>
                                                             <td></td>
-                                                            <td>
-                                                            <form method="GET" class="">
+                                                            <td class="text-center">';
+
+                                            if ($row['unused'])
+                                                echo '<span class="badge bg-warning text-dark">Dismessa</span>';
+
+                                            else
+                                                echo '<form method="GET" class="">
                                                                 <a href="php/editship.php?id=' . $row['id'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                                                                 <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
                                                             </form>
-                                                            </td>
-                                                        </tr>
-                                                    ';
-                                                }
-                                            }
-                                        ?>
+                                                           ';
+                                            echo ' </td>
+                                                  </tr>
+                                                 ';
+                                        }
+                                    }
+                                    ?>
 
                                     </tbody>
                                 </table>
@@ -279,17 +298,20 @@ else if ($_SESSION['type'] === 'cliente')
         }
     }
 
-    $('.deleteButton').click(function(){
+    $('.deleteButton').click(function () {
         var tr = $(this).closest('tr'),
-            del_id = $(tr).attr('id');
+            del_id = $(tr).attr('id'),
+            btns = $(this).closest('form');
 
         $.ajax({
             method: 'GET',
-            url: "php/deleteship.php?id="+ del_id,
+            url: "php/deleteship.php?id=" + del_id,
             cache: false,
-            success:function(result){
-                tr.fadeOut(1000, function(){
-                    $(this).remove();
+            success: function (result) {
+                btns.fadeOut(1000, function () {
+                    btns.empty();
+                    btns.html('<span class="badge bg-warning text-dark">Dismessa</span>');
+                    btns.fadeIn(1000);
                 });
             }
         });

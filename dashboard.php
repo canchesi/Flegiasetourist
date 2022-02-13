@@ -61,6 +61,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" type="image/x-icon" href="/img/logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
+    <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
     <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
@@ -267,12 +268,12 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                     $tomorrow = (new DateTime($today))->modify('+1 day')->format('Y-m-d');
                                     $sql = "
                                                 
-                                            SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret
+                                            SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
                                                 FROM ships JOIN routes
                                                     ON ship_id = id
                                                 JOIN users
                                                     ON id_code = captain
-                                                WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow'
+                                                WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow' AND NOT routes.deleted
 
                                         ";
 
@@ -308,7 +309,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                                     $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                 echo '
-                                                            <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                            <tr class="align-middle'; if($row['delroute']) echo ' text-decoration-line-through'; echo'" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
                                                                 <td class="text-center">
                                                                     <div>' . $row["ship"] . '</div>
                                                                 </td>
@@ -391,7 +392,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                     $sql = "
                                                 
                         SELECT id_code, name, surname, email FROM users
-                            WHERE type = 'capitano' ORDER BY id_code ASC
+                            WHERE type = 'capitano' AND NOT deleted ORDER BY id_code ASC
                     
                     ";
 
@@ -480,7 +481,8 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                     $sql = "
                                                     
                         SELECT * FROM ships
-                           ORDER BY id ASC
+                            WHERE NOT unused
+                            ORDER BY id ASC
                     
                     ";
 
@@ -618,7 +620,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 <div class="modal fade" id="addNote" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="POST" id="add_Note">
+            <form method="GET" id="add_Note">
                 <div class="modal-header">
                     <h5 class="modal-title" id="AddShipsTitle">Nota di Viaggio</h5>
                 </div>
@@ -632,7 +634,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                 <input type="text" value="-1" name="submittedNote" hidden>
             </form>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary submitNote" form="add_Note">Aggiungi</button>
+                <button class="btn btn-primary submitNote" form="add_Note">Aggiungi</button>
             </div>
         </div>
     </div>
@@ -659,8 +661,17 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
     })
 
     $(document).ready(function () {
+        var end = 1;
+        $('#routes tr').each(function (index, tr){
+            if ($(this).find('td').eq(6).find('div').text() !== '~')
+                return true;
+            else if (!($(tr).hasClass('text-decoration-line-through'))) {
+                end = 0;
+                return false;
+            }
+        })
 
-        if ($('#routes tr:last td:eq(5) div').text() !== '~' && $('#routes tr:last td:eq(6) div').text() !== '~')
+        if (($('#routes tr:last td:eq(5) div').text() !== '~' && $('#routes tr:last td:eq(6) div').text() !== '~') || end)
             $('#startTripBtn').toggleClass('btn-success btn-warning');
 
         $('#routes tbody tr').each(function (i, tr){

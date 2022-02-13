@@ -10,7 +10,7 @@ require_once('config.php');
 
 $id = $connection->real_escape_string($_GET['id']);
 
-$sql = "DELETE FROM ships WHERE id = $id ";
+$sql = "UPDATE ships SET unused = 1 WHERE id = '$id' ";
 
 
 if ($connection->query($sql) === FALSE) {

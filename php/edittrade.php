@@ -40,7 +40,8 @@
         <link rel="apple-touch-icon" sizes="180x180" href="/img/180.png">
 
         <!-- Style -->
-        <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
+        <link href="../src/css/style.css" rel="stylesheet">
+        <link href="../src/favicon.png" rel="icon">
 
         <!-- Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">

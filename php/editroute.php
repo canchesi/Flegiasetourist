@@ -17,11 +17,13 @@ if (isset($_POST['trade_dep']))
 
 $id = explode('-', $_GET['id'], 2);
 
-
-$sql = "SELECT *, ships.name AS sname FROM routes JOIN ships ON ship_id = id JOIN users ON captain = id_code WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'";
+ $sql = "SELECT *, ships.name AS sname FROM routes JOIN ships ON ship_id = id JOIN users ON captain = id_code WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'";
 
 if ($result = $connection->query($sql)) {
     $row = $result->fetch_array(MYSQLI_ASSOC);
+    if($row['dep_eff'])
+        header('location: ../routes.php');
+
     if($row['ret']){
         $tmp = $row['trade_dep'];
         $row['trade_dep'] = $row['trade_arr'];
@@ -72,6 +74,7 @@ if (isset($_POST['submitted'])) {
 
     <!-- Style -->
     <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
+    <link href="../src/favicon.png" rel="icon">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
