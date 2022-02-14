@@ -483,8 +483,6 @@ if (isset($_POST['ajax'])) {
 
 <script>
 
-    $(document).onload
-
     var myModal = new coreui.Modal($('#noteModal'), {
         keyboard: false
     })

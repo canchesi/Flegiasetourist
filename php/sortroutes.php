@@ -47,17 +47,17 @@
     ';
 
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-        if($row['ret']){
+        if ($row['ret']) {
             $tmp = $row['trade_dep'];
             $row['trade_dep'] = $row['trade_arr'];
             $row['trade_arr'] = $tmp;
             unset($tmp);
         }
-        if(!$row["dep_eff"])
+        if (!$row["dep_eff"])
             $row["dep_eff"] = '/';
         else
             $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
-        if(!$row["arr_eff"])
+        if (!$row["arr_eff"])
             $row["arr_eff"] = '/';
         else
             $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
@@ -74,10 +74,10 @@
                     <div>' . $row["trade_arr"] . '</div>
                 </td>
                 <td class="text-center">
-                   <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp'])))  . '</div>
+                   <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                 </td>
                 <td class="text-center">
-                    <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp'])))  . '</div>
+                    <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                 </td>
                 <td class="text-center">
                     <div>' . $row["dep_eff"] . '</div>
@@ -88,37 +88,42 @@
                 <td class="text-center">
                     <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                 </td>
-                <td>
-                    <form method="GET" class="">
-                        ';
-        if($_SESSION['type'] !== 'capitano')
+                <td>';
+        if (!$row['deleted']) {
+
+            $out .= '<buttons>';
+
+            if ($_SESSION['type'] !== 'capitano' && $row['dep_eff'] === '/')
+                $out .= '
+                    <div>
+                        <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] . '" class="btn btn-primary m-1">
+                            <i class="cil-pen"></i>
+                        </a>
+                        <a href="#" class="btn btn-danger deleteButton m-1">
+                            <i class="cil-trash"></i>
+                        </a>
+                    </div>';
+            $out .= '<div>';
+            if ($_SESSION['type'] !== 'capitano')
+                $out .= '
+                    <a href="#" class="btn btn-info reservationModalBtn m-1" >
+                        <i class="cil-people"></i>
+                    </a>';
             $out .= '
-                <div>
-                    <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] .'" class="btn btn-primary m-1">
-                        <i class="cil-pen"></i>
-                    </a>
-                    <a href="#" class="btn btn-danger deleteButton m-1">
-                        <i class="cil-trash"></i>
-                    </a>
-                </div>';
-        $out .= '<div>';
-        if($_SESSION['type'] !== 'capitano')
-            $out .= '
-                <a href="#" class="btn btn-info m-1" >
-                    <i class="cil-people"></i>
-                </a>';
-        $out .= '
-                <a href="#" class="btn btn-warning m-1" >
-                    <i class="cil-notes"></i>
-                </a> 
-            </div>
-        </form>
-    </td>
-</tr>
+                        <button class="btn btn-warning m-1 notes">
+                            <i class="cil-notes"></i>
+                        </button> 
+                    </div>
+              </buttons>
+            </td>
+        </tr>
         ';
+        } else {
+            $out .= '
+                <span class="badge bg-danger">Annullata</span>
+                    </td>
+                </tr>';
+        }
     }
-
-    $out .= '</tbody></table>';
-
     echo $out;
 ?>

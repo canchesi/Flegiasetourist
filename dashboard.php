@@ -1,53 +1,53 @@
 <?php
-require_once('php/config.php');
+    require_once('php/config.php');
 
-session_start();
+    session_start();
 
-if (!isset($_SESSION['id']))
-    header("location: login.php");
-else if ($_SESSION['type'] === 'cliente')
-    header('location: index.php');
+    if (!isset($_SESSION['id']))
+        header("location: login.php");
+    else if ($_SESSION['type'] === 'cliente')
+        header('location: index.php');
 
 
-$sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
+    $sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
 
-if ($result = $connection->query($sql))
-    $employeesCount = $result->fetch_assoc();
+    if ($result = $connection->query($sql))
+        $employeesCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
+    $sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
 
-if ($result = $connection->query($sql))
-    $customersCount = $result->fetch_assoc();
+    if ($result = $connection->query($sql))
+        $customersCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(code) AS reservations FROM reservations";
+    $sql = "SELECT COUNT(code) AS reservations FROM reservations";
 
-if ($result = $connection->query($sql))
-    $reservationsCount = $result->fetch_assoc();
+    if ($result = $connection->query($sql))
+        $reservationsCount = $result->fetch_assoc();
 
-$sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
+    $sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
 
-if ($result = $connection->query($sql))
-    $routesCount = $result->fetch_assoc();
+    if ($result = $connection->query($sql))
+        $routesCount = $result->fetch_assoc();
 
-$sqltrades = "SELECT harb_dep, harb_arr FROM trades";
+    $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
 
-if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
+    if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
-    $name = $connection->real_escape_string(ucfirst($_POST['name']));
-    $trade = explode('-', $_POST['trade'], 2);
+        $name = $connection->real_escape_string(ucfirst($_POST['name']));
+        $trade = explode('-', $_POST['trade'], 2);
 
-    $sql = "
+        $sql = "
+                
+            INSERT INTO ships (name, harb1, harb2)
+                VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
             
-        INSERT INTO ships (name, harb1, harb2)
-            VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
-        
-    ";
+        ";
 
-    if (!($result = $connection->query($sql)))
-        die('<script>alert("Errore nell\'invio dei dati.")</script>');
-    else
-        header('location: dashboard.php');
-}
+        if (!($result = $connection->query($sql)))
+            die('<script>alert("Errore nell\'invio dei dati.")</script>');
+        else
+            header('location: dashboard.php');
+    }
 
 
 ?>
@@ -268,14 +268,14 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                     $tomorrow = (new DateTime($today))->modify('+1 day')->format('Y-m-d');
                                     $sql = "
                                                 
-                                            SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
-                                                FROM ships JOIN routes
-                                                    ON ship_id = id
-                                                JOIN users
-                                                    ON id_code = captain
-                                                WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow' AND NOT routes.deleted
+                                        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
+                                            FROM ships JOIN routes
+                                                ON ship_id = id
+                                            JOIN users
+                                                ON id_code = captain
+                                            WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow' AND NOT routes.deleted
 
-                                        ";
+                                    ";
 
                                     if ($_SESSION['type'] === 'capitano')
                                         $sql .= "AND captain = '$id'";
@@ -309,33 +309,33 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                                     $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                 echo '
-                                                            <tr class="align-middle'; if($row['delroute']) echo ' text-decoration-line-through'; echo'" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
-                                                                <td class="text-center">
-                                                                    <div>' . $row["ship"] . '</div>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div>' . $row['trade_dep'] . '</div>
-                                                                </td>
-                                                                <td class="text-center" >
-                                                                    <div>' . $row["trade_arr"] . '</div>
-                                                                </td>
-                                                                <td class="text-center deff" >
-                                                                   <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
-                                                                </td>
-                                                                <td class="text-center aeff" >
-                                                                    <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div>' . $row["dep_eff"] . '</div>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div>' . $row["arr_eff"] . '</div>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
-                                                                </td>
-                                                                <td>
-                                                            </tr>
+                                                    <tr class="align-middle'; if($row['delroute']) echo ' text-decoration-line-through'; echo'" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                        <td class="text-center">
+                                                            <div>' . $row["ship"] . '</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div>' . $row['trade_dep'] . '</div>
+                                                        </td>
+                                                        <td class="text-center" >
+                                                            <div>' . $row["trade_arr"] . '</div>
+                                                        </td>
+                                                        <td class="text-center deff" >
+                                                           <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                                                        </td>
+                                                        <td class="text-center aeff" >
+                                                            <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div>' . $row["dep_eff"] . '</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div>' . $row["arr_eff"] . '</div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div>' . $row["surname"] . ' ' . $row["name"] . '</div>
+                                                        </td>
+                                                        <td>
+                                                    </tr>
                                                     ';
                                                 $row = $result->fetch_array();
                                             }
@@ -620,7 +620,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 <div class="modal fade" id="addNote" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="GET" id="add_Note">
+            <form id="add_Note">
                 <div class="modal-header">
                     <h5 class="modal-title" id="AddShipsTitle">Nota di Viaggio</h5>
                 </div>
@@ -631,11 +631,10 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                   required></textarea>
                     </div>
                 </div>
-                <input type="text" value="-1" name="submittedNote" hidden>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary submitNote">Aggiungi</button>
+                </div>
             </form>
-            <div class="modal-footer">
-                <button class="btn btn-primary submitNote" form="add_Note">Aggiungi</button>
-            </div>
         </div>
     </div>
 </div>
@@ -728,7 +727,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
             method: 'GET',
             url: "php/deleteship.php?id=" + del_id,
             cache: false,
-            success: function (result) {
+            success: function () {
                 tr.fadeOut(1000, function () {
                     $(this).remove();
                 });
