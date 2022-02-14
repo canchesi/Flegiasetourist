@@ -46,7 +46,8 @@ if (isset($_POST['submitted'])) {
     $sql = "
 
                 UPDATE routes
-                    SET ship_id = '$shipID', captain = '$captain' WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'
+                    SET ship_id = '$shipID', captain = '$captain' 
+                WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'
                 
             ";
 
@@ -188,7 +189,7 @@ if (isset($_POST['submitted'])) {
                                 <div class="col-md-4">
                                     <label for="dep_exp" class="form-label">Data di partenza*</label>
                                     <input type="text" class="form-control" id="dep_exp" name="dep_exp" disabled
-                                           value="<?php echo date('d/m/Y H:m', strtotime($row['dep_exp'])); ?>">
+                                           value="<?php echo date('d/m/Y H:i', strtotime($row['dep_exp'])); ?>">
                                 </div>
                                 <!-- End Data Di Partenza -->
 
@@ -218,7 +219,7 @@ if (isset($_POST['submitted'])) {
                                 <div class="col-md-4">
                                     <label for="arr_exp" class="form-label">Data di arrivo*</label>
                                     <input type="text" class="form-control" id="arr_exp" name="arr_exp" disabled
-                                           value="<?php echo date('d/m/Y H:m', strtotime($row['arr_exp'])); ?>">
+                                           value="<?php echo date('d/m/Y H:i', strtotime($row['arr_exp'])); ?>">
                                 </div>
                                 <!-- End Data Di Arrivo -->
 
@@ -276,14 +277,12 @@ if (isset($_POST['submitted'])) {
                 $('#nave').empty();
                 $('#captain').empty();
                 $('#nave').append('<option value="<?php echo $row['ship_id'];?>" selected><?php echo $row['sname'];?></option>');
-                $('#captain').append('<option selected value="<?php echo $row['captain'];?>"><?php echo $row['surname'] . ' ' . $row['name'];?></option>');
+                $('#captain').append("<option selected value='<?php echo $row['captain'];?>'><?php echo $row['surname'] . ' ' . $row['name'];?></option>");
 
                 for (var id in response[0])
-                    if(!($('#captain option[value="id"]')))
                         $('#captain').append('<option value="' + id + '">' + response[0][id] + '</option>');
 
                 for (id in response[1])
-                    if(!($('#nave option[value="id"]')))
                         $('#nave').append('<option value="' + id + '">' + response[1][id] + '</option>');
 
                 for (id in response[2])

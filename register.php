@@ -169,11 +169,7 @@
     </body>
     <!-- End Body -->
 
-    <script type="text/javascript">
-        //TODO Verificare unicità mail
 
-
-    </script>
 </html>
 
 

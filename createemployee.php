@@ -408,31 +408,39 @@
     
                     INSERT INTO infos(user_id, cf, tel, birth_date, gender, prov_r, city_r, zip_r, addr_r)
                         VALUES((SELECT max(id_code) FROM users), '$cf', '$tel', '$birth', '$gender', '$prov', '$city', '$zip', '$addr');            
+            ";
 
+            if ($result = $connection->query($sql)) {
+                $sql = "
                     INSERT INTO generalities(user_id, blood, hair, eyes, height)
                         VALUES((SELECT max(id_code) FROM users), '$blood', '$hair', '$eyes', '$height');
                
                 ";
 
-            if ($result = $connection->multi_query($sql))
-                if (!isset($_POST['domicile'])) {
+                if ($result = $connection->query($sql))
+                    if (!isset($_POST['domicile'])) {
 
-                    $prov = $connection->real_escape_string($_POST['prov_d']);
-                    $city = $connection->real_escape_string($_POST['city_d']);
-                    $zip = $connection->real_escape_string($_POST['zip_d']);
-                    $addr = $connection->real_escape_string($_POST['addr_d']);
+                        $prov = $connection->real_escape_string($_POST['prov_d']);
+                        $city = $connection->real_escape_string($_POST['city_d']);
+                        $zip = $connection->real_escape_string($_POST['zip_d']);
+                        $addr = $connection->real_escape_string($_POST['addr_d']);
 
-                    $sql = "
+                        $sql = "
         
-                        UPDATE infos
-                            SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
+                            UPDATE infos
+                                SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr'
+                                WHERE user_id = (
+                                    SELECT MAX(id_code)
+                                        FROM users
+                                );
                     
-                    ";
+                        ";
 
-                    if (!($result = $connection->query($sql)))
-                        die('<script>alert("Errore nell\'invio dei dati.")</script>');
+                        if (!($result = $connection->query($sql)))
+                            die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
-                }
+                    }
+            }
 
         }
 

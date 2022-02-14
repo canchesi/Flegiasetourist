@@ -17,12 +17,8 @@
 
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-            if($row['ret']){
-                $tmp = $row['trade_dep'];
-                $row['trade_dep'] = $row['trade_arr'];
-                $row['trade_arr'] = $tmp;
-                unset($tmp);
-            }
+                if(strpos($row['surname'], "'"))
+                    $row['surname'] = str_replace("'", "\'", $row['surname']);
                 $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
         }
     $sql = "
@@ -30,7 +26,7 @@
         SELECT id, name, harb1, harb2, ret
             FROM ships LEFT JOIN routes
                 ON id = ship_id
-            WHERE captain IS NULL AND NOT ships.unused
+            WHERE captain IS NULL AND NOT ships.unused AND (harb1 = '$city' OR harb2 = '$city' OR harb1 IS NULL)
     
     ";
 
@@ -76,6 +72,8 @@
                         unset($tmp);
                     }
                     if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
+                        if(strpos($row['surname'], "'"))
+                            $row['surname'] = str_replace("'", "\'", $row['surname']);
                         $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
                         $capship[1][$row['ship_id']] = $row['ship'];
                     }

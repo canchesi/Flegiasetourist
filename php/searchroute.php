@@ -50,12 +50,13 @@
                         <td>" . date("d/m/Y H:i", strtotime($row['arr_exp'])) . "</td>
                         <td>Adulto:\t€" . number_format((float)$row['price_adult'], 2) . "<br>Ragazzo:\t€" . number_format((float)$row['price_underage'], 2) . "</td>
                         <td>" . $rem . "</td>
-                       
                 
                 ";
 
                 if($_SESSION['type'] === 'cliente' && isset($_SESSION['type']))
                     $out .= "<td class='text-center'><button class='btn btn-warning mt-1 reservationModalBtn'>Prenota</button></td>";
+                else
+                    $out .= "<td class='text-center'><div class='badge bg-warning text-dark'>Accedi per prenotare</div></td>";
 
 
                 $row = $result->fetch_array(MYSQLI_ASSOC);
