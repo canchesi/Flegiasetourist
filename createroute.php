@@ -64,13 +64,11 @@
         $sql = "SELECT harb_dep, harb_arr FROM trades";
         $out = '<option disabled selected>Partenza</option>';
         if ($result = $connection->query($sql)) {
-            if ($_GET['ret'] == 0) {
-                while ($row = $result->fetch_array(MYSQLI_ASSOC))
+            while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                if ($_GET['ret'] == 0)
                     $out .= "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
-            } else {
-                while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                else
                     $out .= "<option value = '" . $row['harb_arr'] . "'> " . $row['harb_arr'] . " </option>";
-            }
             echo $out;
         }
 
@@ -245,10 +243,9 @@
                                         <label for="arr_exp" class="form-label">Data di arrivo*</label>
                                         <div class="" id="arr_exp_div"></div>
                                     </div>
-                                    <div class="col-md-4" >
+                                    <div class="col-md-4">
                                         <label for="ship" class="form-label">Navi*</label>
-                                        <div class="" id="ship_div">
-                                        </div>
+                                        <div class="" id="ship_div"></div>
                                         <input type="text" value="1" name="submitted" hidden>
                                     </div>
                                     <div class="col-12 mt-4">
@@ -279,46 +276,53 @@
 
     <script>
 
-        $(document).ready(function () {
-            var checkbox = $('#return');
-
-            checkbox.change(function () {
-                if (checkbox.is(':checked')) {
-                    $.ajax({
-                        type: "GET",
-                        data: {ajax: 1, ret: 1},
-                        success: function (data) {
-                            $('#trade_dep').empty();
-                            $('#trade_dep').html(data);
-                        }
-                    });
-                } else {
-                    $.ajax({
-                        type: "GET",
-                        data: {ajax: 1, ret: 0},
-                        success: function (data) {
-                            $('#trade_dep').empty();
-                            $('#trade_dep').html(data);
-                        }
-                    });
-                }
-            });
+        $(document).ready(function (){
+            $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
+            $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
+            $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
+            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
+            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
         });
 
-        $(document).ready(function (){
+        $(document).ready(function () {
+            var checkbox = $('#return'),
+                ret = 0;
+
+            checkbox.change(function () {
+                if (checkbox.is(':checked'))
+                    ret = 1;
+                $("#arr_div").empty();
+                $("#dep_div").empty();
+                $("#arr_exp_div").empty();
+                $("#ship_div").empty();
+                $("#cap_div").empty();
                 $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
                 $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
                 $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
                 $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
                 $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
+
+                $.ajax({
+                    type: "GET",
+                    data: {ajax: 1, ret: ret},
+                    success: function (data) {
+                        $('#trade_dep').empty();
+                        $('#trade_dep').html(data);
+                        $("#arr_div").empty();
+                        $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
+
+                    }
+                });
+
+            });
         });
 
-        $("#trade_dep").on('change', function (){
+        $(document).on('change', "#trade_dep", function (){
             $("#arr_div").empty();
             $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" required></select>');
             var arr = $("#trade_arr");
             $.ajax({
-                url: "php/setroutes.php?city="+$("#trade_dep option:selected").text().trim(),
+                url: "php/setroutes.php?city="+$("#trade_dep option:selected").val(),
                 type: "GET",
                 dataType: 'json',
                 success:function (response){
@@ -340,14 +344,14 @@
 
         });
 
-        $('#dep_div').change(function () {
+        $('#arr_exp_div').change(function () {
 
             $("#cap_div").empty();
             $("#ship_div").empty();
             $("#ship_div").append('<select class="form-select" id="ship_id" name="ship_id" required><option disabled selected>Nave</option></select>');
             $("#cap_div").append('<select class="form-select" id="captain" name="captain" required><option disabled selected>Capitano</option></select>');
 
-            var city = $('#trade_dep option:selected').text().trim();
+            var city = $('#trade_dep option:selected').val();
 
             $.ajax({
                 url: "php/setcapships.php",
@@ -359,15 +363,12 @@
                     $('#captain').empty();
                     $('#ship_id').append('<option disabled selected>Nave</option>');
                     $('#captain').append('<option disabled selected>Capitano</option>');
-                    for (var id in response[0]) {
+                    for (var id in response[0])
                         $('#captain').append('<option value="'+id+'">'+ response[0][id] +'</option>');
-                    }
-                    for (id in response[1]) {
+                    for (id in response[1])
                         $('#ship_id').append('<option value="'+id+'">'+ response[1][id] +'</option>');
-                    }
-                    for (id in response[2]) {
+                    for (id in response[2])
                         $('#ship_id').append('<option value="'+id+'">'+ response[2][id] +'</option>');
-                    }
                 }
             });
 
