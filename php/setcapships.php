@@ -17,8 +17,6 @@
 
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                if(strpos($row['surname'], "'"))
-                    $row['surname'] = str_replace("'", "\'", $row['surname']);
                 $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
         }
     $sql = "
@@ -72,8 +70,6 @@
                         unset($tmp);
                     }
                     if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
-                        if(strpos($row['surname'], "'"))
-                            $row['surname'] = str_replace("'", "\'", $row['surname']);
                         $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
                         $capship[1][$row['ship_id']] = $row['ship'];
                     }

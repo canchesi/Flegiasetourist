@@ -56,11 +56,11 @@
         if(!$row["dep_eff"])
             $row["dep_eff"] = '/';
         else
-            $row['dep_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_eff'])));
+            $row['dep_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_eff'])));
         if(!$row["arr_eff"])
             $row["arr_eff"] = '/';
         else
-            $row['arr_eff'] = date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_eff'])));
+            $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
         $out .= '
         
             <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
