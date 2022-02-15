@@ -54,7 +54,7 @@ if (isset($_POST['submitted'])) {
                     $sql = "
             
                         UPDATE infos
-                            SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
+                            SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr'
                         WHERE user_id = (SELECT max(id_code) FROM users);
                     
                     ";

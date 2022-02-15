@@ -273,7 +273,7 @@
                                                 ON ship_id = id
                                             JOIN users
                                                 ON id_code = captain
-                                            WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow' AND NOT routes.deleted
+                                            WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow'
 
                                     ";
 
