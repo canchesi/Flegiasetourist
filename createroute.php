@@ -291,6 +291,8 @@
             checkbox.change(function () {
                 if (checkbox.is(':checked'))
                     ret = 1;
+                else
+                    ret = 0;
                 $("#arr_div").empty();
                 $("#dep_div").empty();
                 $("#arr_exp_div").empty();

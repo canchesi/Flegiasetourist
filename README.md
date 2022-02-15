@@ -16,7 +16,7 @@ I porti affiliati all'azienda (identificati dalla città di appartenenza) sono r
 
 Le navi possedute dall'azienda sono identificate da un ID numerico e possiedono un nome di battesimo. Ogni nave è o assegnata ad una tratta specifica o posta come riserva.
 
-Le rotte sono viaggi identificati dalla nave che partirà per la tratta assegnatale e la data e l'orario previsti, e sono composte da varie informazioni: un porto di partenza e uno di arrivo, un orario di arrivo previsto, un orario di partenza e uno di arrivo effettivi inseriti dal capitano della nave al momento della partenza e dell'arrivo reali e una scheda contenente delle note sul viaggio.
+Le rotte sono viaggi identificati dalla nave che partirà per la tratta assegnatale (in un verso o nell'altro) e la data e l'orario previsti, e sono composte da varie informazioni: un porto di partenza e uno di arrivo, un orario di arrivo previsto, un orario di partenza e uno di arrivo effettivi inseriti dal capitano della nave al momento della partenza e dell'arrivo reali e una scheda contenente delle note sul viaggio.
 
 Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare una prenotazione di più biglietti relativi ad una specifica rotta che verranno poi pagati prima dell'imbarco; le prenotazioni sono identificate da un codice numerico e in esse sono indicati il numero di passeggeri maggiorenni e minorenni, al fine di un corretto calcolo del prezzo totale e del numero di passeggeri in viaggio su una certa rotta, una data di effettuazione della prenotazione, e la presenza di un veicolo, il quale può essere al più uno per prenotazione; in base alla tipologia del veicolo (autoveicolo, motoveicolo, camion) vi sono dei sovrapprezzi.
 

@@ -2,7 +2,9 @@
 
 ### Ristrutturazione
 
-Lo schema concettuale non prevede ridondanze o cicli. Le generalizzazioni sono state risolte inserendo un capo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. 
+Lo schema concettuale prevede un ciclo tra le entità "Navi", "Tratte" e "Rotte", ma è stato lasciato tale in quanto una nave assegnata ad una rotta non è necessariamente legata alla tratta percorsa (nave di riserva). Le generalizzazioni sono state risolte inserendo un capo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. 
+
+### Modello relazionale
 
 **Utenti**(<u>ID</u>, Email, Password, Nome, Cognome, Tipo, Eliminato)
 
@@ -10,19 +12,17 @@ Lo schema concettuale non prevede ridondanze o cicli. Le generalizzazioni sono s
 
 **Generalità**(<u>Utente*</u>, GruppoSang, ColoreCapelli, ColoreOcchi, Altezza)
 
-**Navi**(<u>IDNave</u>, Nome, NumMaxPass, NumMaxVeic)
+**Navi**(<u>IDNave</u>, Nome, Tratta*, Dismessa)
 
 **Porti**(<u>Città</u>)
 
-**Tratte**(<u>PortoPart*</u>, <u>PortoArr*</u>, PrezzoMagg, PrezzoMin)
+**Tratte**(<u>PortoPart*</u>, <u>PortoArr*</u>, PrezzoAd, PrezzoRag)
 
-**NoteViaggio**(<u>Nave*</u>, <u>PartenzaPrev*</u>, Contenuto)
+**Rotte**(<u>Nave*</u>, <u>PartenzaPrev</u>, ArrivoPrev, PartEff, ArrEff, Tratta*, NumPass, Note, Direzione, Annullata)
 
-**Rotte**(<u>Nave*</u>, <u>PartenzaPrev</u>, ArrivoPrev, PartEff, ArrEff, Tratta*)
+**Veicoli**(<u>Tipologia</u>, Sovrapprezzo)
 
-**Veicoli**(<u>Tipologia</u>, Sovrapprezzo, SpazioOcc)
-
-**Biglietti**(<u>Codice</u>, Utente*, DataPren, PersMagg, PersMin, Veic*)
+**Biglietti**(<u>Codice</u>, Rotta*, Utente*, DataPren, NumAd, NumRag, Veic*, Annullato)
 
 
 

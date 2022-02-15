@@ -37,47 +37,35 @@
 
     $sql = "
             
-            SELECT MAX(arr_exp) AS arr_exp
-                FROM users JOIN routes
-                    ON captain = id_code
-                WHERE NOT routes.deleted AND NOT users.deleted
-                GROUP BY captain
-    
-        ";
+        SELECT id_code, surname, users.name, arr_exp, trade_dep, trade_arr, ship_id, ships.name AS ship, ret
+            FROM users JOIN routes
+                ON id_code = captain
+            JOIN ships
+                ON ship_id = id
+            WHERE arr_exp = ANY(
+                SELECT MAX(arr_exp) AS arr_exp
+                    FROM users JOIN routes
+                        ON captain = id_code
+                    WHERE NOT routes.deleted AND NOT users.deleted
+                    GROUP BY captain
+            )
+    ";
 
 
 
     if($result = $connection->query($sql)){
-        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-
-            $sql2 = "
-            
-                SELECT id_code, surname, users.name, arr_exp, trade_dep, trade_arr, ship_id, ships.name AS ship, ret
-                    FROM users JOIN routes
-                        ON id_code = captain
-                    JOIN ships
-                        ON ship_id = id
-                    WHERE arr_exp = '" . $row['arr_exp'] . "'
-            
-            ";
-
-            if($result2 = $connection->query($sql2))
-                while($row = $result2->fetch_array(MYSQLI_ASSOC)) {
-                    if($row['ret']){
-                        $tmp = $row['trade_dep'];
-                        $row['trade_dep'] = $row['trade_arr'];
-                        $row['trade_arr'] = $tmp;
-                        unset($tmp);
-                    }
-                    if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
-                        $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
-                        $capship[1][$row['ship_id']] = $row['ship'];
-                    }
+            while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                if($row['ret']){
+                    $tmp = $row['trade_dep'];
+                    $row['trade_dep'] = $row['trade_arr'];
+                    $row['trade_arr'] = $tmp;
+                    unset($tmp);
                 }
-        }
-
-
-
+                if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
+                    $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
+                    $capship[1][$row['ship_id']] = $row['ship'];
+                }
+            }
         echo json_encode($capship);
     } else {
         echo "Error";
