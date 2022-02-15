@@ -10,15 +10,56 @@ Ogni utente della piattaforma è identificato da un codice idcentificativo numer
 
 Un dipendente ha inoltre associata una scheda di generalità utili all'azienda, come gruppo sanguigno, colore di capelli e occhi, e altezza.
 
-Un utente può essere un cliente o un dipendente, il quale a sua volta si suddivide in due categorie: amministratore, il quale è delegato ai lavori d'ufficio e si occupa della gestione completa della piattaforma e degli utenti, e capitano, il quale può guidare o meno una nave per una determinata rotta; è obbligatoria l'assegnazione di un capitano per una rotta.
+Un utente può essere un cliente o un dipendente, il quale a sua volta si suddivide in due categorie: amministratore e capitano.
 
 I porti affiliati all'azienda (identificati dalla città di appartenenza) sono raggruppati in coppie per definire le tratte proposte dalla compagnia. Le tratte hanno due prezzi base per passeggeri adulti e minori di 18 anni.
 
 Le navi possedute dall'azienda sono identificate da un ID numerico e possiedono un nome di battesimo. Ogni nave è o assegnata ad una tratta specifica o posta come riserva.
 
-Le rotte sono viaggi identificati dalla nave che partirà per la tratta assegnatale (in un verso o nell'altro) e la data e l'orario previsti, e sono composte da varie informazioni: un porto di partenza e uno di arrivo, un orario di arrivo previsto, un orario di partenza e uno di arrivo effettivi inseriti dal capitano della nave al momento della partenza e dell'arrivo reali e una scheda contenente delle note sul viaggio.
+Le rotte sono viaggi identificati dalla nave che partirà per la tratta assegnatale e la data e l'orario previsti, e sono composte da varie informazioni: un porto di partenza e uno di arrivo, un orario di arrivo previsto, un orario di partenza e uno di arrivo effettivi della nave e una scheda contenente delle note sul viaggio.
 
-Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare una prenotazione di più biglietti relativi ad una specifica rotta che verranno poi pagati prima dell'imbarco; le prenotazioni sono identificate da un codice numerico e in esse sono indicati il numero di passeggeri maggiorenni e minorenni, al fine di un corretto calcolo del prezzo totale e del numero di passeggeri in viaggio su una certa rotta, una data di effettuazione della prenotazione, e la presenza di un veicolo, il quale può essere al più uno per prenotazione; in base alla tipologia del veicolo (autoveicolo, motoveicolo, camion) vi sono dei sovrapprezzi.
+Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare una prenotazione di più biglietti relativi ad una specifica rotta che verranno poi pagati prima dell'imbarco; le prenotazioni sono identificate da un codice numerico e in esse sono indicati il numero di passeggeri maggiorenni e minorenni e una data di effettuazione della prenotazione, e la presenza di un veicolo; in base alla tipologia del veicolo (autoveicolo, motoveicolo, camion) vi sono dei sovrapprezzi.
+
+### Dizionario
+
+| Entità         | Descrizione                               | Attributi                                                                                                                                             | Identificatore               |
+|----------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
+| Utente         | Utente della piattaforma                  | ID, Email, Nome, Cognome, Password, Eliminato                                                                                                         | ID                           |
+| Informazioni   | Informazioni dell'utente                  | Residenza, Domicilio, CF, Telefono, Data di nascita, Sesso                                                                                            | Utente                       |
+| Dipendente     | Dipendente della società                  |                                                                                                                                                       |                              |
+| Cliente        | Cliente della compagnia                   |                                                                                                                                                       |                              |
+| Amministratore | Amministratore della società              |                                                                                                                                                       |                              |
+| Capitano       | Comandante delle navi                     |                                                                                                                                                       |                              |
+| Generalità     | Informazioni aggiuntive dei dipendenti    | Colore capelli, Colore occhi, Gruppo sanguigno, Altezza                                                                                               | Dipendente                   |
+| Rotta          | Specifici viaggi proposti dalla compagnia | Data partenza prevista, Data arrivo prevista, Data partenza effettiva, Data arrivo affettiva, Numero passeggeri prenotati, Note di viaggio, Annullata | Data partenza prevista, Nave |
+| Navi           | Navi della società                        | ID, Nome, Dismessa                                                                                                                                    | ID                           |
+| Tratte         | Percorsi possibili per le rotte           | Prezzo adulto, Prezzo ragazzo                                                                                                                         | Porto                        |
+| Porti          | Porti affiliati alla società              | Città                                                                                                                                                 | Città                        |
+| Veicoli        | Veicoli trasportabili                     | Tipologia, Sovrapprezzo                                                                                                                               | Tipologia                    |
+| Prenotazioni   | Prenotazioni effettuabili da un cliente   | Codice, Numero passeggeri adulti, Numero passeggeri ragazzi, Data prenotazione                                                                        | Codice                       |
+
+| Relazione                   | Descrizione                                       |
+|-----------------------------|---------------------------------------------------|
+| Appartenenza (informazioni) | Appartenenza delle informazioni ad un  utente     |
+| Appartenenza (generalità)   | Appartenenza delle generalità ad un dipendente    |
+| Guida                       | Comando di una rotta da un capitano               |
+| Operazione                  | Effettuazione di una prenotazione da un cliente   |
+| Aggiunta                    | Aggiunta di un veicolo ad una prenotazione        |
+| Riferimento                 | Riferimento di una prenotazione ad una rotta      |
+| Percorrenza                 | Percorrenza di una nave in relazione ad una rotta |
+| Assegnata                   | Assegnazione di una tratta ad una nave            |
+| Percorso                    | Scelta tratta per una rotta                       |
+| Partenza/Arrivo             | Ruolo dei porti in una tratta (andata)            |
+
+
+### Vincoli
+
+- Una rotta deve essere comandata da uno e un solo capitano, ma non tutti i capitani devono comandare una rotta.
+- Gli orari di partenza e arrivo effettivi sono inseriti dal capitano al momento della partenza e dell'arrivo reali.
+- Gli amministratori sono gli unici che possono gestire completamente la piattaforma.
+- Le rotte relative alla stessa tratta possono essere percorse in un verso o nell'altro.
+- Può essere selezionato al più un veicolo per prenotazione.
+- Solo i clienti possono effettuare una prenotazione.
 
 ### Operazioni
 
@@ -32,6 +73,8 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
 
   - **Inserimento note di viaggio**: Può inserire delle note sulla rotta effettuata, ma non può modificarle una volta confermate.
 
+  - **Modifica informazioni personali**: Può modificare alcune proprie informazioni.
+
 - #### Amministratore
 
   - **Inserimento, rimozione e modifica delle rotte**: Può inserire, rimuovere o modificare una rotta secondo le necessità dell'azienda, cambiando orari e capitano, esclusivamente prima della partenza effettiva.
@@ -42,7 +85,7 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
 
 - #### Visitatore
 
-  - **Visualizzazione delle rotte**: Può visualizzare le rotte offerte dall'azienda fino a sette giorni successivi.
+  - **Visualizzazione delle rotte**: Può visualizzare le rotte offerte dall'azienda in base ad una ricerca.
 
   - **Registrazione come cliente**: Può effettuare una registrazione come cliente inserendo i dati richiesti al fine di effettuare prenotazioni di biglietti.
 
@@ -51,3 +94,5 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
   - **Prenotazione e annullamento di biglietti**: Può effettuare prenotazioni di biglietti per determinate rotte, indicando i dati richiesti, o effettuare un annullamento entro 24 ore precedenti alla partenza.
 
   - **Visualizzazione delle prenotazioni**: Può visualizzare lo storico delle prenotazioni effettuate.
+
+  - **Modifica informazioni personali**: Può modificare tutte le proprie informazioni.

@@ -2,7 +2,7 @@
 
 ### Ristrutturazione
 
-Lo schema concettuale prevede un ciclo tra le entità "Navi", "Tratte" e "Rotte", ma è stato lasciato tale in quanto una nave assegnata ad una rotta non è necessariamente legata alla tratta percorsa (nave di riserva). Le generalizzazioni sono state risolte inserendo un capo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. 
+Lo schema concettuale prevede un ciclo tra le entità "Navi", "Tratte" e "Rotte", ma è stato lasciato tale in quanto una nave assegnata ad una rotta non è necessariamente legata alla tratta percorsa (nave di riserva). Le generalizzazioni sono state risolte inserendo un campo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. 
 
 ### Modello relazionale
 
