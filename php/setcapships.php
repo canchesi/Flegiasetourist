@@ -61,7 +61,7 @@
                     $row['trade_arr'] = $tmp;
                     unset($tmp);
                 }
-                if ($row['trade_arr'] == $city && strtotime($date) > strtotime($row['arr_exp'])) {
+                if ($row['trade_arr'] == $city && strtotime($date) >= strtotime($row['arr_exp'])) {
                     $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
                     $capship[1][$row['ship_id']] = $row['ship'];
                 }

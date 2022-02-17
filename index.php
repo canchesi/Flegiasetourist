@@ -228,15 +228,14 @@ if (isset($_SESSION['id']))
 
             <div>
                 <h2>Destinazioni</h2>
-                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia,
-                    le spiagge della Puglia e della Calabria, il sole della Campania.</p>
+                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia e della Calabria e il sole della Campania.</p>
 
             </div>
         </div>
         <div class="col d-flex align-items-start">
             <div>
                 <h2>Sconti</h2>
-                <p>Offriamo sconti per i ragazzi a partire dal 10% per tutti gli itinerari.</p>
+                <p>Offriamo sconti per i ragazzi per tutti gli itinerari.</p>
             </div>
         </div>
         <div class="col d-flex align-items-start">

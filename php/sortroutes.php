@@ -74,10 +74,10 @@
                     <div>' . $row["trade_arr"] . '</div>
                 </td>
                 <td class="text-center">
-                   <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
+                   <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                 </td>
                 <td class="text-center">
-                    <div>' . date('d/m/Y H:m', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
+                    <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                 </td>
                 <td class="text-center">
                     <div>' . $row["dep_eff"] . '</div>

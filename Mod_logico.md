@@ -6,23 +6,23 @@ Lo schema concettuale prevede un ciclo tra le entità "Navi", "Tratte" e "Rotte"
 
 ### Modello relazionale
 
-**Utenti**(<u>ID</u>, Email, Password, Nome, Cognome, Tipo, Eliminato)
+**Utenti**(<ins>ID</ins>, Email, Password, Nome, Cognome, Tipo, Eliminato)
 
-**Informazioni**(<u>Utente*</u>, CF, Telefono, DataNascita, Sesso, ProvinciaR, ComuneR, CAPR, ViaR, ProvinciaD, ComuneD, CAPD, ViaD)
+**Informazioni**(<ins>Utente*</ins>, CF, Telefono, DataNascita, Sesso, ProvinciaR, ComuneR, CAPR, ViaR, ProvinciaD, ComuneD, CAPD, ViaD)
 
-**Generalità**(<u>Utente*</u>, GruppoSang, ColoreCapelli, ColoreOcchi, Altezza)
+**Generalità**(<ins>Utente*</ins>, GruppoSang, ColoreCapelli, ColoreOcchi, Altezza)
 
-**Navi**(<u>IDNave</u>, Nome, Tratta*, Dismessa)
+**Navi**(<ins>IDNave</ins>, Nome, Tratta*, Dismessa)
 
-**Porti**(<u>Città</u>)
+**Porti**(<ins>Città</ins>)
 
-**Tratte**(<u>PortoPart*</u>, <u>PortoArr*</u>, PrezzoAd, PrezzoRag)
+**Tratte**(<ins>PortoPart*</ins>, <ins>PortoArr*</ins>, PrezzoAd, PrezzoRag)
 
-**Rotte**(<u>Nave*</u>, <u>PartenzaPrev</u>, ArrivoPrev, PartEff, ArrEff, Tratta*, NumPass, Note, Direzione, Annullata)
+**Rotte**(<ins>Nave*</ins>, <ins>PartenzaPrev</ins>, ArrivoPrev, PartEff, ArrEff, Tratta*, NumPass, Note, Direzione, Annullata)
 
-**Veicoli**(<u>Tipologia</u>, Sovrapprezzo)
+**Veicoli**(<ins>Tipologia</ins>, Sovrapprezzo)
 
-**Biglietti**(<u>Codice</u>, Rotta*, Utente*, DataPren, NumAd, NumRag, Veic*, Annullato)
+**Biglietti**(<ins>Codice</ins>, Rotta*, Utente*, DataPren, NumAd, NumRag, Veic*, Annullato)
 
 
 
