@@ -19,6 +19,7 @@
                 OR
                 (trade_dep = '$tradeArr' AND trade_arr = '$tradeDep' AND ret = 1))
                 AND dep_exp >= '$depExp' AND dep_eff IS NULL AND NOT deleted
+            ORDER BY dep_exp ASC
                 
     ";
 
