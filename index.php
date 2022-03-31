@@ -309,6 +309,7 @@ if (isset($_SESSION['id']))
                         <div class="mt-2">
                             <h3 class="mt-2">Totale:</h3>
                             <h5 id="price"></h5>
+                            <h6 class="text-secondary" id="iva"></h6>
                         </div>
                 </form>
             </div>
@@ -374,6 +375,7 @@ if (isset($_SESSION['id']))
         prices[0] = prices[0].replace('Adulto:\t€', '');
         var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
         $('#price').text('€'+total);
+        $('#iva').text("di cui IVA: €"+(total*0.18).toFixed(2));
 
     });
 

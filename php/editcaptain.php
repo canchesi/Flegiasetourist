@@ -471,21 +471,20 @@ if (isset($_POST['submitted'])) {
                                         <option disabled selected>
                                             Seleziona...
                                         </option>
-                                        <option value="neri" <?php if ($row['hair'] == 'neri') echo 'selected' ?>>
-                                            Neri
-                                        </option>
-                                        <option value="castani" <?php if ($row['hair'] == 'castani') echo 'selected' ?>>
-                                            Castani
-                                        </option>
-                                        <option value="biondi" <?php if ($row['hair'] == 'biondi') echo 'selected' ?>>
-                                            Biondi
-                                        </option>
-                                        <option value="rossi" <?php if ($row['hair'] == 'rossi') echo 'selected' ?>>
-                                            Rossi
-                                        </option>
-                                        <option value="pelato" <?php if ($row['hair'] == 'pelato') echo 'selected' ?>>
-                                            Pelato
-                                        </option>
+                                        <?php
+
+                                        $hColorsQuery = "SELECT * FROM hair_colors";
+
+                                        if($hairRes = $connection->query($hColorsQuery)){
+                                            while($colorList = $hairRes->fetch_array(MYSQLI_ASSOC)){
+                                                $color = $colorList['value'] == 'no' ? 'Pelato' : $colorList['value'];
+                                                if($row['hair'] == $colorList['value'])
+                                                    echo '<option value="'.$colorList["value"].'" selected>'.ucfirst($color).'</option>';
+                                                else
+                                                    echo '<option value="'.$colorList["value"].'">'.ucfirst($color).'</option>';
+                                            }
+                                        }
+                                        ?>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
@@ -494,15 +493,21 @@ if (isset($_POST['submitted'])) {
                                         <option disabled>
                                             Seleziona...
                                         </option>
-                                        <option value="marroni" <?php if ($row['eyes'] == 'marroni') echo 'selected' ?>>
-                                            Marroni
-                                        </option>
-                                        <option value="azzurri" <?php if ($row['eyes'] == 'azzurri') echo 'selected' ?>>
-                                            Azzurri
-                                        </option>
-                                        <option value="verdi" <?php if ($row['eyes'] == 'verdi') echo 'selected' ?>>
-                                            Verdi
-                                        </option>
+                                        <?php
+
+                                        $eColorsQuery = "SELECT * FROM eyes_colors";
+
+                                        if($eyeRes = $connection->query($eColorsQuery)){
+                                            while($colorList = $eyeRes->fetch_array(MYSQLI_ASSOC)){
+                                                if($row['eyes'] == $colorList["value"])
+                                                    echo '<option value="'.$colorList["value"].'" selected>'.ucfirst($colorList["value"]).'</option>';
+                                                else
+                                                    echo '<option value="'.$colorList["value"].'">'.ucfirst($colorList["value"]).'</option>';
+                                            }
+                                        }
+
+
+                                        ?>
                                     </select>
                                     <input type="text" value="1" name="submitted" hidden>
                                 </div>
@@ -519,7 +524,6 @@ if (isset($_POST['submitted'])) {
             </div>
         </div>
     </div>
-    <!--End Content -->
     <!--End Content -->
 
     <!--Begin Footer -->

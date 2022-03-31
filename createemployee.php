@@ -302,18 +302,21 @@
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
-                                            <option value="castani">
-                                                Castani
-                                            </option>
-                                            <option value="biondi">
-                                                Biondi
-                                            </option>
-                                            <option value="rossi">
-                                                Rossi
-                                            </option>
-                                            <option value="">
-                                                Pelato
-                                            </option>
+                                                <?php
+
+                                                $hColorsQuery = "SELECT * FROM hair_colors";
+
+                                                if($hairRes = $connection->query($hColorsQuery)){
+                                                    while($colorList = $hairRes->fetch_array(MYSQLI_ASSOC)){
+                                                        if ($colorList["value"] == 'no')
+                                                            echo '<option value="'.$colorList["value"].'">Pelato</option>';
+                                                        else
+                                                            echo '<option value="'.$colorList["value"].'">'.ucfirst($colorList["value"]).'</option>';
+                                                    }
+                                                }
+
+
+                                                ?>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
@@ -322,15 +325,18 @@
                                             <option disabled selected>
                                                 Seleziona...
                                             </option>
-                                            <option value="marrone">
-                                                Marroni
-                                            </option>
-                                            <option value="azzurro">
-                                                Azzurri
-                                            </option>
-                                            <option value="verde">
-                                                Verdi
-                                            </option>
+                                            <?php
+
+                                            $eColorsQuery = "SELECT * FROM eyes_colors";
+
+                                            if($eyeRes = $connection->query($eColorsQuery)){
+                                                while($colorList = $eyeRes->fetch_array(MYSQLI_ASSOC)){
+                                                    echo '<option value="'.$colorList["value"].'">'.ucfirst($colorList["value"]).'</option>';
+                                                }
+                                            }
+
+
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="col-12 mt-4">
