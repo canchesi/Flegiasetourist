@@ -36,6 +36,7 @@ if (isset($_SESSION['id']))
 
     <!-- jQuery -->
     <script src="src/jquery/jquery.js"></script>
+
     <title>Flegias & Tourist</title>
 
     <style>
@@ -43,7 +44,17 @@ if (isset($_SESSION['id']))
             width: 100%;
             height: auto;
         }
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 
 </head>
@@ -228,7 +239,8 @@ if (isset($_SESSION['id']))
 
             <div>
                 <h2>Destinazioni</h2>
-                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia e della Calabria e il sole della Campania.</p>
+                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia e
+                    della Calabria e il sole della Campania.</p>
 
             </div>
         </div>
@@ -306,6 +318,44 @@ if (isset($_SESSION['id']))
                                 ?>
                             </select>
                         </div>
+                        <div class="col-md-12">
+                            <label for="saved_payment" class="col-form-label">Metodo di pagamento</label>
+                            <select id="saved_payment" class="form-select mb-3">
+                                <option>
+                                    Seleziona...
+                                </option>
+                                <option value="cassa">
+                                    Paga in cassa
+                                </option>
+                                <?php
+                                $sql = "SELECT * FROM credit_cards WHERE user = " . $_SESSION['id'];
+
+                                if ($result = $connection->query($sql))
+                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                        echo '<option value="' . $row['id'] . '">xxxx-xxxx-xxxx-x' . substr($row['number'], -3) . '</option>';
+                                ?>
+                                <option value="-1">
+                                    Inserisci carta...
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 row" id="newCardForm">
+                            <div class="col-md-12">
+                                <label class="col-form-label" for="cardNumber">Numero carta: </label>
+                                <input type="number" class="form-control" id="cardNumber" placeholder="**** **** **** ****">
+                                <span class="text-danger mb-3" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expirationDate" class="col-form-label">Data di scadenza</label>
+                                <input id="expirationDate" placeholder="mm/yy" class="form-control mb-3" type="month">
+                                <span class="text-danger mb-3" id="expDateError" style="display: none;">Data di scadenza non valida.</span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="CVV" class="col-form-label">CVV</label>
+                                <input id="CVV" class="form-control" type="number" style="-webkit-appearance: none;" min="0" max="999">
+                                <span class="text-danger mb-3" id="CVVNumberError" placeholder="123" style="display: none;">CVV non valido.</span>
+                            </div>
+                        </div>
                         <div class="mt-2">
                             <h3 class="mt-2">Totale:</h3>
                             <h5 id="price"></h5>
@@ -330,8 +380,14 @@ if (isset($_SESSION['id']))
         keyboard: false
     });
 
+    $(document).ready(function() {
+
+
+
+    });
+
     $(document).on('click', '.reservationModalBtn', function () {
-        if(!($(this).hasClass('close'))) {
+        if (!($(this).hasClass('close'))) {
             var tr = $(this).closest('tr'),
                 ids = $(tr).attr('id'),
                 harbs = $(tr).find('td:eq(0)').text().split(' - ', 2),
@@ -370,12 +426,12 @@ if (isset($_SESSION['id']))
         });
     });
 
-    $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function (){
+    $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function () {
         var prices = $('#routes tr td:eq(3)').text().split('Ragazzo:\t€', 2);
         prices[0] = prices[0].replace('Adulto:\t€', '');
-        var total = (parseFloat($('#maggiorenni').val()).toFixed(2)*prices[0] + parseFloat($('#minorenni').val()).toFixed(2)*prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
-        $('#price').text('€'+total);
-        $('#iva').text("di cui IVA: €"+(total*0.18).toFixed(2));
+        var total = (parseFloat($('#maggiorenni').val()).toFixed(2) * prices[0] + parseFloat($('#minorenni').val()).toFixed(2) * prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
+        $('#price').text('€' + total);
+        $('#iva').text("di cui IVA: €" + (total * 0.18).toFixed(2));
 
     });
 
@@ -384,10 +440,15 @@ if (isset($_SESSION['id']))
             trade_arr = $('#harb_arr').val(),
             date = $('#date').val();
 
+
         $.ajax({
             url: "php/searchroute.php",
             type: "GET",
-            data: {trade_dep: trade_dep, trade_arr: trade_arr, dep_exp: date},
+            data: {
+                    trade_dep: trade_dep,
+                    trade_arr: trade_arr,
+                    dep_exp: date
+            },
             success: function (response) {
                 $('.routetable').empty();
                 $('.routetable').html(response);
@@ -395,33 +456,78 @@ if (isset($_SESSION['id']))
         })
     });
 
-    $(document).on('click', '.book', function (){
+    $(document).on('click', '.book', function () {
         var id = $('#id').val(),
             dep_exp = $('#dep_exp').val(),
             adult = $('#maggiorenni').val(),
             minori = $('#minorenni').val(),
             veicolo = $('#veicolo option:selected').text();
 
-        $.ajax({
-            url: "php/book.php",
-            type: "GET",
-            data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo},
-            success:function (response){
-                if(response === '0'){
-                    alert("Prenotazione effettuata.");
-                    window.location.replace("reservations.php");
-                } else if(response === '-1')
-                    alert("Errore nell\'invio dei dati");
-                else if(response === '-2')
-                    window.location.replace("login.php");
-                else
-                    alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: "+response);
-            }
-        })
+
+        //Credit card validation
+        var cardNumber = $('#cardNumber').val();
+        var cardNumberRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$/;
+        var cardNumberResult = cardNumberRegex.test(cardNumber);
+        if(!cardNumberResult)
+            $("#cardNumberError").removeAttr("style");
+        else
+            $("#cardNumberError").hide();
+
+        //CVV Validation
+        var CVVNumber = $("#CVV").val();
+        var CVVRegex = /^[0-9]{3}$/;
+        var CVVNumberResult = CVVRegex.test(CVVNumber);
+        if(!CVVNumberResult)
+            $("#CVVNumberError").removeAttr('style');
+        else
+            $("#CVVNumberError").hide();
+
+        //ExpDate Validation
+        var today = new Date();
+        var expDate = new Date($("#expirationDate").val());
+        var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth()+1);
+        var expDateResult = firstDayOfNextMonth >= today;
+        console.log(expDateResult);
+
+        if(!expDateResult)
+            $("#expDateError").removeAttr('style');
+        else
+            $("#expDateError").hide();
+
+
+        var validation = cardNumberResult && CVVNumberResult && expDateResult;
+
+        //Booking
+        if(validation) {
+            $.ajax({
+                url: "php/book.php",
+                type: "GET",
+                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo},
+                success: function (response) {
+                    if (response === '0') {
+                        alert("Prenotazione effettuata.");
+                        window.location.replace("reservations.php");
+                    } else if (response === '-1')
+                        alert("Errore nell\'invio dei dati");
+                    else if (response === '-2')
+                        window.location.replace("login.php");
+                    else
+                        alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: " + response);
+                }
+            })
+        }
 
 
     });
 
+
+    //New Card Form
+    var selectedCard = $('#saved_payment').find(":selected").val();
+    var cardFormDiv = $('#newCardForm')
+
+    if (selectedCard === "-1") {
+        cardFormDiv.append().html("")
+    }
 
 </script>
 
