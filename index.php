@@ -458,7 +458,6 @@ if (isset($_SESSION['id']))
 
     $(document).on('change', '#saved_payment', function() {
         validation = $('#saved_payment').val();
-        console.log(validation);
         if(validation === '0')
             $('#newCardForm').removeAttr('style');
         else {
@@ -513,7 +512,7 @@ if (isset($_SESSION['id']))
             else
                 validation = true;
         }
-        console.log(validation);
+
         //Booking
         if(validation !== '0') {
             $.ajax({
