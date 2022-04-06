@@ -321,10 +321,10 @@ if (isset($_SESSION['id']))
                         <div class="col-md-12">
                             <label for="saved_payment" class="col-form-label">Metodo di pagamento</label>
                             <select id="saved_payment" class="form-select mb-3">
-                                <option>
+                                <option disabled selected>
                                     Seleziona...
                                 </option>
-                                <option value="cassa">
+                                <option value="-1">
                                     Paga in cassa
                                 </option>
                                 <?php
@@ -334,12 +334,12 @@ if (isset($_SESSION['id']))
                                     while ($row = $result->fetch_array(MYSQLI_ASSOC))
                                         echo '<option value="' . $row['id'] . '">xxxx-xxxx-xxxx-x' . substr($row['number'], -3) . '</option>';
                                 ?>
-                                <option value="-1">
+                                <option value="0">
                                     Inserisci carta...
                                 </option>
                             </select>
                         </div>
-                        <div class="col-md-12 row" id="newCardForm">
+                        <div class="col-md-12 row" id="newCardForm" style="display: none;">
                             <div class="col-md-12">
                                 <label class="col-form-label" for="cardNumber">Numero carta: </label>
                                 <input type="number" class="form-control" id="cardNumber" placeholder="**** **** **** ****">
@@ -381,8 +381,6 @@ if (isset($_SESSION['id']))
     });
 
     $(document).ready(function() {
-
-
 
     });
 
@@ -456,49 +454,68 @@ if (isset($_SESSION['id']))
         })
     });
 
+    var validation;
+
+    $(document).on('change', '#saved_payment', function() {
+        validation = $('#saved_payment').val();
+        console.log(validation);
+        if(validation === '0')
+            $('#newCardForm').removeAttr('style');
+        else {
+            $('#newCardForm').hide();
+            if(validation){
+                //TODO controllo carta
+            }
+        }
+    })
+
     $(document).on('click', '.book', function () {
-        var id = $('#id').val(),
-            dep_exp = $('#dep_exp').val(),
-            adult = $('#maggiorenni').val(),
-            minori = $('#minorenni').val(),
-            veicolo = $('#veicolo option:selected').text();
+        if(validation === '0') {
+            var id = $('#id').val(),
+                dep_exp = $('#dep_exp').val(),
+                adult = $('#maggiorenni').val(),
+                minori = $('#minorenni').val(),
+                veicolo = $('#veicolo option:selected').text();
 
 
-        //Credit card validation
-        var cardNumber = $('#cardNumber').val();
-        var cardNumberRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$/;
-        var cardNumberResult = cardNumberRegex.test(cardNumber);
-        if(!cardNumberResult)
-            $("#cardNumberError").removeAttr("style");
-        else
-            $("#cardNumberError").hide();
+            //Credit card validation
+            var cardNumber = $('#cardNumber').val();
+            var cardNumberRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14})$/;
+            var cardNumberResult = cardNumberRegex.test(cardNumber);
+            if (!cardNumberResult)
+                $("#cardNumberError").removeAttr("style");
+            else
+                $("#cardNumberError").hide();
 
-        //CVV Validation
-        var CVVNumber = $("#CVV").val();
-        var CVVRegex = /^[0-9]{3}$/;
-        var CVVNumberResult = CVVRegex.test(CVVNumber);
-        if(!CVVNumberResult)
-            $("#CVVNumberError").removeAttr('style');
-        else
-            $("#CVVNumberError").hide();
+            //CVV Validation
+            var CVVNumber = $("#CVV").val();
+            var CVVRegex = /^[0-9]{3}$/;
+            var CVVNumberResult = CVVRegex.test(CVVNumber);
+            if (!CVVNumberResult)
+                $("#CVVNumberError").removeAttr('style');
+            else
+                $("#CVVNumberError").hide();
 
-        //ExpDate Validation
-        var today = new Date();
-        var expDate = new Date($("#expirationDate").val());
-        var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth()+1);
-        var expDateResult = firstDayOfNextMonth >= today;
-        console.log(expDateResult);
+            //ExpDate Validation
+            var today = new Date();
+            var expDate = new Date($("#expirationDate").val());
+            var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth() + 1);
+            var expDateResult = firstDayOfNextMonth >= today;
 
-        if(!expDateResult)
-            $("#expDateError").removeAttr('style');
-        else
-            $("#expDateError").hide();
+            if (!expDateResult)
+                $("#expDateError").removeAttr('style');
+            else
+                $("#expDateError").hide();
 
 
-        var validation = cardNumberResult && CVVNumberResult && expDateResult;
-
+            if(!(cardNumberResult && CVVNumberResult && expDateResult))
+                validation = '0';
+            else
+                validation = true;
+        }
+        console.log(validation);
         //Booking
-        if(validation) {
+        if(validation !== '0') {
             $.ajax({
                 url: "php/book.php",
                 type: "GET",
