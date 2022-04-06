@@ -165,32 +165,10 @@ else if ($_SESSION['type'] === 'cliente')
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
                                     <tr class="align-middle">
-                                        <th class="text-center">
-                                            <a href="#" class="btn btn-ghost-dark orderButton" id="id" data-order="asc">
-                                                ID
-                                            </a>
-                                        </th>
-                                        <th class="text-center">
-                                            <a href="#" class="btn btn-ghost-dark orderButton" id="name"
-                                               data-order="asc">
-                                                Nome
-                                            </a>
-                                        </th>
-                                        <th class="text-center">
-                                            <a href="#" class="btn btn-ghost-dark orderButton" id="harb1"
-                                               data-order="asc">
-                                                Porto n. 1
-                                            </a>
-                                        </th>
-                                        <th class="text-center">
-                                            <a href="#" class="btn btn-ghost-dark orderButton" id="harb2"
-                                               data-order="asc">
-                                                Porto n. 2
-                                            </a>
-                                        </th>
-                                        <th class="text-center"></th>
-                                        <th class="text-center"></th>
-                                        <th class="text-end"></th>
+                                        <th class="text-center border">ID</th>
+                                        <th class="text-center border">Nome</th>
+                                        <th class="text-center border">Porto n. 1</th>
+                                        <th class="text-center border">Porto n. 2</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -210,25 +188,22 @@ else if ($_SESSION['type'] === 'cliente')
                                         while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                                             echo '
                                                         <tr class="align-middle" id="' . $row["id"] . '">
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["id"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["name"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>';
                                             echo $row["harb1"] ? $row["harb1"] : "/";
                                             echo '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                <div>';
                                             echo $row["harb2"] ? $row["harb2"] : "/";
                                             echo '</div>
                                                             </td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
                                                             <td class="text-center">';
 
                                             if ($row['unused'])
@@ -313,20 +288,6 @@ else if ($_SESSION['type'] === 'cliente')
                     btns.html('<span class="badge bg-warning text-dark">Dismessa</span>');
                     btns.fadeIn(1000);
                 });
-            }
-        });
-    });
-
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sortships.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#warehouseTable').html(data);
             }
         });
     });

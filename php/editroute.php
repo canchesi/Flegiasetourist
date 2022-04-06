@@ -7,7 +7,7 @@ session_start();
 if (!isset($_SESSION['id']))
     header("location: login.php");
 else if ($_SESSION['type'] === 'capitano')
-    header('location: dashboard.php');
+    header('1location: dashboard.php');
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
@@ -15,9 +15,16 @@ if (isset($_POST['trade_dep']))
     header('location: routes.php');
 
 
-$id = explode('-', $_GET['id'], 2);
+$id = $_GET['id'];
 
- $sql = "SELECT *, ships.name AS sname FROM routes JOIN ships ON ship_id = id JOIN users ON captain = id_code WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'";
+$sql = "
+    SELECT ships.name AS sname, users.name as cname, surname, trade_dep, trade_arr, dep_eff, ret, captain, ship_id
+        FROM routes JOIN ships 
+            ON ship_id = ships.id 
+        JOIN users 
+            ON captain = id_code 
+    WHERE routes.id = '" . $id . "'
+";
 
 if ($result = $connection->query($sql)) {
     $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -42,18 +49,16 @@ if (isset($_POST['submitted'])) {
     $shipID = $connection->real_escape_string($_POST['ship_id']);
     $captain = $connection->real_escape_string($_POST['captain']);
 
-
     $sql = "
 
                 UPDATE routes
-                    SET ship_id = '$shipID', captain = '$captain' 
-                WHERE ship_id = " . $id[0] . " AND dep_exp = '" . $id[1] . "'
+                    SET ship_id = '" . $shipID . "', captain = '" . $captain . "' 
+                WHERE id = '" . $id . "'
                 
             ";
 
-
     if (!($result = $connection->query($sql)))
-        echo "<script>alert('Errore nell'invio dei dati.')</script>";
+        echo "<script>alert('Errore nell\'invio dei dati.')</script>";
 
 
     header('location: ../routes.php');
@@ -196,7 +201,7 @@ if (isset($_POST['submitted'])) {
                                 <!-- Begin Capitani Disponibili -->
                                 <div class="col-md-4">
                                     <label for="captain" class="form-label">Capitani disponibili*</label>
-                                    <select class="form-select" id="captain" name="captain" required>
+                                    <select class="form-select" id="captain" name="captain">
                                         <option selected
                                                 id="<?php echo $row['captain']; ?>"> <?php echo $row['captain']; ?> </option>
                                     </select>
@@ -226,9 +231,7 @@ if (isset($_POST['submitted'])) {
                                 <!-- Begin Navi -->
                                 <div class="col-md-4">
                                     <label for="nave" class="form-label">Navi*</label>
-                                    <select class="form-select" id="nave" name="ship_id">
-                                        <option disabled selected>Nave</option>
-                                    </select>
+                                    <select class="form-select" id="nave" name="ship_id"></select>
                                     <input type="text" value="1" name="submitted" hidden>
                                 </div>
                                 <!-- End Navi -->
@@ -277,16 +280,16 @@ if (isset($_POST['submitted'])) {
                 $('#nave').empty();
                 $('#captain').empty();
                 $('#nave').append('<option value="<?php echo $row['ship_id'];?>" selected><?php echo $row['sname'];?></option>');
-                $('#captain').append("<option selected value='<?php echo $row['captain'];?>'><?php echo $row['surname'] . ' ' . $row['name'];?></option>");
+                $('#captain').append("<option selected value='<?php echo $row['captain'];?>'><?php echo $row['surname'] . ' ' . $row['cname'];?></option>");
 
                 for (var id in response[0])
-                        $('#captain').append('<option value="' + id + '">' + response[0][id] + '</option>');
+                    $('#captain').append('<option value="' + id + '">' + response[0][id] + '</option>');
 
                 for (id in response[1])
-                        $('#nave').append('<option value="' + id + '">' + response[1][id] + '</option>');
+                    $('#nave').append('<option value="' + id + '">' + response[1][id] + '</option>');
 
                 for (id in response[2])
-                   $('#nave').append('<option value="' + id + '">' + response[2][id] + '</option>');
+                    $('#nave').append('<option value="' + id + '">' + response[2][id] + '</option>');
             }
         });
 

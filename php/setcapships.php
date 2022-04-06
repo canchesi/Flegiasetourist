@@ -21,9 +21,9 @@
         }
     $sql = "
             
-        SELECT id, name, harb1, harb2, ret
+        SELECT ships.id as sid, name, harb1, harb2, ret
             FROM ships LEFT JOIN routes
-                ON id = ship_id
+                ON ships.id = ship_id
             WHERE captain IS NULL AND NOT ships.unused AND (harb1 = '$city' OR harb2 = '$city' OR harb1 IS NULL)
     
     ";
@@ -31,9 +31,9 @@
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC))
             if(!$row['harb1'])
-                $capship[2][$row['id']] = $row['name'] . ' - Riserva';
+                $capship[2][$row['sid']] = $row['name'] . ' - Riserva';
             else
-                $capship[1][$row['id']] = $row['name'];
+                $capship[1][$row['sid']] = $row['name'];
 
     $sql = "
             
@@ -41,7 +41,7 @@
             FROM users JOIN routes
                 ON id_code = captain
             JOIN ships
-                ON ship_id = id
+                ON ship_id = ships.id
             WHERE arr_exp = ANY(
                 SELECT MAX(arr_exp) AS arr_exp
                     FROM users JOIN routes

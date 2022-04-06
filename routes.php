@@ -13,12 +13,12 @@ else if ($_SESSION['type'] === 'cliente')
 if (isset($_POST['ajax'])) {
 
     if ($_POST['ajax'] == 1) {
-        $ids = explode('-', $_POST['id'], 2);
+        $id = $_POST['id'];
         $sql = "
         
             SELECT notes
                 FROM routes
-                WHERE ship_id = '" . $ids[0] . "' AND dep_exp = '" . $ids[1] . "' 
+                WHERE id = '" . $id . "' 
         
         ";
 
@@ -243,29 +243,16 @@ if (isset($_POST['ajax'])) {
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="id" data-order="asc">ID</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="name" data-order="asc">Nave</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="trade_dep" data-order="asc">Partenza</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="trade_arr" data-order="asc">Arrivo</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="dep_exp" data-order="asc">Data partenza prev.</a>
-                                            </th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="arr_exp" data-order="asc">Data arrivo prev.</a>
-                                            </th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="dep_eff" data-order="asc">Data partenza eff.</a>
-                                            </th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="arr_eff" data-order="asc">Data arrivo eff.</a>
-                                            </th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                       id="surname" data-order="asc">Capitano</a></th>
-                                            <th><span style="visibility:hidden;">62b dd1 a04263</span></th>
+                                            <th class="text-center border">ID</th>
+                                            <th class="text-center border">Nave</th>
+                                            <th class="text-center border">Partenza</th>
+                                            <th class="text-center border">Arrivo</th>
+                                            <th class="text-center border">Data partenza prev.</th>
+                                            <th class="text-center border">Data arrivo prev.</th>
+                                            <th class="text-center border">Data partenza eff.</th>
+                                            <th class="text-center border">Data arrivo eff.</th>
+                                            <th class="text-center border">Capitano</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -308,66 +295,66 @@ if (isset($_POST['ajax'])) {
                                             if (!$row['deleted'])
                                                 echo '
                                                         <tr class="align-middle" id="' . $row["id"] . '">
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["id"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row['trade_dep'] . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                 <div>' . $row["trade_arr"] . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                 <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["dep_eff"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["arr_eff"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                                                             </td>
-                                                            <td>
+                                                            <td class="text-center border">
                                                     ';
                                             else
                                                 echo '
                                                         <tr class="align-middle text-decoration-line-through" id="' . $row["id"] .'">
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["id"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row['trade_dep'] . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                 <div>' . $row["trade_arr"] . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
                                                             </td>
-                                                            <td class="text-center" >
+                                                            <td class="text-center border" >
                                                                 <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_exp']))) . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["dep_eff"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["arr_eff"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                                 <div>' . $row["surname"] . '<br>' . $row["name"] . '</div>
                                                             </td>
-                                                            <td class="text-center">
+                                                            <td class="text-center border">
                                                     ';
 
 
@@ -378,7 +365,7 @@ if (isset($_POST['ajax'])) {
                                                 if ($_SESSION['type'] !== 'capitano'  && $row['dep_eff'] === '/')
                                                     echo '
                                                             <div>
-                                                                <a href="php/editroute.php?id=' . $row["ship_id"] . '-' . $row["dep_exp"] . '" class="btn btn-primary m-1">
+                                                                <a href="php/editroute.php?id=' . $row["id"] . '" class="btn btn-primary m-1">
                                                                     <i class="cil-pen"></i>
                                                                 </a>
                                                                 <a href="#" class="btn btn-danger deleteButton m-1">
@@ -649,20 +636,6 @@ if (isset($_POST['ajax'])) {
                         btns.fadeIn(1000);
                     });
                 }
-            }
-        });
-    });
-
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sortroutes.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#warehouseTable').html(data);
             }
         });
     });

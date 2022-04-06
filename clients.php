@@ -1,6 +1,7 @@
 <?php
 require_once('php/config.php');
 
+/** @var MYSQLI $connection*/
 session_start();
 
 if (!isset($_SESSION['id']))
@@ -154,13 +155,10 @@ else if ($_SESSION['type'] === 'cliente')
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
                                         <tr class="align-middle">
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="id_code" data-order="asc">ID</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="surname" data-order="asc">Cognome</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="name" data-order="asc">Nome</a></th>
-                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton" id="email" data-order="asc">Email</a></th>
-                                            <th class="text-center"></th>
-                                            <th class="text-center"></th>
-                                            <th class="text-end"></th>
+                                            <th class="text-center border">ID</th>
+                                            <th class=" border">Cognome</th>
+                                            <th class=" border">Nome</th>
+                                            <th class=" border">Email</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -181,22 +179,19 @@ else if ($_SESSION['type'] === 'cliente')
                                         while ($row = $result->fetch_array()) {
                                             echo '
                                                 <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
+                                                    <td class="text-center border">
                                                         <div>' . $row["id_code"] . '</div>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class=" border">
                                                         <div>' . $row["surname"] . '</div>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class=" border">
                                                         <div>' . $row["name"] . '</div>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="border">
                                                        <div>' . $row["email"] . '</div>
                                                     </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         <form method="GET" class="">
                                                             <a href="php/editclient.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
                                                             <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
@@ -236,7 +231,7 @@ else if ($_SESSION['type'] === 'cliente')
 
     function searchElements() {
         // Declare variables
-        var input, filter, table, tr, td, i, txtValue;
+        var input, filter, table, tr, td_name, td_sur, i, txtValue_name, txtValue_sur;
         input = document.getElementById("searchInput");
         filter = input.value.toUpperCase();
         table = document.getElementById("warehouseTable");
@@ -244,13 +239,14 @@ else if ($_SESSION['type'] === 'cliente')
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1];
+            td_name = tr[i].getElementsByTagName("td")[1];
+            td_sur = tr[i].getElementsByTagName("td")[2];
 
-            if (td) {
-                txtValue = td.textContent || td.innerText;
+            if (td_name || td_sur) {
+                txtValue_name = td_name.textContent || td_name.innerText;
+                txtValue_sur = td_sur.textContent || td_sur.innerText;
 
-
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                if (txtValue_name.toUpperCase().indexOf(filter) > -1 || txtValue_sur.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
@@ -271,20 +267,6 @@ else if ($_SESSION['type'] === 'cliente')
                 tr.fadeOut(1000, function(){
                     $(this).remove();
                 });
-            }
-        });
-    });
-
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sortclient.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#warehouseTable').html(data);
             }
         });
     });

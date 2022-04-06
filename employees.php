@@ -160,21 +160,14 @@ else if ($_SESSION['type'] === 'capitano')
                             <div class="table-responsive" id="warehouseTable">
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="id_code" data-order="asc">ID</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="surname"
-                                                        data-order="asc">Cognome</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="name"
-                                                        data-order="asc">Nome</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="email"
-                                                        data-order="asc">Email</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="type"
-                                                        data-order="asc">Grado</a></th>
-                                        <th class="text-center"></th>
-                                        <th class="text-end"></th>
-                                        <th></th>
-                                    </tr>
+                                        <tr class="align-middle">
+                                            <th class="text-center border">ID</th>
+                                            <th class=" border" style="padding: 20px;">Cognome</th>
+                                            <th class=" border" style="padding: 20px;">Nome</th>
+                                            <th class=" border" style="padding: 20px;">Email</th>
+                                            <th class=" border" style="padding: 20px;">Grado</th>
+                                            <th class=" border" style="padding: 20px;"></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
 
@@ -195,52 +188,46 @@ else if ($_SESSION['type'] === 'capitano')
                                             if ($row['deleted']) {
                                                 echo '
                                                 <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
+                                                    <td class="text-center border">
                                                         <div class="text-decoration-line-through">' . $row["id_code"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div class="text-decoration-line-through">' . $row["surname"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div class="text-decoration-line-through">' . $row["name"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                        <div class="text-decoration-line-through">' . $row["email"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div class="text-decoration-line-through">' . ucfirst($row["type"]) . '</div>
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
                                                     </td>
                                                 </tr>
                                             ';
                                             } else {
                                                 echo '
                                                 <tr class="align-middle" id="' . $row["id_code"] . '">
-                                                    <td class="text-center">
+                                                    <td class="text-center border">
                                                         <div>' . $row["id_code"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div>' . $row["surname"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div>' . $row["name"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                        <div>' . $row["email"] . '</div>
                                                     </td>
-                                                    <td class="" style="padding: 20px">
+                                                    <td class=" border" style="padding: 20px">
                                                         <div>' . ucfirst($row["type"]) . '</div>
                                                     </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td>
-                                                    <form method="GET" >
-                                                        <a href="php/editemployee.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
-                                                        <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
-                                                    </form>
+                                                    <td class="text-center">
+                                                        <form method="GET" >
+                                                            <a href="php/editemployee.php?id=' . $row['id_code'] . '" class="btn btn-primary m-1"><i class="cil-pen"></i></a>
+                                                            <a href="#" class="btn btn-danger m-1 deleteButton"><i class="cil-trash"></i></a>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             ';
@@ -285,8 +272,8 @@ else if ($_SESSION['type'] === 'capitano')
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
-            td_dep = tr[i].getElementsByTagName("td")[0];
-            td_arr = tr[i].getElementsByTagName("td")[1];
+            td_dep = tr[i].getElementsByTagName("td")[1];
+            td_arr = tr[i].getElementsByTagName("td")[2];
 
             if (td_dep || td_arr) {
                 txtValue_dep = td_dep.textContent || td_dep.innerText;
@@ -319,21 +306,6 @@ else if ($_SESSION['type'] === 'capitano')
             }
         });
     });
-
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sort.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#warehouseTable').html(data);
-            }
-        });
-    });
-
 
 </script>
 
