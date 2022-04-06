@@ -487,7 +487,6 @@ if (isset($_SESSION['id']))
         var expDate = new Date($("#expirationDate").val());
         var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth()+1);
         var expDateResult = firstDayOfNextMonth >= today;
-        console.log(expDateResult);
 
         if(!expDateResult)
             $("#expDateError").removeAttr('style');
