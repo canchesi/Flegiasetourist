@@ -445,9 +445,9 @@ if (isset($_SESSION['id']))
             url: "php/searchroute.php",
             type: "GET",
             data: {
-                    trade_dep: trade_dep,
-                    trade_arr: trade_arr,
-                    dep_exp: date
+                trade_dep: trade_dep,
+                trade_arr: trade_arr,
+                dep_exp: date
             },
             success: function (response) {
                 $('.routetable').empty();
@@ -532,5 +532,4 @@ if (isset($_SESSION['id']))
 </script>
 
 </html>
-
 
