@@ -1,6 +1,10 @@
 <?php
     require_once('config.php');
-    session_start();
+
+    /** @var MYSQLI $connection*/
+
+
+session_start();
     if (!isset($_SESSION['id'])) {
         echo '-2';
         exit();
@@ -15,6 +19,7 @@
     $veh = explode(' +', $_GET['vehicle'])[0];
 
 
+
     $sql = "
     
         SELECT num_pass AS pass
@@ -23,7 +28,9 @@
     
     ";
 
-    if($result = $connection->query($sql))
+    echo $sql;
+
+if($result = $connection->query($sql))
         if($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $pass = $num_ad + $num_un;
             if (($pass + $row['pass']) <= 200) {

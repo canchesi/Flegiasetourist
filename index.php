@@ -320,8 +320,8 @@ if (isset($_SESSION['id']))
                         </div>
                         <div class="col-md-12">
                             <label for="saved_payment" class="col-form-label">Metodo di pagamento</label>
-                            <select id="saved_payment" class="form-select mb-3">
-                                <option disabled selected>
+                            <select id="saved_payment" class="form-select">
+                                <option value="NaN" disabled selected>
                                     Seleziona...
                                 </option>
                                 <option value="-1">
@@ -338,6 +338,7 @@ if (isset($_SESSION['id']))
                                     Inserisci carta...
                                 </option>
                             </select>
+                            <span class="text-danger mb-3" id="selectError" style="display: none;">Seleziona un metodo di pagamento.</span>
                         </div>
                         <div class="col-md-12 row" id="newCardForm" style="display: none;">
                             <div class="col-md-12">
@@ -379,6 +380,9 @@ if (isset($_SESSION['id']))
     var myModal = new coreui.Modal($('#reservationModal'), {
         keyboard: false
     });
+
+    var validation = "NaN";
+
 
     $(document).ready(function() {
 
@@ -454,16 +458,16 @@ if (isset($_SESSION['id']))
         })
     });
 
-    var validation;
 
     $(document).on('change', '#saved_payment', function() {
         validation = $('#saved_payment').val();
+        $("#selectError").hide();
         if(validation === '0')
             $('#newCardForm').removeAttr('style');
         else {
             $('#newCardForm').hide();
-            if(validation){
-                //TODO controllo carta
+            if(validation !== '-1'){
+                //TODO controllo carta salvata
             }
         }
     })
@@ -511,6 +515,14 @@ if (isset($_SESSION['id']))
                 validation = '0';
             else
                 validation = true;
+        }
+
+        //Select validation
+        if(validation === "NaN") {
+            $("#selectError").removeAttr('style');
+            validation = "0";
+        } else {
+            $("#selectError").hide();
         }
 
         //Booking

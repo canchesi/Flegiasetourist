@@ -29,15 +29,14 @@ if (isset($_POST['ajax'])) {
 
     } else if ($_POST['ajax'] == 2) {
 
-        $ids = explode('-', $_POST['id'], 2);
+        $id = $_POST['id'];
         $sql = "
-
                 SELECT surname, name, email, adults, underages, vehicle, undone
                     FROM reservations JOIN routes
-                        on reservations.ship_id = routes.ship_id AND reservations.dep_exp = routes.dep_exp
+                        on route_id = id
                     JOIN users  
                         ON user_id = id_code
-                    WHERE routes.ship_id = '" . $ids[0] . "' AND routes.dep_exp = '" . $ids[1] . "'
+                    WHERE id = ".$id."
                     ORDER BY undone, surname
                 
             ";
@@ -205,7 +204,7 @@ if (isset($_POST['ajax'])) {
 
     <!--Begin Content -->
     <div class="body flex-grow-1 px-3">
-        <div class="container-lg">
+        <div class="container-xxl">
 
             <div class="row">
                 <div class="col-md-12">
@@ -220,7 +219,7 @@ if (isset($_POST['ajax'])) {
                                 <div class="m-2"></div>
                                 <div class="lg-col-2">
                                     <input class="form-control m-2 me-1" id="searchInputDate"
-                                           onkeyup="searchElementsDate()"
+                                           onchange="searchElementsDate()"
                                            type="date"
                                            placeholder="Cerca per porti">
                                 </div>
@@ -243,29 +242,31 @@ if (isset($_POST['ajax'])) {
                             <div class="table-responsive" id="warehouseTable">
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
-                                    <tr class="align-middle">
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="name" data-order="asc">Nave</a></th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="trade_dep" data-order="asc">Partenza</a></th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="trade_arr" data-order="asc">Arrivo</a></th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="dep_exp" data-order="asc">Data partenza prev.</a>
-                                        </th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="arr_exp" data-order="asc">Data arrivo prev.</a>
-                                        </th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="dep_eff" data-order="asc">Data partenza eff.</a>
-                                        </th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="arr_eff" data-order="asc">Data arrivo eff.</a>
-                                        </th>
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="surname" data-order="asc">Capitano</a></th>
-                                        <th></th>
-                                    </tr>
+                                        <tr class="align-middle">
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="id" data-order="asc">ID</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="name" data-order="asc">Nave</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="trade_dep" data-order="asc">Partenza</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="trade_arr" data-order="asc">Arrivo</a></th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="dep_exp" data-order="asc">Data partenza prev.</a>
+                                            </th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="arr_exp" data-order="asc">Data arrivo prev.</a>
+                                            </th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="dep_eff" data-order="asc">Data partenza eff.</a>
+                                            </th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="arr_eff" data-order="asc">Data arrivo eff.</a>
+                                            </th>
+                                            <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
+                                                                       id="surname" data-order="asc">Capitano</a></th>
+                                            <th><span style="visibility:hidden;">62b dd1 a04263</span></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
 
@@ -273,9 +274,9 @@ if (isset($_POST['ajax'])) {
 
                                     $sql = "
                                             
-                                                SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted
+                                                SELECT routes.id AS id, ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted
                                                     FROM ships JOIN routes
-                                                        ON ship_id = id
+                                                        ON ship_id = ships.id
                                                     JOIN users
                                                         ON id_code = captain
                                                     
@@ -306,7 +307,10 @@ if (isset($_POST['ajax'])) {
 
                                             if (!$row['deleted'])
                                                 echo '
-                                                        <tr class="align-middle" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                        <tr class="align-middle" id="' . $row["id"] . '">
+                                                            <td class="text-center">
+                                                                <div>' . $row["id"] . '</div>
+                                                            </td>
                                                             <td class="text-center">
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
@@ -335,7 +339,10 @@ if (isset($_POST['ajax'])) {
                                                     ';
                                             else
                                                 echo '
-                                                        <tr class="align-middle text-decoration-line-through" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                        <tr class="align-middle text-decoration-line-through" id="' . $row["id"] .'">
+                                                            <td class="text-center">
+                                                                <div>' . $row["id"] . '</div>
+                                                            </td>
                                                             <td class="text-center">
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
@@ -548,8 +555,8 @@ if (isset($_POST['ajax'])) {
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
-            td_dep = tr[i].getElementsByTagName("td")[1];
-            td_arr = tr[i].getElementsByTagName("td")[2];
+            td_dep = tr[i].getElementsByTagName("td")[2];
+            td_arr = tr[i].getElementsByTagName("td")[3];
             if (td_dep || td_arr) {
                 txtValue_dep = td_dep.textContent || td_dep.innerText;
                 txtValue_arr = td_arr.textContent || td_arr.innerText;
@@ -583,8 +590,8 @@ if (isset($_POST['ajax'])) {
 
             // Loop through all table rows, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
-                td_dep = tr[i].getElementsByTagName("td")[3];
-                td_arr = tr[i].getElementsByTagName("td")[4];
+                td_dep = tr[i].getElementsByTagName("td")[4];
+                td_arr = tr[i].getElementsByTagName("td")[5];
 
                 if (td_dep || td_arr) {
                     txtValue_dep = td_dep.textContent || td_dep.innerText;
@@ -609,7 +616,7 @@ if (isset($_POST['ajax'])) {
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0];
+            td = tr[i].getElementsByTagName("td")[1];
 
             if (td) {
                 txtValue = td.textContent || td.innerText;

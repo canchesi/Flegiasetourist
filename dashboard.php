@@ -1,53 +1,53 @@
 <?php
-    require_once('php/config.php');
+require_once('php/config.php');
 
-    session_start();
+session_start();
 
-    if (!isset($_SESSION['id']))
-        header("location: login.php");
-    else if ($_SESSION['type'] === 'cliente')
-        header('location: index.php');
+if (!isset($_SESSION['id']))
+    header("location: login.php");
+else if ($_SESSION['type'] === 'cliente')
+    header('location: index.php');
 
 
-    $sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
+$sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
 
-    if ($result = $connection->query($sql))
-        $employeesCount = $result->fetch_assoc();
+if ($result = $connection->query($sql))
+    $employeesCount = $result->fetch_assoc();
 
-    $sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
+$sql = "SELECT COUNT(id_code) AS customers FROM users WHERE type = 'cliente'";
 
-    if ($result = $connection->query($sql))
-        $customersCount = $result->fetch_assoc();
+if ($result = $connection->query($sql))
+    $customersCount = $result->fetch_assoc();
 
-    $sql = "SELECT COUNT(code) AS reservations FROM reservations";
+$sql = "SELECT COUNT(code) AS reservations FROM reservations";
 
-    if ($result = $connection->query($sql))
-        $reservationsCount = $result->fetch_assoc();
+if ($result = $connection->query($sql))
+    $reservationsCount = $result->fetch_assoc();
 
-    $sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
+$sql = "SELECT COUNT(dep_exp) AS routes FROM routes";
 
-    if ($result = $connection->query($sql))
-        $routesCount = $result->fetch_assoc();
+if ($result = $connection->query($sql))
+    $routesCount = $result->fetch_assoc();
 
-    $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
+$sqltrades = "SELECT harb_dep, harb_arr FROM trades";
 
-    if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
+if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
-        $name = $connection->real_escape_string(ucfirst($_POST['name']));
-        $trade = explode('-', $_POST['trade'], 2);
+    $name = $connection->real_escape_string(ucfirst($_POST['name']));
+    $trade = explode('-', $_POST['trade'], 2);
 
-        $sql = "
+    $sql = "
                 
             INSERT INTO ships (name, harb1, harb2)
                 VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
             
         ";
 
-        if (!($result = $connection->query($sql)))
-            die('<script>alert("Errore nell\'invio dei dati.")</script>');
-        else
-            header('location: dashboard.php');
-    }
+    if (!($result = $connection->query($sql)))
+        die('<script>alert("Errore nell\'invio dei dati.")</script>');
+    else
+        header('location: dashboard.php');
+}
 
 
 ?>
@@ -268,9 +268,9 @@
                                     $tomorrow = (new DateTime($today))->modify('+1 day')->format('Y-m-d');
                                     $sql = "
                                                 
-                                        SELECT ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
+                                        SELECT routes.id AS id, ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
                                             FROM ships JOIN routes
-                                                ON ship_id = id
+                                                ON ship_id = ships.id
                                             JOIN users
                                                 ON id_code = captain
                                             WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow'
@@ -416,7 +416,7 @@
                                     <td></td>
                                 </tr>
                             ';
-                    }
+                        }
                     }
                 }
                 ?>
