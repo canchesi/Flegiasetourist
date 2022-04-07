@@ -10,7 +10,7 @@
 
     $sql = "
 
-        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass
+        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass, id
             FROM routes JOIN trades 
                 ON trade_dep = harb_dep
                 OR trade_dep = harb_arr
@@ -45,7 +45,7 @@
             while ($row) {
                 $out .= "
                 
-                    <tr id='". $row['ship_id'] ."-" . $row['dep_exp'] ."'>
+                    <tr id='". $row['id'] ."'>
                         <td>$tradeDep - $tradeArr</td>
                         <td>" . date("d/m/Y H:i", strtotime($row['dep_exp'])) . "</td>
                         <td>" . date("d/m/Y H:i", strtotime($row['arr_exp'])) . "</td>

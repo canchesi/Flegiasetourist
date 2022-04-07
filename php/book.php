@@ -4,7 +4,7 @@
     /** @var MYSQLI $connection*/
 
 
-session_start();
+    session_start();
     if (!isset($_SESSION['id'])) {
         echo '-2';
         exit();
@@ -29,12 +29,12 @@ session_start();
     
     ";
 
-if($result = $connection->query($sql))
+    if($result = $connection->query($sql))
         if($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $pass = $num_ad + $num_un;
             if (($pass + $row['pass']) <= 200) {
 
-
+                //TODO controllo sul tipo di pagamento
 
                 $sql = "
                     SELECT id
@@ -61,4 +61,3 @@ if($result = $connection->query($sql))
             } else
                 echo($num_ad + $num_un + $row['pass']);
         }
-?>

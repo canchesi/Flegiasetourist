@@ -20,11 +20,16 @@ if(isset($_POST['ajax'])) {
     ";
 
     if(!($result = $connection->query($sql)))
-        echo "expired";
+        echo 1;
     else {
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
-            //TODO controllo carta
+            $exp = new DateTime($row['exp']);
+            if(strcmp((new DateTime())->format("Y-m"), $exp->format("Y-m")) >= 0)
+                echo "expired";
+            else
+                echo "valid";
         }
+        exit();
     }
 }
 
@@ -347,31 +352,29 @@ if(isset($_POST['ajax'])) {
                                 <option value="NaN" disabled selected>
                                     Seleziona...
                                 </option>
-                                <option value="-1">
+                                <option value="-3">
                                     Paga in cassa
                                 </option>
                                 <?php
-                                $sql = "
-                                    SELECT id, number, exp
-                                        FROM credit_cards JOIN `user-card_matches`
-                                            ON cc_num = number 
-                                        WHERE user_id = '" . $_SESSION["id"] . "' AND saved = 1;
-                                        
-                                ";
+                                    $sql = "
+                                        SELECT id, number, exp
+                                            FROM credit_cards JOIN `user-card_matches`
+                                                ON cc_num = number 
+                                            WHERE user_id = '" . $_SESSION["id"] . "' AND saved = 1;
+                                            
+                                    ";
 
-                                if ($result = $connection->query($sql))
-                                    while ($row = $result->fetch_array(MYSQLI_ASSOC))
-                                        echo '<option value="' . $row["id"] . '">xxxx-xxxx-xxxx-x' . substr($row["number"], -3) . '</option>';
-
+                                    if ($result = $connection->query($sql))
+                                        while ($row = $result->fetch_array(MYSQLI_ASSOC))
+                                            echo '<option value="' . $row["id"] . '">xxxx-xxxx-xxxx-x' . substr($row["number"], -3) . '</option>';
                                 ?>
-                                <input type="month" id="savedCardExp" name="savedCardExp" hidden>
-
-                                <option value="0">
+                                <option value="-2">
                                     Inserisci carta...
                                 </option>
                             </select>
+                            <input type="month" id="savedCardExp" name="savedCardExp" hidden>
                             <span class="text-danger" id="selectError" style="display: none;">Seleziona un metodo di pagamento.</span>
-                            <span class="text-danger" id="expDateError" style="display: none;">Carta di credito scaduta.</span>
+                            <span class="text-danger" id="expiredError" style="display: none;">Carta di credito scaduta.</span>
                         </div>
                         <div class="col-md-12 row" id="newCardForm" style="display: none;">
                             <div class="col-md-12">
@@ -440,7 +443,6 @@ if(isset($_POST['ajax'])) {
                 arr_exp = $(tr).find('td:eq(2)').text();
 
             $('#id').attr('value', ids);
-
             $('#dep_exp').text(dep_exp);
             $('#arr_exp').text(arr_exp);
             $('#partenza').text(harbs[0]);
@@ -500,47 +502,66 @@ if(isset($_POST['ajax'])) {
         })
     });
 
-
     $(document).on('change', '#saved_payment', function() {
         validation = $('#saved_payment').val();
         $("#selectError").hide();
-        if(validation === '0')
+        $("#expiredError").hide();
+        if(validation === '-2') // Se nuova carta
             $('#newCardForm').removeAttr('style');
         else {
             $('#newCardForm').hide();
-            if(validation !== '-1'){
+            if(validation > '0' && validation !== 'NaN'){ // Se è carta salvata
                 //TODO controllo carta salvata
                 $("#selectError").hide();
 
                 $.ajax({
-                    url: "php/index.php",
-                    type: "GET",
+                    type: "POST",
                     data: {id: validation, ajax: 1},
                     success: function (response) {
                         if (response === "valid") {
-                            $("#expDateError").hide();
-                        }
-                        else if(response === "expired"){
-                            $("#expDateError").removeAttr("style");
+                            $("#expiredError").hide();
                         }
                         else {
-                            alert("Errore controllo carta: " + response);
+                            if (response === "expired") {
+                                $("#expiredError").removeAttr("style");
+                            } else {
+                                alert("Errore controllo carta: " + response);
+                            }
+                            validation = '0';
                         }
                     }
                 })
 
             }
+            // Se cassa non fa niente
         }
     })
 
-    $(document).on('click', '.book', function () {
-        if(validation === '0') {
-            var id = $('#id').val(),
-                dep_exp = $('#dep_exp').val(),
-                adult = $('#maggiorenni').val(),
-                minori = $('#minorenni').val(),
-                veicolo = $('#veicolo option:selected').text();
+    var saved = 0;
 
+    $(document).on('change', '#saved', function () {
+        if(saved === 0)
+            saved = 1;
+        else
+            saved = 0;
+    })
+
+    $(document).on('click', '.book', function () {
+
+        var id = $('#id').val(),
+            dep_exp = $('#dep_exp').val(),
+            adult = $('#maggiorenni').val(),
+            minori = $('#minorenni').val(),
+            veicolo = $('#veicolo option:selected').text();
+
+        //Select validation
+        if(validation === "NaN") {
+            $("#selectError").removeAttr('style');
+        } else {
+            $("#selectError").hide();
+        }
+
+        if(validation === '-2') {
 
             //Credit card validation
             var cardNumber = $('#cardNumber').val();
@@ -573,35 +594,29 @@ if(isset($_POST['ajax'])) {
 
             //Card Holder Name
             var cardHolderName = $("#accHolder").val();
+            var spaceOcc = cardHolderName.indexOf(" ");
+            var onlyLetters = /^[a-zA-Z'\s]+$/.test(cardHolderName);
+            var cardHolderNameResult = spaceOcc && onlyLetters;
 
-            if(!cardHolderName)
+            if(!cardHolderNameResult)
                 $("#accHolderError").removeAttr('style');
             else
                 $("#accHolderError").hide();
 
 
 
-            if(!(cardNumberResult && CVVNumberResult && expDateResult && cardHolderName))
-                validation = '0';
-            else
-                validation = true;
-        }
-
-        //Select validation
-        if(validation === "NaN") {
-            $("#selectError").removeAttr('style');
-            validation = "0";
-        } else {
-            $("#selectError").hide();
+            if(cardNumberResult && CVVNumberResult && expDateResult && cardHolderNameResult)
+                validation = '-1';
         }
 
         //Booking
-        if(validation !== '0') {
+        if(validation > '0' || validation === '-1' || validation === '-3') {
             $.ajax({
-                url: "php/book.php",
+            url: "php/book.php",
                 type: "GET",
-                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo, cc_num: cardNumber, payment: },
+                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo, cc_num: cardNumber, payment: validation, saved: saved},
                 success: function (response) {
+                    console.log(response);
                     if (response === '0') {
                         alert("Prenotazione effettuata.");
                         window.location.replace("reservations.php");
@@ -614,8 +629,6 @@ if(isset($_POST['ajax'])) {
                 }
             })
         }
-
-
     });
 
 
