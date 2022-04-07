@@ -1,6 +1,8 @@
 <?php
 require_once('php/config.php');
 
+/** @var MYSQLI $connection*/
+
 session_start();
 
 if (isset($_SESSION['id']))
@@ -334,11 +336,14 @@ if (isset($_SESSION['id']))
                                     while ($row = $result->fetch_array(MYSQLI_ASSOC))
                                         echo '<option value="' . $row['id'] . '">xxxx-xxxx-xxxx-x' . substr($row['number'], -3) . '</option>';
                                 ?>
+                                <input type="month" id="savedCardExp" name="savedCardExp" hidden>
+
                                 <option value="0">
                                     Inserisci carta...
                                 </option>
                             </select>
                             <span class="text-danger" id="selectError" style="display: none;">Seleziona un metodo di pagamento.</span>
+                            <span class="text-danger" id="expDateError" style="display: none;">Carta di credito scaduta.</span>
                         </div>
                         <div class="col-md-12 row" id="newCardForm" style="display: none;">
                             <div class="col-md-12">
@@ -515,8 +520,17 @@ if (isset($_SESSION['id']))
             else
                 $("#expDateError").hide();
 
+            //Card Holder Name
+            var cardHolderName = $("#accHolder").val();
 
-            if(!(cardNumberResult && CVVNumberResult && expDateResult))
+            if(!cardHolderName)
+                $("#accHolderError").removeAttr('style');
+            else
+                $("#accHolderError").hide();
+
+
+
+            if(!(cardNumberResult && CVVNumberResult && expDateResult && cardHolderName))
                 validation = '0';
             else
                 validation = true;

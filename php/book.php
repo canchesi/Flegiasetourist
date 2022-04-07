@@ -28,8 +28,6 @@ session_start();
     
     ";
 
-    echo $sql;
-
 if($result = $connection->query($sql))
         if($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $pass = $num_ad + $num_un;
