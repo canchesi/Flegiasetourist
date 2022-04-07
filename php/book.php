@@ -13,10 +13,11 @@ session_start();
         exit();
     }
 
-    $ids = explode('-', $_GET['id'], 2);
+    $id = $_GET['id'];
     $num_ad = $_GET['adult'];
     $num_un = $_GET['under'];
     $veh = explode(' +', $_GET['vehicle'])[0];
+
 
 
 
@@ -24,7 +25,7 @@ session_start();
     
         SELECT num_pass AS pass
             FROM routes
-            WHERE ship_id = '" . $ids[0] . "' AND dep_exp = '" . $ids[1] . "';
+            WHERE id = '" . $id . "';
     
     ";
 
@@ -33,12 +34,23 @@ if($result = $connection->query($sql))
             $pass = $num_ad + $num_un;
             if (($pass + $row['pass']) <= 200) {
 
+
+
+                $sql = "
+                    SELECT id
+                        FROM `user-card_matches`
+                        WHERE user_id = '" . $_SESSION['id'] . "' AND cc_num = '" . $_GET['cc_num'] . "'
+                
+                ";
+
+                die($sql);
+
                 $sql = "
                 
                     INSERT INTO reservations(user_id, date_res, adults, underages, vehicle, ship_id, dep_exp)
                         VALUES('" . $_SESSION['id'] . "', '" . date('Y-m-d H:i:s') . "', '$num_ad', '$num_un', NULLIF('$veh','Nessuno'), '" . $ids[0] . "', '" . $ids[1] ."');
                         
-                    UPDATE routes SET num_pass = num_pass +'$pass' WHERE ship_id = '" . $ids[0] . "' AND dep_exp = '" . $ids[1] . "';
+                    UPDATE routes SET num_pass = num_pass +'$pass' WHERE id = '" . $id . "';
                 
                 ";
                 if ($result = $connection->multi_query($sql))

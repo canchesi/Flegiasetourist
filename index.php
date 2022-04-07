@@ -8,6 +8,27 @@ session_start();
 if (isset($_SESSION['id']))
     if (!$_SESSION['type'] === 'cliente')
         header('location: dashboard.php');
+
+if(isset($_POST['ajax'])) {
+
+    $sql = "
+        SELECT exp
+            FROM `user-card_matches` JOIN credit_cards
+                ON cc_num = number
+            WHERE id = '" . $_POST["id"] . "'
+        
+    ";
+
+    if(!($result = $connection->query($sql)))
+        echo "expired";
+    else {
+        if($row = $result->fetch_array(MYSQLI_ASSOC)){
+            //TODO controllo carta
+        }
+    }
+}
+
+
 ?>
 
 
@@ -330,11 +351,18 @@ if (isset($_SESSION['id']))
                                     Paga in cassa
                                 </option>
                                 <?php
-                                $sql = "SELECT * FROM credit_cards WHERE user = " . $_SESSION['id'];
+                                $sql = "
+                                    SELECT id, number, exp
+                                        FROM credit_cards JOIN `user-card_matches`
+                                            ON cc_num = number 
+                                        WHERE user_id = '" . $_SESSION["id"] . "' AND saved = 1;
+                                        
+                                ";
 
                                 if ($result = $connection->query($sql))
                                     while ($row = $result->fetch_array(MYSQLI_ASSOC))
-                                        echo '<option value="' . $row['id'] . '">xxxx-xxxx-xxxx-x' . substr($row['number'], -3) . '</option>';
+                                        echo '<option value="' . $row["id"] . '">xxxx-xxxx-xxxx-x' . substr($row["number"], -3) . '</option>';
+
                                 ?>
                                 <input type="month" id="savedCardExp" name="savedCardExp" hidden>
 
@@ -352,9 +380,9 @@ if (isset($_SESSION['id']))
                                 <span class="text-danger" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
                             </div>
                             <div class="col-md-12">
-                                <label class="col-form-label mt-3" for="cardNumber">Nome intestatario: </label>
-                                <input type="text" class="form-control" id="cardNumber" placeholder="Nome Cognome">
-                                <span class="text-danger" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
+                                <label class="col-form-label mt-3" for="accHolder">Nome intestatario: </label>
+                                <input type="text" class="form-control" id="accHolder" placeholder="Nome Cognome">
+                                <span class="text-danger" id="accHolderError" style="display: none;">Inserisci nome intestatario.</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="expirationDate" class="col-form-label mt-3">Data di scadenza</label>
@@ -365,6 +393,10 @@ if (isset($_SESSION['id']))
                                 <label for="CVV" class="col-form-label mt-3">CVV</label>
                                 <input id="CVV" class="form-control" type="number" placeholder="123" style="-webkit-appearance: none;" min="0" max="999">
                                 <span class="text-danger" id="CVVNumberError" style="display: none;">CVV non valido.</span>
+                            </div>
+                            <div class="form-check form-switch col-md-12 ms-3">
+                                <input name="saved" class="form-check-input" type="checkbox" id="saved">
+                                <label for="saved" class="form-check-label ms-2">Salva carta</label>
                             </div>
                         </div>
                         <div class="mt-2">
@@ -478,6 +510,25 @@ if (isset($_SESSION['id']))
             $('#newCardForm').hide();
             if(validation !== '-1'){
                 //TODO controllo carta salvata
+                $("#selectError").hide();
+
+                $.ajax({
+                    url: "php/index.php",
+                    type: "GET",
+                    data: {id: validation, ajax: 1},
+                    success: function (response) {
+                        if (response === "valid") {
+                            $("#expDateError").hide();
+                        }
+                        else if(response === "expired"){
+                            $("#expDateError").removeAttr("style");
+                        }
+                        else {
+                            alert("Errore controllo carta: " + response);
+                        }
+                    }
+                })
+
             }
         }
     })
@@ -549,7 +600,7 @@ if (isset($_SESSION['id']))
             $.ajax({
                 url: "php/book.php",
                 type: "GET",
-                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo},
+                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo, cc_num: cardNumber, payment: },
                 success: function (response) {
                     if (response === '0') {
                         alert("Prenotazione effettuata.");
