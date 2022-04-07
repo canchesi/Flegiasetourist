@@ -2,6 +2,9 @@
 
 require_once('php/config.php');
 
+
+/**@param MySQLI $connection*/
+
 session_start();
 
 if (!isset($_SESSION['id']))
