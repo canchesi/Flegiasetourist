@@ -319,7 +319,7 @@ if (isset($_SESSION['id']))
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <label for="saved_payment" class="col-form-label">Metodo di pagamento</label>
+                            <label for="saved_payment" class="col-form-label mt-3">Metodo di pagamento</label>
                             <select id="saved_payment" class="form-select">
                                 <option value="NaN" disabled selected>
                                     Seleziona...
@@ -338,23 +338,28 @@ if (isset($_SESSION['id']))
                                     Inserisci carta...
                                 </option>
                             </select>
-                            <span class="text-danger mb-3" id="selectError" style="display: none;">Seleziona un metodo di pagamento.</span>
+                            <span class="text-danger" id="selectError" style="display: none;">Seleziona un metodo di pagamento.</span>
                         </div>
                         <div class="col-md-12 row" id="newCardForm" style="display: none;">
                             <div class="col-md-12">
-                                <label class="col-form-label" for="cardNumber">Numero carta: </label>
+                                <label class="col-form-label mt-3" for="cardNumber">Numero carta: </label>
                                 <input type="number" class="form-control" id="cardNumber" placeholder="**** **** **** ****">
-                                <span class="text-danger mb-3" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
+                                <span class="text-danger" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="col-form-label mt-3" for="cardNumber">Nome intestatario: </label>
+                                <input type="text" class="form-control" id="cardNumber" placeholder="Nome Cognome">
+                                <span class="text-danger" id="cardNumberError" style="display: none;">Numero carta non valido.</span>
                             </div>
                             <div class="col-md-6">
-                                <label for="expirationDate" class="col-form-label">Data di scadenza</label>
-                                <input id="expirationDate" placeholder="mm/yy" class="form-control mb-3" type="month">
-                                <span class="text-danger mb-3" id="expDateError" style="display: none;">Data di scadenza non valida.</span>
+                                <label for="expirationDate" class="col-form-label mt-3">Data di scadenza</label>
+                                <input id="expirationDate" class="form-control mb-3" type="month">
+                                <span class="text-danger" id="expDateError" style="display: none;">Data di scadenza non valida.</span>
                             </div>
                             <div class="col-md-6">
-                                <label for="CVV" class="col-form-label">CVV</label>
-                                <input id="CVV" class="form-control" type="number" style="-webkit-appearance: none;" min="0" max="999">
-                                <span class="text-danger mb-3" id="CVVNumberError" placeholder="123" style="display: none;">CVV non valido.</span>
+                                <label for="CVV" class="col-form-label mt-3">CVV</label>
+                                <input id="CVV" class="form-control" type="number" placeholder="123" style="-webkit-appearance: none;" min="0" max="999">
+                                <span class="text-danger" id="CVVNumberError" style="display: none;">CVV non valido.</span>
                             </div>
                         </div>
                         <div class="mt-2">
