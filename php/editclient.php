@@ -329,6 +329,8 @@
                 $zipd = $connection->real_escape_string($_POST['zip_d']);
                 $addrd = $connection->real_escape_string($_POST['addr_d']);
 
+                //TODO - Regex di name, surname, cf tel, birth, zipr e zipd
+
                 $sql = "
             
                     UPDATE users 

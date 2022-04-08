@@ -13,11 +13,15 @@
         exit();
     }
 
+
+
     $id = $_GET['id'];
     $num_ad = $_GET['adult'];
     $num_un = $_GET['under'];
     $veh = explode(' +', $_GET['vehicle'])[0];
 
+
+    //TODO - Aggiungere dati di carta e fare il regex
 
 
 

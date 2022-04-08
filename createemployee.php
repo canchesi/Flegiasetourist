@@ -400,6 +400,8 @@
             $height = $connection->real_escape_string($_POST['height']);
             $eyes = $connection->real_escape_string($_POST['eyes']);
 
+            //TODO - Regex di cf, tel, birth, zip
+
             $sql = "
         
                 INSERT INTO users (email, psw, name, surname, type)
