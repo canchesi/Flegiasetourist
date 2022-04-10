@@ -552,7 +552,8 @@ if(isset($_POST['ajax'])) {
             dep_exp = $('#dep_exp').val(),
             adult = $('#maggiorenni').val(),
             minori = $('#minorenni').val(),
-            veicolo = $('#veicolo option:selected').text();
+            veicolo = $('#veicolo option:selected').text(),
+            cc_info = {cc_num: "", cc_exp: "", cc_cvv: "", cc_acchold: ""};
 
         //Select validation
         if(validation === "NaN") {
@@ -605,8 +606,10 @@ if(isset($_POST['ajax'])) {
 
 
 
-            if(cardNumberResult && CVVNumberResult && expDateResult && cardHolderNameResult)
+            if(cardNumberResult && CVVNumberResult && expDateResult && cardHolderNameResult) {
                 validation = '-1';
+                cc_info = {cc_num: cardNumber, cc_cvv: CVVNumber, cc_exp: expDate.toISOString().split('T')[0], cc_acchold: cardHolderName};
+            }
         }
 
         //Booking
@@ -614,7 +617,7 @@ if(isset($_POST['ajax'])) {
             $.ajax({
             url: "php/book.php",
                 type: "GET",
-                data: {id: id, dep_exp: dep_exp, adult: adult, under: minori, vehicle: veicolo, cc_num: cardNumber, payment: validation, saved: saved},
+                data: {id: id, adult: adult, under: minori, vehicle: veicolo , cc_info: cc_info, payment: validation, saved: saved},
                 success: function (response) {
                     console.log(response);
                     if (response === '0') {
