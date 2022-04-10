@@ -243,7 +243,7 @@ if(isset($_POST['ajax'])) {
 
             <div class="mb-3 col-md-3">
                 <label for="date" class="form-label">Data di partenza</label>
-                <input type="datetime-local" class="form-control" id="date" min="<?php echo date("Y-m-d"); ?>">
+                <input type="datetime-local" class="form-control" id="date" min="<?php echo date("Y-m-d")."T".date("H:i"); ?>">
 
             </div>
 
