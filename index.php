@@ -586,7 +586,8 @@ if(isset($_POST['ajax'])) {
             var today = new Date();
             var expDate = new Date($("#expirationDate").val());
             var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth() + 1);
-            var expDateResult = firstDayOfNextMonth >= today;
+            firstDayOfNextMonth = new Date(firstDayOfNextMonth.getTime() - (firstDayOfNextMonth.getTimezoneOffset()*60*1000));
+            var expDateResult = firstDayOfNextMonth > today;
 
 
             if (!expDateResult)

@@ -99,10 +99,10 @@ if ($result = $connection->query($sql))
                         if ($result = $connection->query($sql))
                             if ($result->num_rows == 0) {
                                 $sql = "
-                            INSERT INTO credit_cards
-                                VALUES('" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['cc_info']['cc_acchold'] . "', '" . $_GET['cc_info']['cc_exp'] . "', '" . $_GET['cc_info']['cc_cvv'] . "');
-                                
-                        ";
+                                    INSERT INTO credit_cards
+                                        VALUES('" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['cc_info']['cc_acchold'] . "', '" . $_GET['cc_info']['cc_exp'] . "', '" . $_GET['cc_info']['cc_cvv'] . "');
+                                        
+                                ";
                                 if (!($result = $connection->query($sql)))
                                     die('-1');
                             }

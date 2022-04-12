@@ -1,12 +1,56 @@
 <?php
 require_once('config.php');
 require_once('residenceinfos.php');
-
+/** @var MYSQLI $connection*/
+/** @var PROVINCE $provinces*/
 session_start();
 
 if (isset($_SESSION['id']))
     if ($_SESSION['type'] !== 'cliente')
         header('location: dashboard.php');
+
+if(isset($_POST['ajax'])){
+
+    $cardNum = $_POST['ccnum'];
+    $delete = -1;
+
+    $sql = "
+        SELECT saved
+            FROM `user-card_matches`
+        WHERE cc_num = '" . $cardNum . "'
+    
+    ";
+
+    if($result = $connection->query($sql))
+        while($row = $result->fetch_array(MYSQLI_ASSOC))
+            if($row['saved'] == 1) {
+                $delete += 1;
+                if($delete > 0)
+                    break;
+            }
+
+    $sql = "
+        UPDATE `user-card_matches`
+            SET saved = 0
+        WHERE user_id = '" . $_SESSION['id'] . "' AND cc_num = '" . $cardNum . "'
+    
+    ";
+
+    if(!($connection->query($sql)))
+        die('-1');
+
+    if($delete == 0) {
+        $sql = "
+            DELETE FROM credit_cards
+                WHERE number = '" . $cardNum . "'
+        ";
+
+        if(!$connection->query($sql))
+            die('-1');
+
+    }
+    die('0');
+}
 
 ?>
 
@@ -31,7 +75,6 @@ if (isset($_SESSION['id']))
 
     <!-- JavaScript -->
     <script src="../src/js/coreui.js"></script>
-    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -68,10 +111,6 @@ if (isset($_SESSION['id']))
                 <?php
 
                 if (isset($_SESSION['type'])) {
-                    /*   if ($_SESSION['type'] != 'cliente') {
-                           echo '<a class="btn btn-outline-primary me-2" href="dashboard.php">Area Riservata</a>';
-                       }
-                       echo '<a class="btn btn-outline-danger me-2" href="logout.php">Logout</a>';*/
 
                     $sql = "SELECT name, surname FROM users WHERE id_code = " . $_SESSION['id'];
 
@@ -122,8 +161,10 @@ $sql = "
         ";
 
 if ($result = $connection->query($sql))
-    $row = $result->fetch_array(MYSQLI_ASSOC);
-
+    if($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $provr = $connection->real_escape_string($row['prov_r']);
+        $provd = $connection->real_escape_string($row['prov_d']);
+    }
 if (isset($_POST['submitted'])) {
     if (isset($_POST)) {
 
@@ -132,7 +173,7 @@ if (isset($_POST['submitted'])) {
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
         $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
         $email = $connection->real_escape_string($_POST['email']);
-
+        $provr = $connection->real_escape_string($_POST['prov_r']);
         $oldPassword = $connection->real_escape_string($_POST['oldPsw']);
         $newPassword = $connection->real_escape_string($_POST['passwd']);
         $confirmPassword = $connection->real_escape_string($_POST['passwdConf']);
@@ -141,7 +182,6 @@ if (isset($_POST['submitted'])) {
         $tel = $_POST['tel'];
         $birth = $_POST['birth_date'];
         $gender = $connection->real_escape_string($_POST['gender']);
-        $provr = $connection->real_escape_string($_POST['prov_r']);
         $cityr = $connection->real_escape_string($_POST['city_r']);
         $zipr = $connection->real_escape_string($_POST['zip_r']);
         $addrr = $connection->real_escape_string($_POST['addr_r']);
@@ -428,19 +468,59 @@ if (isset($_POST['submitted'])) {
             <a class="btn btn-outline-secondary" type="submit" href="../clients.php">Annulla</a>
         </div>
     </form>
+    <p>
+        <table class="table table-bordered" id="routes">
+            <thead class="table-light fw-semibold">
+                <th class="">Numero carta</th>
+                <th class="">Intestatario</th>
+                <th class="">Data di scadenza</th>
+                <th class="text-center">Azioni</th>
+            </thead>
+            <?php
+                $sql = "
+                    SELECT number, acc_holder, exp
+                        FROM credit_cards JOIN `user-card_matches`
+                            ON number = cc_num
+                        WHERE user_id = '" . $_SESSION['id'] . "'
+                ";
 
+                if($result = $connection->query($sql))
+                    if($result->num_rows){
+                        echo '<tbody>';
+                        while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                            echo "
+                                <tr id='" . $row['number'] . "'>
+                                    <td>" . $row['number'] . "</td>
+                                    <td>" . $row['acc_holder'] . "</td>
+                                    <td>" . (new DateTime($row['exp']))->sub(new DateInterval('P1M'))->format('m/Y');
+                            if($row['exp'] <= (new DateTime())->format('Y-m-d'))
+                                echo "<br><div class='badge bg-danger'>Scaduta</div>";
+                            echo"</td>
+                                    <td class='text-center'><form><a href='#' class='btn btn-danger delete'>Elimina</a></form></td>
+                                </tr>
+                            ";
+                        }
+                        echo "</tbody>";
+                    }
+            ?>
+        </table>
+        <?php
+            if ($result && $result->num_rows == 0)
+                echo "<div class='text-center'>Non hai carte memorizzate</div>";
+        ?>
+    </p>
 </div>
 
 
 <!-- End Content-->
 
 <!-- Begin Footer-->
-<div class="container fixed-bottom">
+<!--<div class="container fixed-bottom">
     <footer class="py-3 my-4">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
         <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
     </footer>
-</div>
+</div>-->
 <!-- End Footer-->
 
 </body>
@@ -457,6 +537,7 @@ if (isset($_POST['submitted'])) {
             hidden.hide();
             show.show();
         }
+
     });
 
     $(function () {
@@ -561,18 +642,15 @@ if (isset($_POST['submitted'])) {
 </script>
 <script>
     $(document).ready(function () {
-
-        var selectedCR = '<?php echo $provinces[$row['prov_r']]?>';
-        var selectedPR = '<?php echo $row['city_r']?>';
-        var selectedCD = '<?php echo $provinces[$row['prov_d']]?>';
-        var selectedPD = '<?php echo $row['city_d']?>';
-
+        var selectedCR = '<?php echo $provinces[$provr]?>';
+        var selectedPR = '<?php echo $provr?>';
+        var selectedCD = '<?php echo $provinces[$provd]?>';
+        var selectedPD = '<?php echo $provd?>';
         $.ajax({
             url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + selectedCR,
-            type: 'get',
+            type: 'GET',
             dataType: 'json',
             success: function (response) {
-
                 var len = response.length;
                 $("#ComuneR").empty();
 
@@ -580,7 +658,7 @@ if (isset($_POST['submitted'])) {
                     var id = response[i]['nome'];
                     var name = response[i]['nome'];
 
-                    if (selectedPR == name) {
+                    if (selectedCR == name) {
                         $("#ComuneR").append("<option value='" + id + "' selected>" + name + "</option>");
 
                     } else {
@@ -604,7 +682,7 @@ if (isset($_POST['submitted'])) {
                         var id = response[i]['nome'];
                         var name = response[i]['nome'];
 
-                        if (selectedPD == name) {
+                        if (selectedCD == name) {
                             $("#ComuneD").append("<option value='" + id + "' selected>" + name + "</option>");
 
                         } else {
@@ -618,6 +696,34 @@ if (isset($_POST['submitted'])) {
     });
 
 </script>
+
+<script>
+
+    $(document).on('click', '.delete', function () {
+
+        var tr = $(this).closest('tr'),
+            ccnum = tr.attr('id');
+
+        $.ajax({
+            type: "POST",
+            data: {ajax: 1, ccnum: ccnum},
+            success: function (response) {
+                console.log(response);
+                if (response === '0') {
+                    tr.fadeOut(1000, function () {
+                        tr.empty();
+                    });
+                } else
+                    alert("Errore.");
+            }
+        })
+
+
+    });
+
+
+</script>
+
 </html>
 
 

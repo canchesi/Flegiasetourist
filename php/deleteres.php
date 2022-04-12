@@ -1,5 +1,5 @@
 <?php
-
+    /** @var MYSQLI $connection*/
     session_start();
     if (!isset($_SESSION['id']) || $_SESSION['type'] !== 'cliente') {
         header("location: login.php");
