@@ -588,6 +588,7 @@ if(isset($_POST['ajax'])) {
             var firstDayOfNextMonth = new Date(expDate.getFullYear(), expDate.getMonth() + 1);
             var expDateResult = firstDayOfNextMonth >= today;
 
+
             if (!expDateResult)
                 $("#expDateError").removeAttr('style');
             else
@@ -608,11 +609,12 @@ if(isset($_POST['ajax'])) {
 
             if(cardNumberResult && CVVNumberResult && expDateResult && cardHolderNameResult) {
                 validation = '-1';
-                cc_info = {cc_num: cardNumber, cc_cvv: CVVNumber, cc_exp: expDate.toISOString().split('T')[0], cc_acchold: cardHolderName};
+                cc_info = {cc_num: cardNumber, cc_cvv: CVVNumber, cc_exp: firstDayOfNextMonth.toISOString().split('T')[0], cc_acchold: cardHolderName};
             }
         }
 
         //Booking
+        // carta salvata    || nuova carta valida  || pagamento in cassa
         if(validation > '0' || validation === '-1' || validation === '-3') {
             $.ajax({
             url: "php/book.php",
