@@ -626,12 +626,15 @@ if(isset($_POST['ajax'])) {
                     if (response === '0') {
                         alert("Prenotazione effettuata.");
                         window.location.replace("reservations.php");
-                    } else if (response === '-1')
+                    } else if (response === '-1') {
                         alert("Errore nell\'invio dei dati");
-                    else if (response === '-2')
+                        location.reload();
+                    } else if (response === '-2')
                         window.location.replace("login.php");
-                    else
+                    else {
                         alert("Prenotazione rifiutata.\nNumero di passeggeri superiore al limite massimo di 200: " + response);
+                        location.reload();
+                    }
                 }
             })
         }

@@ -134,14 +134,13 @@ if (isset($_SESSION['id']))
         </thead>
         <tbody>
             <?php
-                $sql = "SELECT * 
-                            FROM reservations JOIN routes 
-                                ON reservations.ship_id = routes.ship_id AND reservations.dep_exp = routes.dep_exp 
-                            JOIN trades 
-                                ON trade_dep = harb_dep AND trade_arr = harb_arr 
-                            LEFT JOIN vehicles 
-                                ON type = vehicle 
-                            WHERE user_id ='". $_SESSION['id'] . "'";
+                $sql = "SELECT * FROM reservations 
+                            JOIN routes ON routes.id = reservations.route_id 
+                            JOIN `user-card_matches` AS ucm ON payment_id = ucm.id 
+                            JOIN trades ON routes.trade_dep = trades.harb_dep
+                            LEFT JOIN vehicles ON type = vehicle 
+                        WHERE ucm.user_id = ".$_SESSION['id']."
+";
 
                 if($result = $connection->query($sql)){
                     while($row = $result->fetch_array(MYSQLI_ASSOC)){
@@ -221,6 +220,7 @@ if (isset($_SESSION['id']))
             url: "php/deleteres.php?idres="+idres,
             type: "GET",
             success: function (response) {
+                console.log(response);
                 if (response === '0') {
                     tr.addClass("text-decoration-line-through");
                     btns.fadeOut(1000, function () {

@@ -1,24 +1,18 @@
 <?php
-    require_once('config.php');
+require_once('config.php');
 
-    /** @var MYSQLI $connection*/
-
-
-    session_start();
-    if (!isset($_SESSION['id'])) {
-        echo '-2';
-        exit();
-    }elseif($_SESSION['type'] != 'cliente') {
-        echo '-2';
-        exit();
-    }
+/** @var MYSQLI $connection */
 
 
+session_start();
+if (!isset($_SESSION['id']) || $_SESSION['type'] != 'cliente')
+    die('-2');
 
-    $id = $_GET['id'];
-    $num_ad = $_GET['adult'];
-    $num_un = $_GET['under'];
-    $veh = explode(' +', $_GET['vehicle'])[0];
+
+$id = $_GET['id'];
+$num_ad = $_GET['adult'];
+$num_un = $_GET['under'];
+$veh = explode(' +', $_GET['vehicle'])[0];
 
 $cc_user_id = 0;
 
@@ -89,8 +83,8 @@ if ($result = $connection->query($sql))
                             die('-1');
                     } while ($cc_user_id === 0);
 
-            if($_GET['saved'] === '1'){
-                $sql = "
+                    if ($_GET['saved'] === '1') {
+                        $sql = "
                     SELECT number
                         FROM credit_cards
                     WHERE number = '" . $_GET['cc_num'] . "'
@@ -112,18 +106,7 @@ if ($result = $connection->query($sql))
                     $cc_user_id = $_GET['payment'];
             }
 
-    $sql = "
-    
-        SELECT num_pass AS pass
-            FROM routes
-            WHERE id = '" . $id . "';
-    
-    ";
-
-    if($result = $connection->query($sql))
-        if($row = $result->fetch_array(MYSQLI_ASSOC)) {
-            $pass = $num_ad + $num_un;
-            if (($pass + $row['pass']) <= 200) {
+            if ($cc_user_id) {
 
                 $sql = "
                 
