@@ -139,7 +139,8 @@ if (isset($_SESSION['id']))
                             JOIN `user-card_matches` AS ucm ON payment_id = ucm.id 
                             JOIN trades ON routes.trade_dep = trades.harb_dep
                             LEFT JOIN vehicles ON type = vehicle 
-                        WHERE ucm.user_id = ".$_SESSION['id']."
+                        WHERE ucm.user_id = ".$_SESSION['id']. " 
+                        ORDER BY date_res DESC
 ";
 
                 if($result = $connection->query($sql)){
@@ -196,12 +197,12 @@ if (isset($_SESSION['id']))
 <!-- End Content -->
 
 <!-- Begin Footer -->
-<div class="container fixed-bottom">
+<!--<div class="container fixed-bottom">
     <footer class="py-3 my-4">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
         <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
     </footer>
-</div>
+</div>-->
 <!-- End Footer -->
 
 

@@ -596,7 +596,7 @@ if(isset($_POST['ajax'])) {
                 $("#expDateError").hide();
 
             //Card Holder Name
-            var cardHolderName = $("#accHolder").val();
+            var cardHolderName = $("#accHolder").val().toUpperCase();
             var spaceOcc = cardHolderName.indexOf(" ");
             var onlyLetters = /^[a-zA-Z'\s]+$/.test(cardHolderName);
             var cardHolderNameResult = spaceOcc && onlyLetters;
@@ -610,7 +610,7 @@ if(isset($_POST['ajax'])) {
 
             if(cardNumberResult && CVVNumberResult && expDateResult && cardHolderNameResult) {
                 validation = '-1';
-                cc_info = {cc_num: cardNumber, cc_cvv: CVVNumber, cc_exp: firstDayOfNextMonth.toISOString().split('T')[0], cc_acchold: cardHolderName};
+                cc_info = {cc_num: cardNumber, cc_acchold: cardHolderName, cc_exp: firstDayOfNextMonth.toISOString().split('T')[0], cc_cvv: CVVNumber};
             }
         }
 

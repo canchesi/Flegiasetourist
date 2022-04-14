@@ -481,7 +481,7 @@ if (isset($_POST['submitted'])) {
                     SELECT number, acc_holder, exp
                         FROM credit_cards JOIN `user-card_matches`
                             ON number = cc_num
-                        WHERE user_id = '" . $_SESSION['id'] . "'
+                        WHERE user_id = '" . $_SESSION['id'] . "' AND saved = 1
                 ";
 
                 if($result = $connection->query($sql))

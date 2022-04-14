@@ -52,31 +52,29 @@ if ($result = $connection->query($sql))
                         }
                     } while ($cc_user_id === 0);
                     break;
+
+
                 case '-1':  // Carta nuova
+                    $saved = $_GET['saved'];
                     do {
                         $sql = "
-                    SELECT id, saved
-                        FROM `user-card_matches`
-                    WHERE user_id = '" . $_SESSION['id'] . "' AND cc_num = '" . $_GET['cc_info']['cc_num'] . "'
-                ";
+                            SELECT id, saved
+                                FROM `user-card_matches`
+                            WHERE user_id = '" . $_SESSION['id'] . "' AND cc_num = '" . $_GET['cc_info']['cc_num'] . "'
+                        ";
 
                         if ($result = $connection->query($sql)) {
                             if ($result->num_rows == 0) {
                                 $sql = "
-                            INSERT INTO `user-card_matches` (user_id, cc_num, saved)
-                                VALUES('" . $_SESSION['id'] . "', '" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['saved'] . "')
-                        ";
+                                    INSERT INTO `user-card_matches` (user_id, cc_num, saved)
+                                        VALUES('" . $_SESSION['id'] . "', '" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['saved'] . "')
+                                ";
 
                                 if (!($result = $connection->query($sql)))
                                     die('-1');
-
                             } else if ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                                 $cc_user_id = $row['id'];
-                                if ($row['saved'] == '0' && $_GET['saved'] == '1') {
-                                    $sql = "UPDATE `user-card_matches` SET saved = 1 WHERE id = '" . $row['id'] . "'";
-                                    if (!($result = $connection->query($sql)))
-                                        die('-1');
-                                }
+                                $saved = $row['saved'];
                             }
 
                         } else
@@ -84,13 +82,14 @@ if ($result = $connection->query($sql))
                     } while ($cc_user_id === 0);
 
                     if ($_GET['saved'] === '1') {
+
                         $sql = "
-                    SELECT number
-                        FROM credit_cards
-                    WHERE number = '" . $_GET['cc_num'] . "'
-                
-                ";
-                        if ($result = $connection->query($sql))
+                            SELECT *
+                                FROM credit_cards
+                            WHERE number = '" . $_GET['cc_info']['cc_num'] . "'
+                        
+                        ";
+                        if ($result = $connection->query($sql)) {
                             if ($result->num_rows == 0) {
                                 $sql = "
                                     INSERT INTO credit_cards
@@ -99,7 +98,21 @@ if ($result = $connection->query($sql))
                                 ";
                                 if (!($result = $connection->query($sql)))
                                     die('-1');
+
+                            } else {
+                                if($row = $result->fetch_array(MYSQLI_ASSOC))
+                                    if(!empty(array_diff($_GET['cc_info'], $row)))
+                                        die('-1');
+
                             }
+
+                            if ($saved == '0') {
+                                $sql = "UPDATE `user-card_matches` SET saved = 1 WHERE id = '" . $cc_user_id  . "'";
+                                if (!($result = $connection->query($sql)))
+                                    die('-1');
+                            }
+                        } else
+                            die('-1');
                     }
                     break;
                 default:    // Carta già salvata

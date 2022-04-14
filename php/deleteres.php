@@ -12,17 +12,16 @@
     $idRes = $_GET['idres'];
     $numPass = 0;
 
-    $sql = "SELECT adults, underages, ship_id, dep_exp FROM reservations WHERE code = '$idRes'";
+    $sql = "SELECT adults, underages, route_id FROM reservations WHERE code = '$idRes'";
     if($result = $connection->query($sql)){
         if($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $numPass = $row['adults'] + $row['underages'];
-            $shipID = $row['ship_id'];
-            $depExp = $row['dep_exp'];
 
             $sql = "
-                    UPDATE routes SET num_pass = num_pass - $numPass WHERE ship_id = '$shipID' AND dep_exp = '$depExp';
-                    UPDATE reservations SET undone = '1' WHERE code = '$idRes';
+                    UPDATE routes SET num_pass = num_pass - '".$numPass."' WHERE id = '".$row['route_id']."';
+                    UPDATE reservations SET undone = '1' WHERE code = '".$idRes."';
             ";
+
 
             if($result = $connection->multi_query($sql))
                 echo '0';
