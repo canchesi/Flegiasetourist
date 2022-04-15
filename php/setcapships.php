@@ -1,11 +1,9 @@
 <?php
-
     require_once("config.php");
 
-    $city = $connection->real_escape_string($_GET["city"]);
-    $date = $connection->real_escape_string($_GET["date"]);
-    $capship = array(array(),array(),array());
-
+    //$date = str_replace('/','-',$_GET['date']);
+    $date = date("Y-m-d H:i", strtotime(str_replace('/','-',$_GET['date'])));
+    $capship = array(array(),array());
     $sql = "
         
         SELECT id_code, name, surname, ret
@@ -14,58 +12,39 @@
             WHERE type ='capitano' AND ship_id IS NULL AND NOT users.deleted
     
     ";
-
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
                 $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
         }
+
     $sql = "
             
-        SELECT ships.id as sid, name, harb1, harb2, ret
+        SELECT ships.id as sid, name, ret
             FROM ships LEFT JOIN routes
                 ON ships.id = ship_id
-            WHERE captain IS NULL AND NOT ships.unused AND (harb1 = '$city' OR harb2 = '$city' OR harb1 IS NULL)
+            WHERE captain IS NULL AND NOT ships.unused 
     
     ";
 
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC))
-            if(!$row['harb1'])
-                $capship[2][$row['sid']] = $row['name'] . ' - Riserva';
-            else
                 $capship[1][$row['sid']] = $row['name'];
 
     $sql = "
             
-        SELECT id_code, surname, users.name, arr_exp, trade_dep, trade_arr, ship_id, ships.name AS ship, ret
-            FROM users JOIN routes
-                ON id_code = captain
-            JOIN ships
-                ON ship_id = ships.id
-            WHERE arr_exp = ANY(
-                SELECT MAX(arr_exp) AS arr_exp
-                    FROM users JOIN routes
-                        ON captain = id_code
-                    WHERE NOT routes.deleted AND NOT users.deleted
-                    GROUP BY captain
-            )
+        SELECT id_code, surname, users.name AS name, ship_id, ships.name AS ship
+            FROM users
+                JOIN routes
+                    ON id_code = captain
+                JOIN ships
+                    ON ship_id = ships.id
+            WHERE NOT routes.deleted AND NOT users.deleted AND arr_exp < '" . $date . "'
     ";
-
-
-
     if($result = $connection->query($sql)){
-            while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                if($row['ret']){
-                    $tmp = $row['trade_dep'];
-                    $row['trade_dep'] = $row['trade_arr'];
-                    $row['trade_arr'] = $tmp;
-                    unset($tmp);
-                }
-                if ($row['trade_arr'] == $city && strtotime($date) >= strtotime($row['arr_exp'])) {
-                    $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
-                    $capship[1][$row['ship_id']] = $row['ship'];
-                }
-            }
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
+            $capship[1][$row['ship_id']] = $row['ship'];
+        }
         echo json_encode($capship);
     } else {
         echo "Error";

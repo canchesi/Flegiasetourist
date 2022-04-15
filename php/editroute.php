@@ -11,15 +11,18 @@ else if ($_SESSION['type'] === 'capitano')
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
-if (isset($_POST['trade_dep']))
+if (isset($_POST['harb_dep']))
     header('location: routes.php');
 
 
 $id = $_GET['id'];
 
 $sql = "
-    SELECT ships.name AS sname, users.name as cname, surname, trade_dep, trade_arr, dep_eff, ret, captain, ship_id
-        FROM routes JOIN ships 
+    SELECT ships.name AS sname, users.name as cname, surname, harb_dep, harb_arr, dep_exp, arr_exp, dep_eff, ret, captain, ship_id
+        FROM routes 
+        JOIN trades
+            ON trade_id = trades.id
+        JOIN ships 
             ON ship_id = ships.id 
         JOIN users 
             ON captain = id_code 
@@ -32,9 +35,9 @@ if ($result = $connection->query($sql)) {
         header('location: ../routes.php');
 
     if($row['ret']){
-        $tmp = $row['trade_dep'];
-        $row['trade_dep'] = $row['trade_arr'];
-        $row['trade_arr'] = $tmp;
+        $tmp = $row['harb_dep'];
+        $row['harb_dep'] = $row['harb_arr'];
+        $row['harb_arr'] = $tmp;
         unset($tmp);
     }
 }
@@ -125,12 +128,6 @@ if (isset($_POST['submitted'])) {
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="../ships.php">
-                <i class="cil-boat-alt nav-icon"></i>
-                Navi
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="../clients.php">
                 <i class="cil-user nav-icon"></i>
                 Clienti
@@ -157,7 +154,7 @@ if (isset($_POST['submitted'])) {
 
             <span class="fs-4">Flegias & Tourist</span>
 
-            <a href="logout.php" class="btn btn-light">Esci</a>
+            <a href="../logout.php" class="btn btn-light">Esci</a>
         </div>
 
     </header>
@@ -181,10 +178,10 @@ if (isset($_POST['submitted'])) {
 
                                 <!--Begin Porto Di Partenza-->
                                 <div class="col-md-4">
-                                    <label for="trade_dep" class="form-label">Porto di partenza*</label>
-                                    <select class="form-select" id="trade_dep" name="trade_dep" disabled>
+                                    <label for="harb_dep" class="form-label">Porto di partenza*</label>
+                                    <select class="form-select" id="harb_dep" name="harb_dep" disabled>
                                         <?php
-                                        echo "<option selected>" . $row['trade_dep'] . "</option>"
+                                        echo "<option selected>" . $row['harb_dep'] . "</option>"
                                         ?>
                                     </select>
                                 </div>
@@ -202,8 +199,8 @@ if (isset($_POST['submitted'])) {
                                 <div class="col-md-4">
                                     <label for="captain" class="form-label">Capitani disponibili*</label>
                                     <select class="form-select" id="captain" name="captain">
-                                        <option selected
-                                                id="<?php echo $row['captain']; ?>"> <?php echo $row['captain']; ?> </option>
+                                        <!--<option selected
+                                                id="<?php /*echo $row['captain']; */?>"> <?php /*echo $row['captain']; */?> </option>-->
                                     </select>
                                     <input type="text" value="1" name="submitted" hidden>
                                 </div>
@@ -211,10 +208,10 @@ if (isset($_POST['submitted'])) {
 
                                 <!-- Begin Porto Di Destinazione -->
                                 <div class="col-md-4">
-                                    <label for="trade_arr" class="form-label">Porto di destinazione*</label>
-                                    <select class="form-select" id="trade_arr" name="trade_arr" disabled>
+                                    <label for="harb_arr" class="form-label">Porto di destinazione*</label>
+                                    <select class="form-select" id="harb_arr" name="harb_arr" disabled>
                                         <?php
-                                        echo "<option selected>" . $row['trade_arr'] . "</option>"
+                                        echo "<option selected>" . $row['harb_arr'] . "</option>"
                                         ?>
                                     </select>
                                 </div>
@@ -266,17 +263,13 @@ if (isset($_POST['submitted'])) {
 
 <script>
     $(document).ready(function () {
-
-        var city = '<?php echo $row['trade_dep'];?>';
-
+        var date = $("#dep_exp").val();
         $.ajax({
             url: "setcapships.php",
-            data: {city: city, date: $('#dep_exp').val()},
+            data: {date: $("#dep_exp").val()},
             type: "GET",
             dataType: "JSON",
             success: function (response) {
-
-                console.log(response);
                 $('#nave').empty();
                 $('#captain').empty();
                 $('#nave').append('<option value="<?php echo $row['ship_id'];?>" selected><?php echo $row['sname'];?></option>');
@@ -287,13 +280,10 @@ if (isset($_POST['submitted'])) {
 
                 for (id in response[1])
                     $('#nave').append('<option value="' + id + '">' + response[1][id] + '</option>');
-
-                for (id in response[2])
-                    $('#nave').append('<option value="' + id + '">' + response[2][id] + '</option>');
             }
         });
 
-    });
+    })
 </script>
 
 

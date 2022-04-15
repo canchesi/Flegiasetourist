@@ -3,7 +3,7 @@
 require_once('php/config.php');
 
 
-/**@param MySQLI $connection*/
+/**@var MySQLI $connection*/
 
 session_start();
 
@@ -36,13 +36,14 @@ if (isset($_POST['ajax'])) {
         $sql = "
                 SELECT surname, name, email, adults, underages, vehicle, undone
                     FROM reservations JOIN routes
-                        on route_id = id
-                    JOIN users  
-                        ON user_id = id_code
-                    WHERE id = ".$id."
+                        on route_id = routes.id
+                    JOIN `user-card_matches` AS ucm  
+                        ON payment_id = ucm.id 
+                    JOIN users
+                    	ON id_code = ucm.user_id
+                    WHERE routes.id = '".$id."'
                     ORDER BY undone, surname
-                
-            ";
+        ";
 
         if ($result = $connection->query($sql)) {
             $out = "";
@@ -136,12 +137,6 @@ if (isset($_POST['ajax'])) {
                         <a class="nav-link" href="employees.php">
                             <i class="cil-contact nav-icon "></i>
                             Dipendenti
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="ships.php">
-                            <i class="cil-boat-alt nav-icon"></i>
-                            Navi
                         </a>
                     </li>
                     <li class="nav-item">
@@ -262,12 +257,13 @@ if (isset($_POST['ajax'])) {
 
                                     $sql = "
                                             
-                                                SELECT routes.id AS id, ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted
+                                                SELECT routes.id AS id, ships.name AS ship, ship_id, harb_dep, harb_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted
                                                     FROM ships JOIN routes
                                                         ON ship_id = ships.id
                                                     JOIN users
                                                         ON id_code = captain
-                                                    
+                                                    JOIN trades
+                                                        on trade_id = trades.id
 
                                             ";
                                     if ($_SESSION['type'] === 'capitano')
@@ -277,9 +273,9 @@ if (isset($_POST['ajax'])) {
                                     if ($result = $connection->query($sql)) {
                                         while ($row = $result->fetch_array()) {
                                             if ($row['ret']) {
-                                                $tmp = $row['trade_dep'];
-                                                $row['trade_dep'] = $row['trade_arr'];
-                                                $row['trade_arr'] = $tmp;
+                                                $tmp = $row['harb_dep'];
+                                                $row['harb_dep'] = $row['harb_arr'];
+                                                $row['harb_arr'] = $tmp;
                                                 unset($tmp);
                                             }
 
@@ -303,10 +299,10 @@ if (isset($_POST['ajax'])) {
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
                                                             <td class="text-center border">
-                                                                <div>' . $row['trade_dep'] . '</div>
+                                                                <div>' . $row['harb_dep'] . '</div>
                                                             </td>
                                                             <td class="text-center border" >
-                                                                <div>' . $row["trade_arr"] . '</div>
+                                                                <div>' . $row["harb_arr"] . '</div>
                                                             </td>
                                                             <td class="text-center border" >
                                                                <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
@@ -335,10 +331,10 @@ if (isset($_POST['ajax'])) {
                                                                 <div>' . $row["ship"] . '</div>
                                                             </td>
                                                             <td class="text-center border">
-                                                                <div>' . $row['trade_dep'] . '</div>
+                                                                <div>' . $row['harb_dep'] . '</div>
                                                             </td>
                                                             <td class="text-center border" >
-                                                                <div>' . $row["trade_arr"] . '</div>
+                                                                <div>' . $row["harb_arr"] . '</div>
                                                             </td>
                                                             <td class="text-center border" >
                                                                <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
@@ -361,7 +357,7 @@ if (isset($_POST['ajax'])) {
 
                                             if (!$row['deleted']) {
 
-                                                echo '<buttons>';
+                                                echo '<buttons class="row">';
 
                                                 if ($_SESSION['type'] !== 'capitano'  && $row['dep_eff'] === '/')
                                                     echo '
@@ -629,12 +625,12 @@ if (isset($_POST['ajax'])) {
             cache: false,
             success: function (result) {
                 if (result) {
-                    tr.addClass("text-decoration-line-through");
+                    tr.children().not(":eq(9)").addClass("text-decoration-line-through");
                     btns.fadeOut(1000, function () {
-                        btns.empty();
-                        btns.addClass('text-center')
-                        btns.html('<span class="badge bg-danger">Annullata</span>');
-                        btns.fadeIn(1000);
+                        tr.children().eq(9).empty();
+                        tr.children().eq(9).addClass('text-center')
+                        tr.children().eq(9).html('<span class="badge bg-danger">Annullata</span>');
+                        tr.children().eq(9).fadeIn(1000);
                     });
                 }
             }

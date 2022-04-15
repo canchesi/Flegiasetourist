@@ -1,6 +1,9 @@
 <?php
 
     require_once("config.php");
+
+    /**@var MYSQLI $connection*/
+
     $sql = '
                                                 
         SELECT harb_dep, harb_arr

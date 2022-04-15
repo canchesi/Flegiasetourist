@@ -9,7 +9,7 @@ else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
 
-$sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente'";
+$sql = "SELECT COUNT(id_code) AS employees FROM users WHERE type != 'cliente' AND deleted = 0";
 
 if ($result = $connection->query($sql))
     $employeesCount = $result->fetch_assoc();
@@ -34,12 +34,11 @@ $sqltrades = "SELECT harb_dep, harb_arr FROM trades";
 if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
     $name = $connection->real_escape_string(ucfirst($_POST['name']));
-    $trade = explode('-', $_POST['trade'], 2);
 
     $sql = "
                 
-            INSERT INTO ships (name, harb1, harb2)
-                VALUES ('$name', NULLIF('$trade[0]',''), NULLIF('$trade[1]',''));
+            INSERT INTO ships (name)
+                VALUES ('$name');
             
         ";
 
@@ -112,12 +111,6 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="ships.php">
-                                <i class="cil-boat-alt nav-icon"></i>
-                                Navi
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="clients.php">
                                 <i class="cil-user nav-icon"></i>
                                 Clienti
@@ -151,7 +144,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                         data-coreui-toggle="dropdown" aria-expanded="false">
 
                     <?php
-                    echo $_SESSION['name'] . ' ' . $_SESSION['surname'];
+                        echo $_SESSION['name'] . ' ' . $_SESSION['surname'];
                     ?>
 
                 </button>
@@ -218,15 +211,15 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                 <!--Begin Routes List-->
                 <div class="col-md-12 mb-4">
                     <div class="card mb-12">
-                        <div class="card-header"><span
-                                    class="fs-2"><?php
-                                if ($_SESSION['type'] === 'capitano')
-                                    echo 'Le tue rotte di oggi ';
-                                else
-                                    echo 'Rotte di oggi ';
+                        <div class="card-header"><span class="fs-2">
+                                <?php
+                                    if ($_SESSION['type'] === 'capitano')
+                                        echo 'Le tue rotte di oggi ';
+                                    else
+                                        echo 'Rotte di oggi ';
 
-                                $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-                                echo $formatter->format(time()); ?></span>
+                                    $formatter = new IntlDateFormatter('it_IT', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                                    echo $formatter->format(time()); ?></span>
                         </div>
 
 
@@ -265,16 +258,18 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
                                     $id = $_SESSION['id'];
                                     $today = date("Y-m-d");
-                                    $tomorrow = (new DateTime($today))->modify('+1 day')->format('Y-m-d');
+                                    $tomorrow = date("Y-m-d", strtotime($today."+1 day"));
                                     $sql = "
                                                 
-                                        SELECT routes.id AS id, ships.name AS ship, ship_id, trade_dep, trade_arr, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
-                                            FROM ships JOIN routes
-                                                ON ship_id = ships.id
-                                            JOIN users
-                                                ON id_code = captain
-                                            WHERE dep_exp >= '$today' AND dep_exp < '$tomorrow'
-
+                                        SELECT routes.id AS id, ships.name AS ship, harb_dep, harb_arr, ship_id, dep_exp, arr_exp, dep_eff, arr_eff, captain, users.name AS name, surname, ret, routes.deleted AS delroute
+                                            FROM routes
+                                                JOIN ships
+                                                    ON ship_id = ships.id
+                                                JOIN trades
+                                                    ON trade_id = trades.id
+                                                JOIN users
+                                                    ON captain = users.id_code
+                                            WHERE dep_exp >= '".$today."' AND dep_exp < '".$tomorrow."'
                                     ";
 
                                     if ($_SESSION['type'] === 'capitano')
@@ -294,9 +289,9 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                         else {
                                             while ($row) {
                                                 if ($row['ret']) {
-                                                    $tmp = $row['trade_dep'];
-                                                    $row['trade_dep'] = $row['trade_arr'];
-                                                    $row['trade_arr'] = $tmp;
+                                                    $tmp = $row['harb_dep'];
+                                                    $row['harb_dep'] = $row['harb_arr'];
+                                                    $row['harb_arr'] = $tmp;
                                                     unset($tmp);
                                                 }
                                                 if (!$row["dep_eff"])
@@ -309,15 +304,18 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                                     $row['arr_eff'] = date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['arr_eff'])));
 
                                                 echo '
-                                                    <tr class="align-middle'; if($row['delroute']) echo ' text-decoration-line-through'; echo'" id="' . $row["ship_id"] . '-' . $row["dep_exp"] . '">
+                                                    <tr class="align-middle';
+                                                if($row['delroute'])
+                                                    echo ' text-decoration-line-through';
+                                                echo '" id="' . $row['id'] . '">
                                                         <td class="text-center">
                                                             <div>' . $row["ship"] . '</div>
                                                         </td>
                                                         <td class="text-center">
-                                                            <div>' . $row['trade_dep'] . '</div>
+                                                            <div>' . $row['harb_dep'] . '</div>
                                                         </td>
                                                         <td class="text-center" >
-                                                            <div>' . $row["trade_arr"] . '</div>
+                                                            <div>' . $row["harb_arr"] . '</div>
                                                         </td>
                                                         <td class="text-center deff" >
                                                            <div>' . date('d/m/Y H:i', strtotime(str_replace('.', '-', $row['dep_exp']))) . '</div>
@@ -463,10 +461,6 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                         <th class="text-center">
                                             Nome
                                         </th>
-                                        <th class="text-center">
-                                            Tratta
-                                        </th>
-                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -489,34 +483,15 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                     if ($result = $connection->query($sql)) {
                         $reserve = array();
                         while ($row = $result->fetch_array()) {
-                            if ($row['harb1'] && $row['harb2'])
-                                echo '
-                                    <tr class="align-middle" id="' . $row["id"] . '">
-                                        <td class="text-center">
-                                            <div>' . $row["id"] . '</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div>' . $row["name"] . '</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div>' . $row["harb1"] . '-' . $row["harb2"] . '</div>
-                                        </td><td></td></tr>';
-                            else
-                                $reserve[] = '
-                                    <tr class="align-middle table-warning" id="' . $row["id"] . '">
-                                        <td class="text-center">
-                                            <div>' . $row["id"] . '</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div>' . $row["name"] . '</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div>Riserva</div>
-                                        </td><td></td></tr>';
+                            echo '
+                                <tr class="align-middle" id="' . $row["id"] . '">
+                                    <td class="text-center">
+                                        <div>' . $row["id"] . '</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div>' . $row["name"] . '</div>
+                                    </td>';
                         }
-                        foreach ($reserve as $res)
-                            echo $res;
-
 
                         echo '
                         
@@ -540,8 +515,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
     <!--Begin Footer -->
     <footer class="footer">
-        <div class="">Flegias & Tourist</a>
-        </div>
+        <div class="">Flegias & Tourist</div>
         <div class="ms-auto">Danny De Novi & Claudio Anchesi © 2022</div>
     </footer>
     <!-- End Footer -->
@@ -557,22 +531,9 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                     <h5 class="modal-title" id="AddShipsTitle">Aggiungi nave</h5>
                 </div>
                 <div class="modal-body row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label for="name" class="form-label">Nome*</label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="Nome" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="trade" class="form-label">Tratte*</label>
-                        <select class="form-select" name="trade" required>
-                            <option value="-" selected>Riserva</option>
-                            <?php
-                            if ($result = $connection->query($sqltrades))
-                                while ($row = $result->fetch_array(MYSQLI_ASSOC))
-                                    echo '
-                                        <option value="' . $row['harb_dep'] . '-' . $row['harb_arr'] . '">' . $row['harb_dep'] . '-' . $row['harb_arr'] . '</option>
-                                    ';
-                            ?>
-                        </select>
                     </div>
                 </div>
                 <input type="text" name="AddShip" value="1" hidden>

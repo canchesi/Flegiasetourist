@@ -2,6 +2,8 @@
 
     require_once('php/config.php');
 
+    /**@var MYSQLI $connection*/
+
     session_start();
 
     if (!isset($_SESSION['id']))
@@ -10,9 +12,9 @@
         header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
-
+/*
     if(isset($_POST['trade_dep']))
-        header('location: routes.php');
+        header('location: routes.php');*/
 
 
     if(isset($_POST['submitted'])) {
@@ -25,6 +27,11 @@
         $captain = $connection->real_escape_string($_POST['captain']);
         $tradeDep = $connection->real_escape_string($_POST['trade_dep']);
         $tradeArr = $connection->real_escape_string($_POST['trade_arr']);
+
+        $sql = "SELECT id, harb_dep FROM trades WHERE harb_arr = '".$tradeArr."' AND harb_dep = '". $tradeDep."'";
+        if($result = $connection->query($sql))
+            if($row = $result->fetch_array(MYSQLI_ASSOC))
+                $tradeId = $row['id'];
 
         $error = false;
 
@@ -47,8 +54,8 @@
 
             $sql = "
                     
-                INSERT INTO routes (ship_id, dep_exp, arr_exp, captain, trade_dep, trade_arr, ret)
-                    VALUES ('$shipID', '$depExp', '$arrExp', '$captain', '$tradeDep', '$tradeArr', $ret);
+                INSERT INTO routes (id, ship_id, trade_id, dep_exp, arr_exp, captain, ret)
+                    VALUES ('".uniqid()."', '$shipID', '$tradeId', '$depExp', '$arrExp', '$captain', $ret);
                 
             ";
 
@@ -131,12 +138,6 @@
                 <a class="nav-link" href="employees.php">
                     <i class="cil-contact nav-icon "></i>
                     Dipendenti
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="ships.php">
-                    <i class="cil-boat-alt nav-icon"></i>
-                    Navi
                 </a>
             </li>
             <li class="nav-item">
@@ -308,6 +309,7 @@
                     type: "GET",
                     data: {ajax: 1, ret: ret},
                     success: function (data) {
+                        console.log(data);
                         $('#trade_dep').empty();
                         $('#trade_dep').html(data);
                         $("#arr_div").empty();
@@ -341,8 +343,8 @@
 
             $("#dep_div").empty();
             $("#arr_exp_div").empty();
-            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" required>');
-            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" required>');
+            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" min="' + '<?php echo date("Y-m-d")."T".date("H:i"); ?>' + '" required>');
+            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" min="' + '<?php echo date("Y-m-d")."T".date("H:i"); ?>' + '" name="arr_exp" required>');
 
         });
 
@@ -357,7 +359,7 @@
 
             $.ajax({
                 url: "php/setcapships.php",
-                data: {city: city, date: $('#dep_exp').val()},
+                data: {date: $('#dep_exp').val()},
                 type: "GET",
                 dataType: "JSON",
                 success: function (response){
@@ -369,8 +371,6 @@
                         $('#captain').append('<option value="'+id+'">'+ response[0][id] +'</option>');
                     for (id in response[1])
                         $('#ship_id').append('<option value="'+id+'">'+ response[1][id] +'</option>');
-                    for (id in response[2])
-                        $('#ship_id').append('<option value="'+id+'">'+ response[2][id] +'</option>');
                 }
             });
 

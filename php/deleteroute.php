@@ -1,6 +1,7 @@
 <?php
 
     session_start();
+    /**@var MYSQLI $connection*/
     if (!isset($_SESSION['id']) || $_SESSION['type'] !== 'amministratore') {
         header("location: login.php");
         exit;

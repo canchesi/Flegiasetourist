@@ -1,11 +1,11 @@
 <?php
 
     require_once('config.php');
-
+    /** @var MYSQLI $connection*/
     session_start();
 
     $sql = "
-        SELECT ship_id, dep_exp
+        SELECT routes.id
             FROM users JOIN routes
                 ON captain = id_code
             WHERE id_code = '" . $_SESSION['id'] . "' AND dep_exp = ANY(
@@ -30,7 +30,7 @@
             
                     UPDATE routes
                         SET dep_eff = '" . date('Y-m-d H:i') . "'
-                    WHERE ship_id = '" . $row['ship_id'] . "' AND dep_exp = '" . $row['dep_exp'] . "';
+                    WHERE id = '" . $row['id'] . "';
                 
                 ";
             else
@@ -40,7 +40,7 @@
                     SET
                         arr_eff = '" . date('Y-m-d H:i') . "',
                         notes = '" . $_GET['note'] . "'
-                WHERE ship_id = '" . $row['ship_id'] . "' AND dep_exp = '" . $row['dep_exp'] . "';
+                WHERE id = '" . $row['id'] . "';
             
             ";
             if($connection->query($sql))
