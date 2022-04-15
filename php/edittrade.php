@@ -85,12 +85,7 @@
                     Dipendenti
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../ships.php">
-                    <i class="cil-boat-alt nav-icon"></i>
-                    Navi
-                </a>
-            </li>
+
                         <li class="nav-item">
                 <a class="nav-link" href="../clients.php">
                     <i class="cil-user nav-icon"></i>

@@ -4,6 +4,10 @@ require_once('php/config.php');
 
 session_start();
 
+//TODO - Decidere se mettere un flag per disattivare la rotta e se non ci sono costraint dare la possibilità di eliminarla
+//TODO - Tasto di eliminazione nave su dashboard da fare
+
+
 if (!isset($_SESSION['id']))
     header("location: login.php");
 else if ($_SESSION['type'] === 'capitano')
@@ -67,12 +71,6 @@ else if ($_SESSION['type'] === 'cliente')
             <a class="nav-link" href="employees.php">
                 <i class="cil-contact nav-icon "></i>
                 Dipendenti
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="ships.php">
-                <i class="cil-boat-alt nav-icon"></i>
-                Navi
             </a>
         </li>
         <li class="nav-item">
@@ -178,10 +176,10 @@ else if ($_SESSION['type'] === 'cliente')
                                                         <div>' . $row["harb_arr"] . '</div>
                                                     </td>
                                                     <td class="" style="padding: 20px">
-                                                        <div>€' . $row["price_adult"] . '</div>
+                                                        <div>€' . number_format($row['price_adult'], 2, '.', ' ') . '</div>
                                                     </td>
                                                     <td class="" style="padding: 20px">
-                                                       <div>€' . $row["price_underage"] . '</div>
+                                                       <div>€' .number_format($row['price_underage'], 2, '.', ' ') . '</div>
                                                     </td>
                                                     <td></td>
                                                     <td></td>
