@@ -193,14 +193,6 @@ if (isset($_POST['ajax'])) {
                 </ul>
             </div>
         </div>
-        <div class="header-divider"></div>
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb my-0 ms-2">
-                    <li class="breadcrumb-item"><span>Rotte</span></li>
-                </ol>
-            </nav>
-        </div>
     </header>
     <!-- End Header -->
 
@@ -213,8 +205,14 @@ if (isset($_POST['ajax'])) {
                 <div class="col-md-12">
                     <div class="card mb-5">
                         <div class="card-header"><span class="fs-2">Rotte</span></div>
-                        <div class="card-body">
-                            <div class=" d-flex flex-row-reverse">
+                        <div class="card-body row">
+                            <div class="col-md-3">
+                                <?php
+                                    if ($_SESSION['type'] !== 'capitano')
+                                        echo '<a href="trades.php" class="btn btn-primary m-2">Vedi tratte</a>';
+                                ?>
+                            </div>
+                            <div class="col-md-9 d-flex flex-row-reverse">
                                 <?php
                                 if ($_SESSION['type'] !== 'capitano')
                                     echo '<a href="createroute.php" class="btn btn-primary m-2">Aggiungi</a>';
