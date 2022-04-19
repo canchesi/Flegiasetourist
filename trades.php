@@ -145,14 +145,10 @@ else if ($_SESSION['type'] === 'cliente')
                                 <table class="table border">
                                     <thead class="table-light fw-semibold">
                                     <tr class="align-middle">
-                                        <th class="text-center"><a href="#" class="btn btn-ghost-dark orderButton"
-                                                                   id="harb_dep" data-order="asc">Partenza</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="harb_arr"
-                                                        data-order="asc">Arrivo</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton" id="price_adult"
-                                                        data-order="asc">Prezzo maggiorenni</a></th>
-                                        <th class=""><a href="#" class="btn btn-ghost-dark orderButton"
-                                                        id="price_underage" data-order="asc">Prezzo ragazzi</a></th>
+                                        <th class="text-center">Partenza</th>
+                                        <th class="">Arrivo</th>
+                                        <th class="">Prezzo maggiorenni</th>
+                                        <th class="">Prezzo ragazzi</th>
                                         <th class="text-center"></th>
                                         <th class="text-center"></th>
                                         <th class="text-end"></th>
@@ -162,7 +158,7 @@ else if ($_SESSION['type'] === 'cliente')
                                     <tbody>
 
                                     <?php
-                                            $sql = "SELECT * FROM trades";
+                                            $sql = "SELECT * FROM trades WHERE deleted = 0";
 
                                         if ($result = $connection->query($sql)) {
 
@@ -264,19 +260,6 @@ else if ($_SESSION['type'] === 'cliente')
         });
     });
 
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sorttrades.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#warehouseTable').html(data);
-            }
-        });
-    });
 </script>
 
 </html>

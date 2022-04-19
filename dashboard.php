@@ -461,6 +461,8 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                         <th class="text-center">
                                             Nome
                                         </th>
+                                        <th class="text-center">
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -490,6 +492,13 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
                                     </td>
                                     <td class="text-center">
                                         <div>' . $row["name"] . '</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div>                                                            
+                                        <button type="button" class="btn btn-danger m-1 deleteButton">
+                                                <i class="cil-trash"></i>
+                                            </button>
+                                        </div>
                                     </td>';
                         }
 
@@ -680,15 +689,19 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
     })
 
 
-    $('.deleteButton').click(function () {
+    $('.deleteButton').on('click',function () {
+        console.log("Cliccato");
+
         var tr = $(this).closest('tr'),
             del_id = $(tr).attr('id');
 
         $.ajax({
             method: 'GET',
-            url: "php/deleteship.php?id=" + del_id,
+            data:{del_id: del_id},
+            url: "php/deleteship.php",
             cache: false,
-            success: function () {
+            success: function (response) {
+                console.log(response)
                 tr.fadeOut(1000, function () {
                     $(this).remove();
                 });
@@ -696,19 +709,6 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
         });
     });
 
-    $(document).on("click", ".orderButton", function () {
-        var column = $(this).attr("id"),
-            order = $(this).data("order");
-
-        $.ajax({
-            url: "php/sortships.php",
-            method: "POST",
-            data: {column: column, order: order},
-            success: function (data) {
-                $('#ships').html(data);
-            }
-        });
-    });
 
 </script>
 

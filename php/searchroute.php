@@ -3,6 +3,8 @@
 
     require_once('config.php');
 
+    /**@var mysqli $connection*/
+
     $tradeDep = $_GET['trade_dep'];
     $tradeArr = $_GET['trade_arr'];
     $depExp = $_GET['dep_exp'];
@@ -10,15 +12,13 @@
 
     $sql = "
 
-        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass, id
+        SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass, routes.id
             FROM routes JOIN trades 
-                ON trade_dep = harb_dep
-                OR trade_dep = harb_arr
+                ON trade_id = trades.id
             WHERE 
-                ((trade_dep = '$tradeDep' AND trade_arr = '$tradeArr' AND ret = 0) 
-                OR
-                (trade_dep = '$tradeArr' AND trade_arr = '$tradeDep' AND ret = 1))
-                AND dep_exp >= '$depExp' AND dep_eff IS NULL AND NOT deleted
+                harb_dep = '$tradeDep' AND harb_arr = '$tradeArr' 
+                AND
+                dep_exp >= '$depExp' AND dep_eff IS NULL AND NOT routes.deleted
             ORDER BY dep_exp ASC
                 
     ";

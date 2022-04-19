@@ -75,12 +75,6 @@ if (isset($_POST['harb_dep']))
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="ships.php">
-                <i class="cil-boat-alt nav-icon"></i>
-                Navi
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="clients.php">
                 <i class="cil-user nav-icon"></i>
                 Clienti
@@ -217,18 +211,31 @@ if (isset($_POST['submitted'])) {
     $prad = $_POST['price_adult'];
     $prun = $_POST['price_underage'];
 
-
     $sql = "
+        SELECT id
+            FROM trades
+            WHERE (harb_dep = '$dep' AND harb_arr = '$arr') OR (harb_dep = '$arr' AND harb_arr = '$dep')
+    ";
+
+    if($result = $connection->query($sql))
+        if($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $sql = "UPDATE trades SET deleted = 0, price_adult = '$prad', price_underage = '$prun' WHERE id = '" . $row['id']. "'";
+            if(!($result = $connection->query($sql)))
+                die('-1');
+        }
+    else {
+
+        $sql = "
                 
             INSERT INTO trades (`harb_dep`, `harb_arr`, `price_adult`, `price_underage`)                            
                 VALUES ('$dep', '$arr', '$prad', '$prun');
                        
       ";
 
-    if (!$resultInsert = $connection->query($sql))
-        die('<script>alert("Errore nell\'invio dei dati.")</script>');
+        if (!$resultInsert = $connection->query($sql))
+            die('<script>alert("Errore nell\'invio dei dati.")</script>');
 
-
+    }
 }
 
 ?>

@@ -55,7 +55,8 @@ if ($result = $connection->query($sql))
 
 
                 case '-1':  // Carta nuova
-                    $saved = $_GET['saved'];
+                    $saved = 1;
+                    $alreadySaved = 0;
                     do {
                         $sql = "
                             SELECT id, saved
@@ -66,8 +67,25 @@ if ($result = $connection->query($sql))
                         if ($result = $connection->query($sql)) {
                             if ($result->num_rows == 0) {
                                 $sql = "
-                                    INSERT INTO `user-card_matches` (user_id, cc_num, saved)
-                                        VALUES('" . $_SESSION['id'] . "', '" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['saved'] . "')
+                                    SELECT cvv
+                                        FROM credit_cards
+                                        WHERE number = '" . $_GET['cc_info']['cc_num'] . "'
+                                ";
+
+                                if($result = $connection->query($sql))
+                                    if($result->num_rows == 0) {
+
+                                        $sql = "
+                                            INSERT INTO credit_cards (number)
+                                                VALUES('" . $_GET['cc_info']['cc_num'] . "')
+                                        ";
+
+                                        if (!($result = $connection->query($sql)))
+                                            die('-1');
+                                    }
+                                $sql = "
+                                    INSERT INTO `user-card_matches` (user_id, cc_num)
+                                        VALUES('" . $_SESSION['id'] . "', '" . $_GET['cc_info']['cc_num'] . "')
                                 ";
 
                                 if (!($result = $connection->query($sql)))
@@ -82,36 +100,38 @@ if ($result = $connection->query($sql))
                     } while ($cc_user_id === 0);
 
                     if ($_GET['saved'] === '1') {
-
                         $sql = "
-                            SELECT *
-                                FROM credit_cards
-                            WHERE number = '" . $_GET['cc_info']['cc_num'] . "'
-                        
+                            SELECT saved
+                                FROM `user-card_matches`
+                            WHERE cc_num = '" . $_GET['cc_info']['cc_num'] . "'
                         ";
+
                         if ($result = $connection->query($sql)) {
-                            if ($result->num_rows == 0) {
-                                $sql = "
-                                    INSERT INTO credit_cards
-                                        VALUES('" . $_GET['cc_info']['cc_num'] . "', '" . $_GET['cc_info']['cc_acchold'] . "', '" . $_GET['cc_info']['cc_exp'] . "', '" . $_GET['cc_info']['cc_cvv'] . "');
-                                        
-                                ";
-                                if (!($result = $connection->query($sql)))
-                                    die('-1');
-
-                            } else {
-                                if($row = $result->fetch_array(MYSQLI_ASSOC))
-                                    if(!empty(array_diff($_GET['cc_info'], $row)))
-                                        die('-1');
-
-                            }
-
-                            if ($saved == '0') {
-                                $sql = "UPDATE `user-card_matches` SET saved = 1 WHERE id = '" . $cc_user_id  . "'";
-                                if (!($result = $connection->query($sql)))
-                                    die('-1');
-                            }
+                            while (($row = $result->fetch_array(MYSQLI_ASSOC)) && !$alreadySaved)
+                                if ($row['saved'] == 1)
+                                    $alreadySaved = 1;
                         } else
+                            die('-1');
+
+                        if(!$alreadySaved){
+                            $sql = "
+                                UPDATE credit_cards
+                                    SET 
+                                        acc_holder = '" . $_GET['cc_info']['cc_acchold'] . "',
+                                        exp = '" .$_GET['cc_info']['cc_exp']. "',
+                                        cvv = '" .$_GET['cc_info']['cc_cvv']. "'
+                                    WHERE number = '" . $_GET['cc_info']['cc_num'] . "'
+
+                            ";
+
+                            if (!($result = $connection->query($sql)))
+                                die('-1');
+
+
+                        }
+                        $sql = "UPDATE `user-card_matches` SET saved = 1 WHERE id = '" . $cc_user_id  . "'";
+
+                        if (!($result = $connection->query($sql)))
                             die('-1');
                     }
                     break;
@@ -121,10 +141,11 @@ if ($result = $connection->query($sql))
 
             if ($cc_user_id) {
 
+
                 $sql = "
                 
-                    INSERT INTO reservations(route_id, payment_id, date_res, adults, underages, vehicle)
-                        VALUES('" . $id . "', '" . $cc_user_id . "', '" . date('Y-m-d H:i:s') . "', '$num_ad', '$num_un', NULLIF('$veh','Nessuno'));
+                    INSERT INTO reservations(route_id, payment_id, date_res, adults, underages, vehicle, subtotal)
+                        VALUES('" . $id . "', '" . $cc_user_id . "', '" . date('Y-m-d H:i:s') . "', '$num_ad', '$num_un', NULLIF('$veh','Nessuno'), '".$_GET['subtotal']."');
                         
                     UPDATE routes SET num_pass = num_pass +'$pass' WHERE id = '" . $id . "';
                 

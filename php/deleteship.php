@@ -8,7 +8,7 @@ if (!isset($_SESSION['id']) || $_SESSION['type'] !== 'amministratore') {
 
 require_once('config.php');
 
-$id = $connection->real_escape_string($_GET['id']);
+$id = $connection->real_escape_string($_GET['del_id']);
 
 $sql = "UPDATE ships SET unused = 1 WHERE id = '$id' ";
 

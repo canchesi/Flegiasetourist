@@ -236,8 +236,9 @@ if(isset($_POST['ajax'])) {
             </div>
             <div class="col-md-3">
                 <label for="harb_arr" class="form-label">Porto di arrivo</label>
-                <input type="text" class="form-control" id="harb_arr" name="harb_arr" placeholder="Arrivo"
-                       style="background-color: white" readonly>
+                <select class="form-select" id="harb_arr" name="harb_arr">
+                    <option selected disabled>Arrivo</option>
+                </select>
             </div>
 
 
@@ -427,7 +428,7 @@ if(isset($_POST['ajax'])) {
     });
 
     var validation = "NaN";
-
+    var total;
 
     $(document).ready(function() {
 
@@ -450,7 +451,7 @@ if(isset($_POST['ajax'])) {
             $('#maggiorenni').val('1').change();
             $('#minorenni').val('0').change();
             $('#veicolo').val('0').change();
-            $('#price').text(price);
+            $('#price').text(price)
         }
 
         $('#reservationModal').modal('toggle');
@@ -466,7 +467,7 @@ if(isset($_POST['ajax'])) {
             success: function (response) {
                 arr.empty();
                 response.forEach(function (city) {
-                    $("#harb_arr").val(city);
+                    $("#harb_arr").append("<option value='"+city+"'>"+city+"</option>");
                 })
             }
         });
@@ -475,7 +476,7 @@ if(isset($_POST['ajax'])) {
     $(document).on('change', '#maggiorenni, #minorenni, #veicolo', function () {
         var prices = $('#routes tr td:eq(3)').text().split('Ragazzo:\t€', 2);
         prices[0] = prices[0].replace('Adulto:\t€', '');
-        var total = (parseFloat($('#maggiorenni').val()).toFixed(2) * prices[0] + parseFloat($('#minorenni').val()).toFixed(2) * prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
+        total = (parseFloat($('#maggiorenni').val()).toFixed(2) * prices[0] + parseFloat($('#minorenni').val()).toFixed(2) * prices[1] + 1.00 * parseFloat($('#veicolo option:selected').val()).toFixed(2)).toFixed(2);
         $('#price').text('€' + total);
         $('#iva').text("di cui IVA: €" + (total * 0.18).toFixed(2));
 
@@ -620,7 +621,7 @@ if(isset($_POST['ajax'])) {
             $.ajax({
             url: "php/book.php",
                 type: "GET",
-                data: {id: id, adult: adult, under: minori, vehicle: veicolo , cc_info: cc_info, payment: validation, saved: saved},
+                data: {id: id, adult: adult, under: minori, vehicle: veicolo , cc_info: cc_info, payment: validation, saved: saved, subtotal: total},
                 success: function (response) {
                     console.log(response);
                     if (response === '0') {

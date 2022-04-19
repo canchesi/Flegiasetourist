@@ -41,8 +41,12 @@ if(isset($_POST['ajax'])){
 
     if($delete == 0) {
         $sql = "
-            DELETE FROM credit_cards
-                WHERE number = '" . $cardNum . "'
+            UPDATE credit_cards
+                SET
+                    acc_holder = NULL,
+                    exp = NULL,
+                    cvv = NULL 
+                WHERE number = '$cardNum'
         ";
 
         if(!$connection->query($sql))

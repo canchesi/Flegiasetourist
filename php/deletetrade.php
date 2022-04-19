@@ -10,7 +10,7 @@
 
     $id = explode("-", $connection->real_escape_string($_GET['id']));
 
-    $sql = "DELETE FROM trades WHERE harb_dep ='" . $id[0] . "' AND harb_arr = '" . $id[1] . "'";
+    $sql = "UPDATE trades SET deleted = 1 WHERE harb_dep ='" . $id[0] . "' AND harb_arr = '" . $id[1] . "'";
 
 
     if ($connection->query($sql) === FALSE) {

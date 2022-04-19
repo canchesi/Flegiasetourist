@@ -23,11 +23,11 @@ if ($result = $connection->query($sql)) {
 
     if ($resultFilter = $connection->query($sql)) {
         while ($resRow = $resultFilter->fetch_array(MYSQLI_ASSOC)) {
-            if (in_array($resRow['harb_dep'], $row)) {
+            if (in_array($resRow['harb_dep'], $row) && $resRow['deleted'] != 1) {
                 $pos = array_search($resRow['harb_dep'], $row);
                 unset($row[$pos]);
             }
-            if (in_array($resRow['harb_arr'], $row)) {
+            if (in_array($resRow['harb_arr'], $row) && $resRow['deleted'] != 1) {
                 $pos = array_search($resRow['harb_arr'], $row);
                 unset($row[$pos]);
             }

@@ -137,19 +137,18 @@ if (isset($_SESSION['id']))
                 $sql = "SELECT * FROM reservations 
                             JOIN routes ON routes.id = reservations.route_id 
                             JOIN `user-card_matches` AS ucm ON payment_id = ucm.id 
-                            JOIN trades ON routes.trade_dep = trades.harb_dep
+                            JOIN trades ON routes.trade_id = trades.id
                             LEFT JOIN vehicles ON type = vehicle 
-                        WHERE ucm.user_id = ".$_SESSION['id']. " 
+                        WHERE ucm.user_id = '".$_SESSION['id']. "' AND routes.deleted = 0
                         ORDER BY date_res DESC
 ";
 
                 if($result = $connection->query($sql)){
                     while($row = $result->fetch_array(MYSQLI_ASSOC)){
-                        $total = $row['price_adult'] * $row['adults'] + $row['price_underage'] * $row['underages'] + $row['charge'];
                         if($row['ret']) {
-                            $tmp = $row["trade_dep"];
-                            $row["trade_dep"] = $row['trade_arr'];
-                            $row["trade_arr"] = $tmp;
+                            $tmp = $row["harb_dep"];
+                            $row["harb_dep"] = $row['harb_arr'];
+                            $row["harb_arr"] = $tmp;
                             unset($tmp);
                         }
 
@@ -160,7 +159,7 @@ if (isset($_SESSION['id']))
                             $row['vehicle'] = 'Nessuno';
                         echo '>
                                   <td>'.date("d/m/Y H:i", strtotime($row["date_res"])).'</td>
-                                  <td>'.$row["trade_dep"].'-'.$row["trade_arr"].'</td>
+                                  <td>'.$row["harb_dep"].'-'.$row["harb_arr"].'</td>
                                   <td>'.date("d/m/Y H:i", strtotime($row["dep_exp"]));
 
                         if($row['deleted'])
@@ -170,7 +169,7 @@ if (isset($_SESSION['id']))
 
                             echo'
                                   </td>
-                                  <td>€'.number_format($total, 2).'</td>
+                                  <td>€'.number_format($row['subtotal'], 2).'</td>
                                   
                                ';
 
