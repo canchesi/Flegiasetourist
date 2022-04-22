@@ -12,9 +12,8 @@
         header('location: dashboard.php');
     else if ($_SESSION['type'] === 'cliente')
         header('location: index.php');
-/*
     if(isset($_POST['trade_dep']))
-        header('location: routes.php');*/
+        header('location: routes.php');
 
 
     if(isset($_POST['submitted'])) {
@@ -28,7 +27,7 @@
         $tradeDep = $connection->real_escape_string($_POST['trade_dep']);
         $tradeArr = $connection->real_escape_string($_POST['trade_arr']);
 
-        $sql = "SELECT id, harb_dep FROM trades WHERE harb_arr = '".$tradeArr."' AND harb_dep = '". $tradeDep."'";
+        $sql = "SELECT id, harb_dep FROM trades WHERE (harb_arr = '".$tradeArr."' AND harb_dep = '". $tradeDep."') OR (harb_arr = '".$tradeDep."' AND harb_dep = '".$tradeArr."')";
         if($result = $connection->query($sql))
             if($row = $result->fetch_array(MYSQLI_ASSOC))
                 $tradeId = $row['id'];
@@ -60,7 +59,7 @@
             ";
 
             if (!($result = $connection->query($sql)))
-                echo "<script>alert('Errore nell'invio dei dati.')</script>";
+                echo "<script>alert('Errore nell\'invio dei dati.')</script>";
 
         }
 
@@ -68,14 +67,24 @@
 
     if(isset($_GET['ajax'])) {
 
+
         $sql = "SELECT harb_dep, harb_arr FROM trades";
         $out = '<option disabled selected>Partenza</option>';
+        $harbs_dep = [];
+        $harbs_arr = [];
         if ($result = $connection->query($sql)) {
             while ($row = $result->fetch_array(MYSQLI_ASSOC))
-                if ($_GET['ret'] == 0)
-                    $out .= "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
-                else
-                    $out .= "<option value = '" . $row['harb_arr'] . "'> " . $row['harb_arr'] . " </option>";
+                if ($_GET['ret'] == 0) {
+                    if (!in_array($row['harb_dep'],$harbs_dep)) {
+                        $out .= "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
+                        $harbs_dep[] = $row['harb_dep'];
+                    }
+                    } else {
+                        if (!in_array($row['harb_arr'],$harbs_arr)) {
+                            $out .= "<option value = '" . $row['harb_arr'] . "'> " . $row['harb_arr'] . " </option>";
+                            $harbs_arr[] = $row['harb_arr'];
+                        }
+                    }
             echo $out;
         }
 
@@ -219,10 +228,14 @@
                                         <select class="form-select" id="trade_dep" name="trade_dep" required>
                                             <option disabled selected>Partenza</option>
                                             <?php
-                                                $sql = "SELECT harb_dep FROM trades";
+                                                $harbs = [];
+                                                $sql = "SELECT harb_dep FROM trades WHERE deleted = 0";
                                                 if ($result = $connection->query($sql))
                                                     while ($row = $result->fetch_array(MYSQLI_ASSOC))
-                                                        echo "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
+                                                        if(!in_array($row['harb_dep'],$harbs)) {
+                                                            echo "<option value = '" . $row['harb_dep'] . "'> " . $row['harb_dep'] . " </option>";
+                                                            $harbs[] = $row['harb_dep'];
+                                                        }
                                             ?>
                                         </select>
                                     </div>
@@ -287,7 +300,8 @@
 
         $(document).ready(function () {
             var checkbox = $('#return'),
-                ret = 0;
+                ret = 0,
+                harbs = <?php echo json_encode($harbs)?>;
 
             checkbox.change(function () {
                 if (checkbox.is(':checked'))
@@ -307,7 +321,7 @@
 
                 $.ajax({
                     type: "GET",
-                    data: {ajax: 1, ret: ret},
+                    data: {ajax: 1, ret: ret, harbs: harbs},
                     success: function (data) {
                         console.log(data);
                         $('#trade_dep').empty();
