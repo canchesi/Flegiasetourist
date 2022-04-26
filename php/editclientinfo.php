@@ -712,7 +712,6 @@ if (isset($_POST['submitted'])) {
             type: "POST",
             data: {ajax: 1, ccnum: ccnum},
             success: function (response) {
-                console.log(response);
                 if (response === '0') {
                     tr.fadeOut(1000, function () {
                         tr.empty();

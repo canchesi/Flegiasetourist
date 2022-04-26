@@ -1,6 +1,8 @@
 <?php
 require_once('php/config.php');
 
+/**@var MYSQLI $connection*/
+
 session_start();
 
 if (!isset($_SESSION['id']))
@@ -690,7 +692,6 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
 
 
     $('.deleteButton').on('click',function () {
-        console.log("Cliccato");
 
         var tr = $(this).closest('tr'),
             del_id = $(tr).attr('id');
@@ -701,7 +702,6 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
             url: "php/deleteship.php",
             cache: false,
             success: function (response) {
-                console.log(response)
                 tr.fadeOut(1000, function () {
                     $(this).remove();
                 });

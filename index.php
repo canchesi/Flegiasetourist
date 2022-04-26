@@ -623,7 +623,6 @@ if(isset($_POST['ajax'])) {
                 type: "GET",
                 data: {id: id, adult: adult, under: minori, vehicle: veicolo , cc_info: cc_info, payment: validation, saved: saved, subtotal: total},
                 success: function (response) {
-                    console.log(response);
                     if (response === '0') {
                         alert("Prenotazione effettuata.");
                         window.location.replace("reservations.php");

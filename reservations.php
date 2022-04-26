@@ -1,6 +1,7 @@
 <?php
 require_once('php/config.php');
 
+/**?@var MYSQLI $connection*/
 session_start();
 
 if (isset($_SESSION['id']))
@@ -220,7 +221,6 @@ if (isset($_SESSION['id']))
             url: "php/deleteres.php?idres="+idres,
             type: "GET",
             success: function (response) {
-                console.log(response);
                 if (response === '0') {
                     tr.addClass("text-decoration-line-through");
                     btns.fadeOut(1000, function () {
