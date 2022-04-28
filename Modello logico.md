@@ -2,7 +2,7 @@
 
 ### Ristrutturazione
 
-Le generalizzazioni sono state risolte inserendo un campo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. Non vi sono relazioni N a N o cicli. 
+Le generalizzazioni sono state risolte inserendo un campo "tipo" in Utente che può essere "Amministratore", "Capitano" o "Cliente", rendendo le relazioni delle entità figlie direttamente legate all'entità Utente. La relazione ternaria tra Carte di credito, Clienti (Utenti una volta ristrutturato) e Prenotazioni è gestita tramite un’entità Associazioni utente-carta, tale da gestire la relazione N a N tra le prime due entità sopracitate e permettendo che la stessa sia una chiave esterna in Prenotazioni, tramite una relazione con cardinalità massima (1,N) nel verso Prenotazioni-Associazioni utente-carta.
 
 ### Modello relazionale
 
