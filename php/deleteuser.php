@@ -8,10 +8,12 @@
 
     require_once('config.php');
 
-    $id = $connection->real_escape_string($_GET['id']);
+    /** @var MYSQLI $connection*/
 
-    $sql = "UPDATE users SET deleted = 1 WHERE id_code = $id ";
+    $id = $connection->real_escape_string($_GET['id']); //ID utente
 
+    // Query che aggiorna il flag dell'utente eliminato
+    $sql = "UPDATE users SET deleted = 1 WHERE id_code = '$id'";
 
     if ($connection->query($sql) === FALSE) {
         echo "Error: " . $sql . "<br>" . $connection->error;

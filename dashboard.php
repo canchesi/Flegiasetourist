@@ -702,9 +702,13 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
             url: "php/deleteship.php",
             cache: false,
             success: function (response) {
-                tr.fadeOut(1000, function () {
-                    $(this).remove();
-                });
+                if(response)
+                    alert(response)
+                else {
+                    tr.fadeOut(1000, function () {
+                        $(this).remove();
+                    });
+                }
             }
         });
     });

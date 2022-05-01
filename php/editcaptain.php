@@ -3,6 +3,8 @@
 require_once('config.php');
 require_once('residenceinfos.php');
 
+/** @var MYSQLI $connection*/
+
 session_start();
 
 if (!isset($_SESSION['id']))
@@ -10,6 +12,7 @@ if (!isset($_SESSION['id']))
 else if ($_SESSION['type'] === 'cliente')
     header('location: index.php');
 
+// Query che prende le informazioni di un capitano
 
 $sql = "
     
@@ -30,60 +33,71 @@ if ($result = $connection->query($sql))
     $row = $result->fetch_array(MYSQLI_ASSOC);
 
 
+// Al submit del form
 if (isset($_POST['submitted'])) {
+
+    //Se ci sono modifiche
     if (isset($_POST)) {
 
-        $tel = $_POST['tel'];
+        $tel = $_POST['tel']; //Numero di telefono
 
+        // Se è stata modificata la password
         if ($_POST['psw']) {
 
-            $error = '';
+            $error = '';    // variabile d'errore
 
-            $password = $_POST['psw'];
-            $passwordConfirmation = $_POST['pswConf'];
-            $oldPassword = $_POST['oldPsw'];
+            $password = $_POST['psw'];                  //Password nuova
+            $passwordConfirmation = $_POST['pswConf'];  //Conferma password nuova
+            $oldPassword = $_POST['oldPsw'];            //Password vercchia
 
             if ($password != $passwordConfirmation) {
+                // Se le due password nuove non coincidono inserisce l'errore
                 $error = "I campi Nuova Password e Conferma Password non coincidono.<br>";
             }
 
-            if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,}$/', $password)){
+            if (!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,}$/', $password)) {
+                //Se non è rispettato il regex inserisce l'errore
                 $error .= "La password deve contenere almeno 8 caratteri e deve essere alfanumerica e con caratteri speciali.<br>";
             }
 
+            // Se non c'è errore
             if (!$error) {
-                if ($result = $connection->query("SELECT * FROM users WHERE id_code =" . $_SESSION['id'])) {
-                    $row = $result->fetch_array(MYSQLI_ASSOC);
-                    if (password_verify($oldPassword, $row['psw'])) {
-                        $hashPasswd = password_hash($password, PASSWORD_DEFAULT);
-                        $sql = "UPDATE users SET psw = '$hashPasswd' WHERE id_code =" . $_SESSION['id']. ";  
-                        UPDATE infos
-                        SET
-                            tel = '$tel'
-                        WHERE user_id = " . $_SESSION['id'] . ";
-                        ";
-                        if(!($result = $connection->multi_query($sql))){
-                            die('<script>alert("Errore nell\'invio dei dati.")</script>');
+                if ($result = $connection->query("SELECT psw FROM users WHERE id_code =" . $_SESSION['id'])) { //Query che prende la password dell'utente
+                    if ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                        // Se la password vecchia è corretta...
+                        if (password_verify($oldPassword, $row['psw'])) {
+                            // ...codifica la password nuova...
+                            $hashPasswd = password_hash($password, PASSWORD_DEFAULT);
+                            // ...e aggiorna la password...
+                            $sql = "
+                                UPDATE users 
+                                    SET psw = '$hashPasswd'
+                                    WHERE id_code =" . $_SESSION['id'] . ";
+                            ";
+                            if (!($result = $connection->query($sql))) {
+                                die('<script>alert("Errore nell\'invio dei dati.")</script>');
+                            }
+                            echo '<script>window.location.replace("../dashboard.php")</script>';
+                        } else {
+                            // ...altrimenti inserisce l'errore
+                            $error .= "Vecchia Password errata.";
                         }
-                        echo '<script>window.location.replace("../dashboard.php")</script>';
-                    } else {
-                        $error .= "Vecchia Password errata.";
                     }
                 }
             }
-        } else {
-            $sql = "
-                UPDATE infos
-                    SET
-                        tel = '$tel'
-                    WHERE user_id = " . $_SESSION['id'] . ";
-                ";
-
-                    if (!($result = $connection->query($sql)))
-                        die('<script>alert("Errore nell\'invio dei dati.")</script>');
-
-                    echo '<script>window.location.replace("../dashboard.php")</script>';
         }
+        $sql = "
+            UPDATE infos
+                SET
+                    tel = '$tel'
+                WHERE user_id = " . $_SESSION['id'] . ";
+        ";
+
+        if (!($result = $connection->query($sql)))
+            die('<script>alert("Errore nell\'invio dei dati.")</script>');
+
+        echo '<script>window.location.replace("../dashboard.php")</script>';
+
     }
 }
 

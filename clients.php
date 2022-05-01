@@ -258,9 +258,13 @@ else if ($_SESSION['type'] === 'cliente')
             url: "php/deleteuser.php?id="+ del_id,
             cache: false,
             success:function(result){
-                tr.fadeOut(1000, function(){
-                    $(this).remove();
-                });
+                if(result)
+                    alert(result)
+                else {
+                    tr.fadeOut(1000, function () {
+                        $(this).remove();
+                    });
+                }
             }
         });
     });

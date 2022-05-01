@@ -293,10 +293,14 @@ else if ($_SESSION['type'] === 'capitano')
             url: "php/deleteuser.php?id=" + del_id,
             cache: false,
             success: function (result) {
-                tr.addClass("text-decoration-line-through");
-                btns.fadeOut(1000, function(){
-                    btns.remove();
-                });
+                if(result)
+                    alert(result)
+                else {
+                    tr.addClass("text-decoration-line-through");
+                    btns.fadeOut(1000, function () {
+                        btns.remove();
+                    });
+                }
             }
         });
     });

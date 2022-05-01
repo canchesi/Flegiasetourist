@@ -1,5 +1,6 @@
 <?php
 
+    // File di configurazione per la connessione al db
     $username = "fliegiasetourist";
     $password = "";
     $addr = "localhost";
