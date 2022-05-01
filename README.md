@@ -52,9 +52,6 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
 | Possiede (Colore capelli)   | Collegamento colore capelli e dipendente        | Colore capelli, Generalità                                                   |
 | Partenza                    | Assegnazione partenza ad un porto (andata)      | Porti, Tratte                                                                |
 | Arrivo                      | Assegnazione arrivo ad un porto (andata)        | Porti, Tratte                                                                |
-| Carte di credito            | Carte di credito usate/salvate dagli utenti     | Numero, intestatario, data di scadenza, CVV                                  |
-| Associazioni utente-carta   | Associazioni utente-carta utilizzata            | ID, salvata                                                                  |
-| Prenotazioni                | Prenotazioni effettuate dai clienti             | ID, numero minorenni, numero adulti, subtotale, data prenotazione, annullata |
 
 
 ### Vincoli
