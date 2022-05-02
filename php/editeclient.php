@@ -3,6 +3,9 @@
     require_once('config.php');
     require_once('residenceinfos.php');
 
+    /** @var MYSQLI $connection*/
+    /** @var array $provinces*/
+
     session_start();
 
     if (!isset($_SESSION['id']))
@@ -12,7 +15,8 @@
 
     if(isset($_POST['name']))
         header('location: ../employees.php');
-    
+
+    // Query che prende le informazioni dell'utente
     $sql = "
     
         SELECT *
@@ -403,6 +407,8 @@ if($result = $connection->query($sql))
     <?php
         if (isset($_POST['submitted'])) {
             if (isset($_POST)) {
+
+                // variabili varie
                 $name = $connection->real_escape_string(ucfirst($_POST['name']));
                 $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
                 $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
@@ -424,6 +430,7 @@ if($result = $connection->query($sql))
                 $eyes = $connection->real_escape_string($_POST['eyes']);
                 $height = $connection->real_escape_string($_POST['height']);
 
+                // Query che aggiorna le informazion dell'utente
                 $sql = "
             
                     UPDATE users 

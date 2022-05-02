@@ -2,7 +2,8 @@
 require_once('config.php');
 require_once('residenceinfos.php');
 /** @var MYSQLI $connection*/
-/** @var PROVINCE $provinces*/
+/** @var array $provinces*/
+
 session_start();
 
 if (isset($_SESSION['id']))
@@ -11,9 +12,10 @@ if (isset($_SESSION['id']))
 
 if(isset($_POST['ajax'])){
 
-    $cardNum = $_POST['ccnum'];
-    $delete = -1;
+    $cardNum = $_POST['ccnum']; //Numero di carta
+    $delete = -1;               //Flag di eliminazione
 
+    // Query che controlla se prende il flag saved di una carta
     $sql = "
         SELECT saved
             FROM `user-card_matches`
@@ -21,14 +23,18 @@ if(isset($_POST['ajax'])){
     
     ";
 
+    // Se qualche utente ha salvato la carta...
     if($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC))
             if($row['saved'] == 1) {
                 $delete += 1;
+                // ...e non è quello attuale che vuole rimuovere la carta...
                 if($delete > 0)
+                    // ...$delete diventa 1 ed esce dal ciclo
                     break;
             }
 
+    // Query che imposta il flag saved a 0 per l'associazione utente-carta in questione e...
     $sql = "
         UPDATE `user-card_matches`
             SET saved = 0
@@ -39,7 +45,9 @@ if(isset($_POST['ajax'])){
     if(!($connection->query($sql)))
         die('-1');
 
+    // ...se nessuno ha salvato la carta...
     if($delete == 0) {
+        // ...vengono messe a NULL alcune informazioni della suddetta carta
         $sql = "
             UPDATE credit_cards
                 SET
@@ -116,7 +124,8 @@ if(isset($_POST['ajax'])){
 
                 if (isset($_SESSION['type'])) {
 
-                    $sql = "SELECT name, surname FROM users WHERE id_code = " . $_SESSION['id'];
+                    // Query che prende nome e cognome dell'utente
+                    $sql = "SELECT name, surname FROM users WHERE id_code = '" . $_SESSION['id'] ."'";
 
                     if ($result = $connection->query($sql)) {
                         $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -155,6 +164,7 @@ if(isset($_POST['ajax'])){
 
 <?php
 
+// Query che prende le informaioni dell'utente
 $sql = "
         
         SELECT *
@@ -166,14 +176,15 @@ $sql = "
 
 if ($result = $connection->query($sql))
     if($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $provr = $connection->real_escape_string($row['prov_r']);
-        $provd = $connection->real_escape_string($row['prov_d']);
+        $provr = $connection->real_escape_string($row['prov_r']); //Provincia di residenza
+        $provd = $connection->real_escape_string($row['prov_d']); //Provincia di domicilio
     }
 if (isset($_POST['submitted'])) {
     if (isset($_POST)) {
 
-        $error = "";
+        $error = "";    // Errore
 
+        // Varie informazioni
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
         $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
         $email = $connection->real_escape_string($_POST['email']);
@@ -194,23 +205,29 @@ if (isset($_POST['submitted'])) {
         $zipd = $connection->real_escape_string($_POST['zip_d']);
         $addrd = $connection->real_escape_string($_POST['addr_d']);
 
+        // Se si vuole cambiare la password...
         if ($oldPassword && $newPassword) {
 
+            // ...ma la password vecchia è errata...
             if (!password_verify($oldPassword, $row['psw']))
-                $error .= "La vecchia password non è corretta. <br>";
+                $error .= "La vecchia password non è corretta. <br>"; // ...viene inserito l'errore
 
+            // ...ma le password nuove non coincidono...
             if ($newPassword != $confirmPassword) {
-                $error .= "I campi Nuova Password e Conferma Password non coincidono.<br>";
+                $error .= "I campi Nuova Password e Conferma Password non coincidono.<br>"; // ...viene inserito l'errore
             }
 
+            // ...ma la password non rispetta il regex...
             if (!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,}$/', $newPassword)) {
-                $error .= "La password deve contenere almeno 8 caratteri e deve essere alfanumerica e con caratteri speciali.<br>";
+                $error .= "La password deve contenere almeno 8 caratteri e deve essere alfanumerica e con caratteri speciali.<br>"; // ...viene inserito l'errore
             }
 
+            // ...e tutto va a buon fine...
             if (!$error) {
 
-                $hashPasswd = password_hash($newPassword, PASSWORD_DEFAULT);
+                $hashPasswd = password_hash($newPassword, PASSWORD_DEFAULT); // Password criptata
 
+                // ...vengono cambiate tutte le informazioni...
                 $sql = "
             
                     UPDATE users 
@@ -241,6 +258,7 @@ if (isset($_POST['submitted'])) {
 
         } else {
 
+            // ... altrimenti vengono cambiate le informazioni senza password
             $sql = "
             
                     UPDATE users 
@@ -514,18 +532,6 @@ if (isset($_POST['submitted'])) {
         ?>
     </p>
 </div>
-
-
-<!-- End Content-->
-
-<!-- Begin Footer-->
-<!--<div class="container fixed-bottom">
-    <footer class="py-3 my-4">
-        <ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
-        <p class="text-center text-muted">© 2022 Flegias & Tourist</p>
-    </footer>
-</div>-->
-<!-- End Footer-->
 
 </body>
 

@@ -1,9 +1,12 @@
 <?php
     require_once("config.php");
 
-    //$date = str_replace('/','-',$_GET['date']);
-    $date = date("Y-m-d H:i", strtotime(str_replace('/','-',$_GET['date'])));
-    $capship = array(array(),array());
+    /** @var MYSQLI $connection*/
+
+    $date = date("Y-m-d H:i", strtotime(str_replace('/','-',$_GET['date'])));   //Data odierna formattata
+    $capship = array(array(),array());  //Array di array per capitani e navi
+
+    // Query che seleziona informazioni circa i capitani disponibili
     $sql = "
         
         SELECT id_code, name, surname, ret
@@ -12,11 +15,12 @@
             WHERE type ='capitano' AND ship_id IS NULL AND NOT users.deleted
     
     ";
+
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
                 $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
         }
-
+    // Query che selezioni informazioni circa le navi disponibili
     $sql = "
             
         SELECT ships.id as sid, name, ret
@@ -30,6 +34,7 @@
         while($row = $result->fetch_array(MYSQLI_ASSOC))
                 $capship[1][$row['sid']] = $row['name'];
 
+    // Query che prende le informazioni circa navi e capitani che non sono ancora partiti
     $sql = "
             
         SELECT id_code, surname, users.name AS name, ship_id, ships.name AS ship

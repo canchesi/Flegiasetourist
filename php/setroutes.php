@@ -4,6 +4,7 @@
 
     /**@var MYSQLI $connection*/
 
+    // Query che seleziona tutti i porti di parenza e arrivo
     $sql = '
                                                 
         SELECT harb_dep, harb_arr

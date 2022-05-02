@@ -3,6 +3,9 @@
 require_once('config.php');
 require_once('residenceinfos.php');
 
+/** @var MYSQLI $connection*/
+/** @var array $provinces*/
+
 session_start();
 
 if (!isset($_SESSION['id']))
@@ -15,6 +18,7 @@ else if ($_SESSION['type'] === 'cliente')
 if (isset($_POST['name']))
     header('location: ../employees.php');
 
+//  query che seleziona le informazioni dell'utente
 $sql = "
     
         SELECT *
@@ -420,7 +424,10 @@ if ($result = $connection->query($sql))
 
 <?php
 if (isset($_POST['submitted'])) {
+    // TODO DA CONTOROLLARE
     if (isset($_POST))
+
+    // Informazioni varie
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
     $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
     $hashPasswd = password_hash('password', PASSWORD_DEFAULT);
@@ -438,6 +445,7 @@ if (isset($_POST['submitted'])) {
     $eyes = $connection->real_escape_string($_POST['eyes']);
     $height = $connection->real_escape_string($_POST['height']);
 
+    // Query che aggiorna le informazion dell'impiegato
     $sql = "
             
                     UPDATE users 
@@ -473,17 +481,19 @@ if (isset($_POST['submitted'])) {
     if ($result = $connection->multi_query($sql))
         if (!isset($_POST['domicile'])) {
 
+            // Informazioni su ldomicilio
             $prov = $connection->real_escape_string($_POST['prov_d']);
             $city = $connection->real_escape_string($_POST['city_d']);
             $zip = $connection->real_escape_string($_POST['zip_d']);
             $addr = $connection->real_escape_string($_POST['addr_d']);
 
+            // Query che aggiorna le informazioni di domicilio
             $sql = "
-                    
-                                    UPDATE infos
-                                        SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
-                                
-                                ";
+
+                UPDATE infos
+                    SET prov_d = '$prov', city_d = '$city', zip_d = '$zip', addr_d = '$addr';
+            
+            ";
         }
 
     if (!($result = $connection->multi_query($sql)))

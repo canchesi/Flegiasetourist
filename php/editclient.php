@@ -3,6 +3,9 @@
     require_once('config.php');
     require_once('residenceinfos.php');
 
+    /** @var MYSQLI $connection */
+    /** @var array $provinces*/
+
     session_start();
 
     if (!isset($_SESSION['id']))
@@ -14,7 +17,8 @@
 
     if(isset($_POST['name']))
         header('location: ../clients.php');
-    
+
+    // Query che prende le informazioni del cliente
     $sql = "
     
         SELECT *
@@ -25,7 +29,7 @@
         ";
 
     if($result = $connection->query($sql))
-            $row = $result->fetch_array(MYSQLI_ASSOC);
+        $row = $result->fetch_array(MYSQLI_ASSOC);
 
 ?>
 
@@ -325,6 +329,7 @@
 
                 //TODO - Regex di name, surname, cf tel, birth, zipr e zipd
 
+                // Query che aggiorna le informazioni dell'utente
                 $sql = "
             
                     UPDATE users 

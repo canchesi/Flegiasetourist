@@ -4,13 +4,9 @@ require_once("config.php");
 
 /** @var MySQLI $connection */
 
-$row = array();
-/*foreach ($_GET['cities'] as $city)
-    if ($city != $_GET['city'])
-        $row[] = $city;*/
-
 $selectedCity = $connection->real_escape_string($_GET["city"]);
 
+// Query che seleziona tutti gli altri porti disponibili
 $sql = "SELECT city FROM harbors WHERE city != '$selectedCity'";
 
 if ($result = $connection->query($sql)) {
@@ -19,6 +15,7 @@ if ($result = $connection->query($sql)) {
             $row[] = $cities['city'];
     }
 
+    // Query che seleziona porti già relazionati con quello di partenza selezionato
     $sql = "SELECT * FROM trades WHERE harb_dep = '$selectedCity' OR harb_arr = '$selectedCity'";
 
     if ($resultFilter = $connection->query($sql)) {

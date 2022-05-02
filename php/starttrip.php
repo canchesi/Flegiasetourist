@@ -4,6 +4,7 @@
     /** @var MYSQLI $connection*/
     session_start();
 
+    // Query che seleziona la rotta più vicina del capitano in question
     $sql = "
         SELECT routes.id
             FROM users JOIN routes
@@ -26,6 +27,7 @@
     if($result = $connection->query($sql)){
         if($row = $result->fetch_array(MYSQLI_ASSOC)) {
             if ($_GET['start'])
+                // Query che aggiorna la data di partenza effettiva
                 $sql = "
             
                     UPDATE routes
@@ -34,6 +36,7 @@
                 
                 ";
             else
+                // Query che aggiorna la data di arrivo effettiva e le note di viaggio
                 $sql = "
             
                 UPDATE routes

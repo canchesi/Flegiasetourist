@@ -2,6 +2,8 @@
 
 require_once('config.php');
 
+/** @var MYSQLI $connection*/
+
 session_start();
 
 if (!isset($_SESSION['id']))
@@ -15,8 +17,9 @@ if (isset($_POST['harb_dep']))
     header('location: routes.php');
 
 
-$id = $_GET['id'];
+$id = $_GET['id'];  //ID rotta
 
+// Query che prende le informazioni della rotta
 $sql = "
     SELECT ships.name AS sname, users.name as cname, surname, harb_dep, harb_arr, dep_exp, arr_exp, dep_eff, ret, captain, ship_id
         FROM routes 
@@ -34,6 +37,7 @@ if ($result = $connection->query($sql)) {
     if($row['dep_eff'])
         header('location: ../routes.php');
 
+    // Scambia partenza e arrivo al flag ret = 1
     if($row['ret']){
         $tmp = $row['harb_dep'];
         $row['harb_dep'] = $row['harb_arr'];
@@ -49,16 +53,17 @@ if (isset($_POST['submitted'])) {
 
     // Vars
 
-    $shipID = $connection->real_escape_string($_POST['ship_id']);
-    $captain = $connection->real_escape_string($_POST['captain']);
+    $shipID = $connection->real_escape_string($_POST['ship_id']);   //ID nave
+    $captain = $connection->real_escape_string($_POST['captain']);  //ID capitano
 
+    // Query che aggiorna le informazioni della nave
     $sql = "
 
-                UPDATE routes
-                    SET ship_id = '" . $shipID . "', captain = '" . $captain . "' 
-                WHERE id = '" . $id . "'
-                
-            ";
+        UPDATE routes
+            SET ship_id = '" . $shipID . "', captain = '" . $captain . "' 
+        WHERE id = '" . $id . "'
+        
+    ";
 
     if (!($result = $connection->query($sql)))
         echo "<script>alert('Errore nell\'invio dei dati.')</script>";

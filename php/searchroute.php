@@ -5,11 +5,12 @@
 
     /**@var mysqli $connection*/
 
-    $tradeDep = $_GET['trade_dep'];
-    $tradeArr = $_GET['trade_arr'];
-    $depExp = $_GET['dep_exp'];
+    $tradeDep = $_GET['trade_dep']; //Porto di partenza
+    $tradeArr = $_GET['trade_arr']; //Porto di arrivo
+    $depExp = $_GET['dep_exp'];     //Data di partenza prevista
 
-
+    // Query che seleziona le rotte non annullate, che non sono partite,
+    // e successive alla data odierna, relative ad una rotta
     $sql = "
 
         SELECT dep_exp, arr_exp, ship_id, price_adult, price_underage, num_pass, routes.id

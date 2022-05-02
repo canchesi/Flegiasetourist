@@ -108,7 +108,7 @@ Le generalizzazioni sono state risolte inserendo un campo "tipo" in Utente che p
 
 **Porti**(<ins>Città</ins>)
 
-**Tratte**(<ins>ID</ins>PortoPart*, PortoArr*, PrezzoAd, PrezzoRag, Annullata)
+**Tratte**(<ins>ID</ins>, PortoPart*, PortoArr*, PrezzoAd, PrezzoRag, Annullata)
 
 **Rotte**(<ins>ID</ins>, ID nave*, ID tratta*, PartenzaPrev, ArrivoPrev, PartEff, ArrEff, Capitano*, NumPass, Note, Direzione, Annullata)
 
