@@ -4,6 +4,7 @@ require_once('config.php');
 require_once('residenceinfos.php');
 
 /** @var MYSQLI $connection*/
+/** @var array $provinces*/
 
 session_start();
 
@@ -158,13 +159,13 @@ if (isset($_POST['submitted'])) {
         if ($_SESSION['type'] !== 'capitano')
             echo '
                         <li class="nav-item">
-                            <a class="nav-link" href="employees.php">
+                            <a class="nav-link" href="../employees.php">
                                 <i class="cil-contact nav-icon "></i>
                                 Dipendenti
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="clients.php">
+                            <a class="nav-link" href="../clients.php">
                                 <i class="cil-user nav-icon"></i>
                                 Clienti
                             </a>

@@ -3,6 +3,9 @@
 require_once('php/config.php');
 require_once('php/residenceinfos.php');
 
+/**@var MYSQLI $connection*/
+/**@var array $provinces*/
+
 session_start();
 if (isset($_SESSION['id'])) {
     if ($_SESSION['type'] === 'cliente')
@@ -316,12 +319,14 @@ if (isset($_POST['submitted']) && !$error)
 
     $("#ProvR").change(function () {
         var deptid = $(this).val();
-
+        var city = $("#ProvR option:selected").text().trim();
         $("#ComuneRid").empty();
         $("#ComuneRid").append('<label for="ComuneR" class="form-label"><br></label><select id="ComuneR" class="form-select" name="city_r" required><option disabled selected>Comune</option></select>');
 
+        if(city === "Aosta")
+            city = "Valle d'Aosta"
         $.ajax({
-            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + $("#ProvR option:selected").text().trim(),
+            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + city,
             type: 'get',
             dataType: 'json',
             success: function (response) {
@@ -342,12 +347,16 @@ if (isset($_POST['submitted']) && !$error)
 
     $("#ProvD").change(function () {
         var deptid = $(this).val();
+        var city = $("#ProvD option:selected").text().trim();
 
         $("#ComuneDid").empty();
         $("#ComuneDid").append('<label for="ComuneD" class="form-label"><br></label><select id="ComuneD" class="form-select" name="city_d" required><option disabled selected>Comune</option></select>');
 
+        if(city === "Aosta")
+            city = "Valle d'Aosta"
+
         $.ajax({
-            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + $("#ProvD option:selected").text().replace(/\s+/g, ''),
+            url: 'https://comuni-ita.herokuapp.com/api/comuni/provincia/' + city,
             type: 'get',
             dataType: 'json',
             success: function (response) {
@@ -375,6 +384,8 @@ if (isset($_POST['submitted']) && !$error)
         var checkbox = $('#domicile');
         var hidden = $('.hidden');
         var show = $('.show');
+        if (selectedCR === "Aosta")
+            selectedCR = "Valle d'Aosta";
 
         if (!selectedPR) {
             $("#ComuneRid").empty();
