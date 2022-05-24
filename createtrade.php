@@ -256,7 +256,7 @@ if (isset($_POST['submitted'])) {
         $.ajax({
             url: 'php/settrades.php?city=' + $("#harb_dep option:selected").val().trim(),
             type: "GET",
-            dataType: 'json',
+            dataType: "JSON",
             success: function (response) {
                 arr.empty();
                 arr.append("<option disabled selected>Arrivo</option>");

@@ -187,7 +187,7 @@ if (isset($_POST['submitted'])) {
         // Varie informazioni
         $name = $connection->real_escape_string(ucfirst($_POST['name']));
         $surname = $connection->real_escape_string(ucfirst($_POST['surname']));
-        $email = $connection->real_escape_string($_POST['email']);
+        $email = $connection->real_escape_string($_POST['mail']);
         $provr = $connection->real_escape_string($_POST['prov_r']);
         $oldPassword = $connection->real_escape_string($_POST['oldPsw']);
         $newPassword = $connection->real_escape_string($_POST['passwd']);
@@ -234,7 +234,8 @@ if (isset($_POST['submitted'])) {
                         SET
                             name = '$name',
                             surname = '$surname',
-                            psw = '$hashPasswd'
+                            psw = '$hashPasswd',
+                            email = '$email'
                         WHERE id_code = " . $row['id_code'] . ";
                     
                     UPDATE infos
@@ -264,7 +265,8 @@ if (isset($_POST['submitted'])) {
                     UPDATE users 
                         SET
                             name = '$name',
-                            surname = '$surname'
+                            surname = '$surname',
+                            email = '$email'
                         WHERE id_code = " . $row['id_code'] . ";
                     
                     UPDATE infos
@@ -325,7 +327,7 @@ if (isset($_POST['submitted'])) {
         </div>
         <div class="col-md-4">
             <label for="mail" class="form-label">Email*</label>
-            <input type="mail" class="form-control" id="mail" name="mail" placeholder="Email"
+            <input type="email" class="form-control" id="mail" name="mail" placeholder="Email"
                    value="<?php echo $row['email'] ?>" required>
         </div>
         <div class="col-md-4">

@@ -242,6 +242,7 @@
                                     <div class="col-md-4">
                                         <label for="dep_exp" class="form-label">Data di partenza*</label>
                                         <div class="" id="dep_div"></div>
+                                        <input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>
                                     </div>
                                     <div class="col-md-4" >
                                         <label for="captain" class="form-label">Capitani disponibili*</label>
@@ -256,6 +257,7 @@
                                     <div class="col-md-4">
                                         <label for="arr_exp" class="form-label">Data di arrivo*</label>
                                         <div class="" id="arr_exp_div"></div>
+                                        <input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="ship" class="form-label">Navi*</label>
@@ -294,11 +296,22 @@
             $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
             $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
             $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
+/*
             $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
+*/
+/*
             $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
+*/
         });
 
+
         $(document).ready(function () {
+
+            var today = new Date().toISOString().substring(0, 16);
+
+            $("#dep_exp").attr("min", today);
+            $("#arr_exp").attr("min", today);
+
             var checkbox = $('#return'),
                 ret = 0,
                 harbs = <?php echo json_encode($harbs)?>;
@@ -316,13 +329,12 @@
                 $("#arr_div").append('<select class="form-select" id="trade_arr" name="trade_arr" disabled><option disabled selected>Arrivo</option></select>');
                 $("#cap_div").append('<select class="form-select" id="captain" name="captain" disabled><option disabled selected>Capitano</option></select>');
                 $("#ship_div").append('<select class="form-select" id="nave" name="nave" disabled><option disabled selected>Nave</option></select>');
-                $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" disabled>');
-                $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" name="arr_exp" disabled>');
 
                 $.ajax({
                     type: "GET",
                     data: {ajax: 1, ret: ret, harbs: harbs},
                     success: function (data) {
+                        console.log(response)
                         $('#trade_dep').empty();
                         $('#trade_dep').html(data);
                         $("#arr_div").empty();
@@ -343,6 +355,7 @@
                 type: "GET",
                 dataType: 'json',
                 success:function (response){
+                    console.log(response)
                     arr.empty();
                     arr.append("<option disabled selected>Arrivo</option>");
                     response.forEach(function (city) {
@@ -356,26 +369,32 @@
 
             $("#dep_div").empty();
             $("#arr_exp_div").empty();
-            $("#dep_div").append('<input type="datetime-local" class="form-control" id="dep_exp" name="dep_exp" min="' + '<?php echo date("Y-m-d")."T".date("H:i"); ?>' + '" required>');
-            $("#arr_exp_div").append('<input type="datetime-local" class="form-control" id="arr_exp" min="' + '<?php echo date("Y-m-d")."T".date("H:i"); ?>' + '" name="arr_exp" required>');
+            $("#dep_exp").removeAttr("disabled");
+            $("#arr_exp").removeAttr("disabled");
 
         });
 
-        $('#arr_exp_div').change(function () {
+        $('#arr_exp').change(function () {
 
             $("#cap_div").empty();
             $("#ship_div").empty();
             $("#ship_div").append('<select class="form-select" id="ship_id" name="ship_id" required><option disabled selected>Nave</option></select>');
             $("#cap_div").append('<select class="form-select" id="captain" name="captain" required><option disabled selected>Capitano</option></select>');
 
-            var city = $('#trade_dep option:selected').val();
+        })
+
+
+        $("#arr_exp, #depexp").change(function() {
+
+            console.log("modificato");
 
             $.ajax({
                 url: "php/setcapships.php",
-                data: {date: $('#dep_exp').val()},
+                data: {date: $('#dep_exp').val(), cap: null},
                 type: "GET",
                 dataType: "JSON",
                 success: function (response){
+                    console.log(response[0]);
                     $('#ship_id').empty();
                     $('#captain').empty();
                     $('#ship_id').append('<option disabled selected>Nave</option>');
@@ -387,7 +406,7 @@
                 }
             });
 
-        });
+        })
 
 
 

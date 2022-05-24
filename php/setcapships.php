@@ -12,9 +12,11 @@
         SELECT id_code, name, surname, ret
             FROM users LEFT JOIN routes
                 ON id_code = captain
-            WHERE type ='capitano' AND ship_id IS NULL AND NOT users.deleted
-    
-    ";
+            WHERE type ='capitano' AND ship_id IS NULL AND NOT users.deleted";
+
+
+    if ($_GET['cap'] !== null)
+        $sql .= " AND id_code != '" . $_GET['cap'] . "'";
 
     if ($result = $connection->query($sql))
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
@@ -43,9 +45,12 @@
                     ON id_code = captain
                 JOIN ships
                     ON ship_id = ships.id
-            WHERE NOT routes.deleted AND NOT users.deleted AND arr_exp < '" . $date . "'
-    ";
-    if($result = $connection->query($sql)){
+            WHERE NOT routes.deleted AND NOT users.deleted AND arr_exp < '" . $date . "'";
+
+if ($_GET['cap'] !== null)
+    $sql .= " AND id_code != '" . $_GET['cap'] . "'";
+
+if($result = $connection->query($sql)){
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $capship[0][$row['id_code']] = $row['surname'] . " " . $row['name'];
             $capship[1][$row['ship_id']] = $row['ship'];

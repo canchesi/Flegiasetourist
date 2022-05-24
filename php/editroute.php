@@ -204,8 +204,8 @@ if (isset($_POST['submitted'])) {
                                 <div class="col-md-4">
                                     <label for="captain" class="form-label">Capitani disponibili*</label>
                                     <select class="form-select" id="captain" name="captain">
-                                        <!--<option selected
-                                                id="<?php /*echo $row['captain']; */?>"> <?php /*echo $row['captain']; */?> </option>-->
+                                        <option selected
+                                                id="<?php echo $row['captain']; ?>"> <?php echo $row['captain'];?> </option>
                                     </select>
                                     <input type="text" value="1" name="submitted" hidden>
                                 </div>
@@ -268,13 +268,36 @@ if (isset($_POST['submitted'])) {
 
 <script>
     $(document).ready(function () {
-        var date = $("#dep_exp").val();
         $.ajax({
             url: "setcapships.php",
-            data: {date: $("#dep_exp").val()},
+            data: {date: $("#dep_exp").val(), cap: $("#captain").val()},
             type: "GET",
             dataType: "JSON",
             success: function (response) {
+                console.log(response)
+                $('#nave').empty();
+                $('#captain').empty();
+                $('#nave').append('<option value="<?php echo $row['ship_id'];?>" selected><?php echo $row['sname'];?></option>');
+                $('#captain').append("<option selected value='<?php echo $row['captain'];?>'><?php echo $row['surname'] . ' ' . $row['cname'];?></option>");
+
+                for (var id in response[0])
+                    $('#captain').append('<option value="' + id + '">' + response[0][id] + '</option>');
+
+                for (id in response[1])
+                    $('#nave').append('<option value="' + id + '">' + response[1][id] + '</option>');
+            }
+        });
+
+    })
+
+    $(document).change("#dep_exp, #arr_exp", function () {
+        $.ajax({
+            url: "setcapships.php",
+            data: {date: $("#dep_exp").val(), cap: $("#captain").val()},
+            type: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                console.log(response)
                 $('#nave').empty();
                 $('#captain').empty();
                 $('#nave').append('<option value="<?php echo $row['ship_id'];?>" selected><?php echo $row['sname'];?></option>');

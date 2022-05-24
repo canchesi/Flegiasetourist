@@ -62,6 +62,7 @@ Un cliente, una volta registratosi alla piattaforma, può decidere di effettuare
 - Le rotte relative alla stessa tratta possono essere percorse in un verso o nell'altro.
 - Può essere selezionato al più un veicolo per prenotazione.
 - Intestatario, Data di scadenza e CVV di una carta di credito sono salvati solo se l’utente lo specifica.
+- Possono essere aggiunte soltanto rotte dopo la più lontana nel futuro, relativamente al capitano.
 
 ### Operazioni
 

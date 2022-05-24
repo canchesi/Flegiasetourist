@@ -268,7 +268,7 @@ if(isset($_POST['ajax'])) {
 
             <div>
                 <h2>Destinazioni</h2>
-                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia e
+                <p>Destinazioni da e verso i più belli porti del Sud Italia. Potrete godervi il mare della Sicilia, della Sardegna e
                     della Calabria e il sole della Campania.</p>
 
             </div>
