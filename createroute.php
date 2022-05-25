@@ -334,7 +334,6 @@
                     type: "GET",
                     data: {ajax: 1, ret: ret, harbs: harbs},
                     success: function (data) {
-                        console.log(response)
                         $('#trade_dep').empty();
                         $('#trade_dep').html(data);
                         $("#arr_div").empty();
