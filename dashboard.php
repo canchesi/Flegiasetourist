@@ -65,8 +65,7 @@ if (isset($_POST['AddShip']) && $_POST['AddShip'] == 1) {
     <link href="/src/favicon.png" rel="icon">
 
     <!-- Style -->
-    <link href="https://coreui.io/demo/4.0/free/css/style.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.2.0/dist/css/coreui.min.css" rel="stylesheet" integrity="sha384-UkVD+zxJKGsZP3s/JuRzapi4dQrDDuEf/kHphzg8P3v8wuQ6m9RLjTkPGeFcglQU" crossorigin="anonymous">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons@2.1.0/css/all.css">
 
